@@ -1,0 +1,5 @@
+private_key.pem
+*.sh
+mapcon.tar.gz
+*.jpeg
+*.sql

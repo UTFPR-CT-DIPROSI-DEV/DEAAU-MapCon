@@ -1,0 +1,66 @@
+/*
+    Estilização dos forms
+*/
+
+.formSpace{
+    margin: 10px;
+    text-align: left
+}
+
+.title_form{
+    margin-bottom: 10px;
+}
+
+
+.botoes_form {
+    margin-bottom: 10px
+}
+
+.botoes_form *{
+    margin-right: 5px;
+}
+
+.filtros_form{
+    padding-bottom: 5px
+}
+
+.filtros_form *{
+    margin-right: 2px
+}
+
+
+
+/*
+    Responsive Datatable
+*/
+.datatable_responsive_demo .p_datatable_responsive_demo .p-datatable-tbody > tr > td .p-column_title {
+    display: none;
+  }
+  
+  @media screen and (max-width: 40em) {
+    .datatable_responsive_demo  .p-datatable-thead > tr > th,
+    .datatable_responsive_demo  .p-datatable-tfoot > tr > td {
+        display: none !important;
+    }
+  
+    .datatable_responsive_demo .p_datatable_responsive_demo .p-datatable-tbody > tr > td {
+        text-align: left;
+        display: block;
+        width: 100%;
+        float: left;
+        clear: left;
+        border: 0 none;
+    }
+  
+    .datatable_responsive_demo .p_datatable_responsive_demo .p-datatable-tbody > tr > td .p-column_title {
+        padding: .4rem;
+        min-width: 30%;
+        display: inline-block;
+        margin: -.4em 1em -.4em -.4rem;
+        font-weight: bold;
+    }
+  
+    .datatable_responsive_demo .p_datatable_responsive_demo .p-datatable-tbody > tr > td:last-child {
+        border-bottom: 1px solid var(--surface-d);
+    }
+  }

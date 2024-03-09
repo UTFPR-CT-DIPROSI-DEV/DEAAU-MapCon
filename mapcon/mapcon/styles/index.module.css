@@ -1,0 +1,29 @@
+
+.quadro_noticia{
+    box-shadow: none;
+    -webkit-box-shadow: none
+}
+
+.titulo{
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.busca{
+    margin-top: 20px;
+    margin-bottom: 40px !important; 
+}
+
+.titulo_noticia{
+    color: #D32F2F;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.data_noticia{
+    margin-top: 10px;
+    margin-bottom: 15px;
+    color: grey;
+}
+
