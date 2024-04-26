@@ -41,10 +41,8 @@ export default function MainMap({ conflitos }) {
             raio: ''
         }
 
-
         setShowForm({ data: dados, marker_pos: marker_pos, pos: pos, visible: true })
     }
-
 
     return (
         <>
@@ -62,9 +60,6 @@ export default function MainMap({ conflitos }) {
                         </Popup>
                     </CircleMarker>)
                 })}
-
-
-                
 
                 <ZoomControl position={'topright'}></ZoomControl>
             </MapContainer>

@@ -1,5 +1,10 @@
 private_key.pem
 *.sh
-mapcon.tar.gz
 *.jpeg
 *.sql
+mapcon.tar.gz
+crawler.tar.gz
+local.csv
+tmp.py
+my-crawler/
+python_crawlers/
