@@ -7,7 +7,7 @@ import Link from 'next/link'
 import styles from '../../styles/index.module.css'
 import ToolbarMapCon from '../../components/toolbar_mapcon';
 import { useRouter } from 'next/router';
-import { getSession, useSession } from 'next-auth/client';
+import { getSession, useSession } from 'next-auth/react';
 import Loading from '../../components/loading/loading';
 
 

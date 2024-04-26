@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import ToolbarMapCon from "../../../components/toolbar_mapcon";
 import Loading from "../../../components/loading/loading";
-import { getSession } from "next-auth/client";
+import { getSession } from "next-auth/react";
 import { Dialog } from "primereact/dialog";
 import { Dropdown } from "primereact/dropdown";
 import { RadioButton } from "primereact/radiobutton";

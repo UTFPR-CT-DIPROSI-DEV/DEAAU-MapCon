@@ -1,5 +1,5 @@
 import NextAuth from 'next-auth'
-import Providers from 'next-auth/providers'
+import CredentialsProvider from "next-auth/providers/credentials";
 import db from '../../../lib/back/db';
 import bcrypt from 'bcryptjs'
 
@@ -9,7 +9,7 @@ export default NextAuth({
         jwt: true
     },
     providers: [
-        Providers.Credentials({
+        CredentialsProvider({
             // The name to display on the sign in form (e.g. 'Sign in with...')
             name: 'dados',
             // The credentials is used to generate a suitable form on the sign in page.

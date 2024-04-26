@@ -1,4 +1,4 @@
-import { csrfToken } from 'next-auth/client'
+import { csrfToken } from 'next-auth/react'
 import { useState } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';

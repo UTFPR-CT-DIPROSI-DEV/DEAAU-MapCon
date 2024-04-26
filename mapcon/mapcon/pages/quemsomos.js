@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import Image from 'next/image'
-import { Card } from 'primereact/card';
+// import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext'
 import Link from 'next/link'

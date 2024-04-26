@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { Menubar } from 'primereact/menubar';
 import { Button } from 'primereact/button';
 import Link from "next/link";
-import { signIn, signOut, useSession } from 'next-auth/client'
+import { signIn, signOut, useSession } from 'next-auth/react'
 
 
 

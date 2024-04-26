@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import captureWebsite from "capture-website";
-import { getSession } from "next-auth/client";
+import { getSession } from "next-auth/react";
 import db from "../../../lib/back/db";
 import { v1 as uuidv1 } from "uuid";
 
