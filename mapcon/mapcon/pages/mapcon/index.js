@@ -5,7 +5,7 @@ import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext'
 import Link from 'next/link'
 import styles from '../../styles/index.module.css'
-import ToolbarSite from '../../components/toolbar_site';
+import ToolbarMapCon from '../../components/toolbar_mapcon';
 import { useRouter } from 'next/router';
 import { getSession, useSession } from 'next-auth/react';
 import Loading from '../../components/loading/loading';
@@ -16,7 +16,7 @@ function Index(props) {
   
   return (
     <div>
-      <ToolbarSite/>
+      <ToolbarMapCon/>
       <div className="p-grid p-formgrid p-m-lg-6 p-m-2">
         <div className="p-col-12 p-mb-2 p-lg-12 p-mb-lg-0">
         </div>
