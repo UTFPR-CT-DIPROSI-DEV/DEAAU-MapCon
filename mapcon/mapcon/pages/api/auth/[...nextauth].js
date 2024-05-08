@@ -6,6 +6,7 @@ import bcrypt from 'bcryptjs'
 export default NextAuth({
     // Configure one or more authentication providers
     session: {
+        strategy: 'jwt',
         jwt: true
     },
     providers: [
@@ -19,34 +20,24 @@ export default NextAuth({
                 username: { label: "CPF/Username", type: "text" },
                 password: { label: "Senha", type: "password" }
             },
-            async authorize(credentials) {
-
-
-                const user = await db('usuario')
+            async authorize(credentials, req) {
+                const usr = await db('usuario')
                     .select('usu_login', 'usu_senha', 'perfil_usuario_num_seq_perfil_usuario')
                     .where({ usu_login: credentials.username })
                     .first();
 
-                    
-
-                if (!user) { // User don't exist
+                if (!usr) { // User doesn't exist
                     return null
                 } else {
-
-                    
-
                     // Verifying the password
-                    if (bcrypt.compareSync(credentials.password, user.usu_senha)) {
-
-                        
-
+                    if (bcrypt.compareSync(credentials.password, usr.usu_senha)) {
                         let ret = {
-                            id: user.usu_login,
-                            perfil: user.perfil_usuario_num_seq_perfil_usuario,
-                            pushid: user.pushid
+                            id: usr.usu_login,
+                            perfil: usr.perfil_usuario_num_seq_perfil_usuario,
+                            pushid: usr.pushid
                         }
+                        console.debug('Authorize : ', ret);
                         return ret;
-
                     } else {
                         return null;
                     }
@@ -65,15 +56,33 @@ export default NextAuth({
             //  "token" is being send below to "session" callback...
             //  ...so we set "user" param of "token" to object from "authorize"...
             //  ...and return it...
-            user && (token.user = user);
-            return Promise.resolve(token)   // ...here
+            const {t,u,a,p,i} = {t: token, u: user, a: account, p: profile, i: isNewUser};
+            console.debug('JWT : ', token, user, account, profile, isNewUser);
+            if (u) {
+                token.user = u;
+            }
+            // user && (token.user = user);
+            return token;
         },
-        session: async (session, user, sessionToken) => {
-            //  "session" is current session object
-            //  below we set "user" param of "session" to value received from "jwt" callback
-            session.user = user.user;
-            return Promise.resolve(session)
+        session: async (session) => {
+            console.debug('Session : ', session);
+            console.debug('Session TOKEN USER : ', session.token.token.user);
+            if (session) {
+              session.user = session.token.token.user;
+              return session;
+            } else {
+              // Handle the case where session or user is undefined
+              console.error('Session or user is undefined', { session });
+              return Promise.resolve(session);
+            }
         }
+        // session: async (session, user, sessionToken) => {
+        //     //  "session" is current session object
+        //     //  below we set "user" param of "session" to value received from "jwt" callback
+        //     console.debug('Session : ', session, user, sessionToken);
+        //     session.user = user.user;
+        //     return Promise.resolve(session)
+        // }
     },
     pages: {
         signIn: '/login'

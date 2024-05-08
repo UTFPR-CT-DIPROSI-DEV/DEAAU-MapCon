@@ -22,13 +22,17 @@ export default function ToolbarSite() {
       label: 'Equipe',
       command:()=>{router.push("/equipe")}
     },
+    // {
+    //   label: 'Outras Publicações',
+    //   command:()=>{router.push("/outraspublicacoes")}
+    // },
+    // {
+    //   label: 'Publicação Científica',
+    //   command:()=>{router.push("/publicacaocientifica")}
+    // },
     {
-      label: 'Outras Publicações',
-      command:()=>{router.push("/outraspublicacoes")}
-    },
-    {
-      label: 'Publicação Científica',
-      command:()=>{router.push("/publicacaocientifica")}
+      label: 'MapCon',
+      command:()=>{router.push("/mapcon")}
     },
     // {
     //   label: 'MapCon',
