@@ -1,7 +1,7 @@
 private_key.pem
 *.sh
 *.jpeg
-*.sql
+# *.sql
 mapcon.tar.gz
 crawler.tar.gz
 local.csv
