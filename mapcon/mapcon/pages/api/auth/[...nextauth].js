@@ -56,10 +56,9 @@ export default NextAuth({
             //  "token" is being send below to "session" callback...
             //  ...so we set "user" param of "token" to object from "authorize"...
             //  ...and return it...
-            const {t,u,a,p,i} = {t: token, u: user, a: account, p: profile, i: isNewUser};
             console.debug('JWT : ', token, user, account, profile, isNewUser);
-            if (u) {
-                token.user = u;
+            if (user) {
+                token.user = user;
             }
             // user && (token.user = user);
             return token;
@@ -67,6 +66,7 @@ export default NextAuth({
         session: async (session) => {
             console.debug('Session : ', session);
             console.debug('Session TOKEN USER : ', session.token.token.user);
+            console.debug('Session TOKEN USER : ', session.token.token.token.user);
             if (session) {
               session.user = session.token.token.user;
               return session;

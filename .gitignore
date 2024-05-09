@@ -10,3 +10,4 @@ my-crawler/
 python_crawlers/
 .env.local
 backup*
+mapcon/node_modules_2/

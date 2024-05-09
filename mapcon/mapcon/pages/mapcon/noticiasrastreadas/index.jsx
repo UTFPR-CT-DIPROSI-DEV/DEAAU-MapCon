@@ -130,7 +130,7 @@ export default function NoticiasRastreadasPage(props) {
     <Loading></Loading>
   ) : (
     <div>
-      <ToolbarMapCon></ToolbarMapCon>
+      <ToolbarMapCon/>
       <div className="p-grid p-formgrid p-m-lg-3 p-m-2">
         <div className="p-col-12 p-mb-12 p-lg-12 p-mb-lg-0">
           <TableCrud

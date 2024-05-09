@@ -6,10 +6,10 @@ import Link from "next/link";
 import { signIn, signOut, useSession } from 'next-auth/react'
 
 
-
 export default function ToolbarMapCon() {
-
+  
   const router = useRouter();
+  
   const { data: session, status: loading } = useSession();
 
   let items = [
