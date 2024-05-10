@@ -1,0 +1,1 @@
+psql -h pgsql.cogeti.ct.internal -p 5432 -U conflitosurbanos -d conflitosurbanos

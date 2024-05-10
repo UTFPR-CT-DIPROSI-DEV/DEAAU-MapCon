@@ -18,19 +18,23 @@ export default function ToolbarMapCon() {
       items: [
         {
           label: 'Notícias Rastreadas',
-          command:()=>{router.push("/mapcon/noticiasrastreadas");}
+          // command:()=>{router.push("/mapcon/noticiasrastreadas");}
+          command:()=>{window.location.href = "/mapcon/noticiasrastreadas";}
         },
         {
           label: 'Protesto',
-          command:()=>{router.push("/mapcon/protesto");}
+          // command:()=>{router.push("/mapcon/protesto");}
+          command:()=>{window.location.href = "/mapcon/protesto";}
         },
         {
           label: 'Conflito',
           //command:()=>{history.push("/escolasevagas");}
+          // command:()=>{history.push("/escolasevagas");}
         },
         {
           label: 'Agente',
-          command:()=>{router.push("/mapcon/agente_protesto");}
+          // command:()=>{router.push("/mapcon/agente_protesto");}
+          command:()=>{window.location.href = "/mapcon/agente_protesto";}
         },
         // {
         //   label: 'Notícias do Blog'
@@ -42,38 +46,46 @@ export default function ToolbarMapCon() {
       items: [
         {
           label: 'Categoria do Objeto',
-          command:()=>{router.push("/mapcon/catobj");}
+          // command:()=>{router.push("/mapcon/catobj");}
+          command:()=>{window.location.href = "/mapcon/catobj";}
         },
         {
           label: 'Repertório de Ação',
-          command:()=>{router.push("/mapcon/repacao");}
+          // command:()=>{router.push("/mapcon/repacao");}
+          command:()=>{window.location.href = "/mapcon/repacao";}
         },
         {
           label: 'Categoria do Agente',
-          command:()=>{router.push("/mapcon/catagente");}
+          // command:()=>{router.push("/mapcon/catagente");}
+          command:()=>{window.location.href = "/mapcon/catagente";}
         },
         {
           label: 'Forma de Participação',
-          command:()=>{router.push("/mapcon/formaparticipacao");}
+          // command:()=>{router.push("/mapcon/formaparticipacao");}
+          command:()=>{window.location.href = "/mapcon/formaparticipacao";}
         },
         {
           label: 'Cidade',
-          command:()=>{router.push("/mapcon/cidade");}
+          // command:()=>{router.push("/mapcon/cidade");}
+          command:()=>{window.location.href = "/mapcon/cidade";}
         },
         {
           label: 'Bairro',
-          command:()=>{router.push("/mapcon/bairro");}
+          // command:()=>{router.push("/mapcon/bairro");}
+          command:()=>{window.location.href = "/mapcon/bairro";}
         },
         {
           label: 'Fonte',
-          command:()=>{router.push("/mapcon/fonteprotesto");}
+          // command:()=>{router.push("/mapcon/fonteprotesto");}
+          command:()=>{window.location.href = "/mapcon/fonteprotesto";}
         },
         // {
         //   label: 'Perfil do Usuário',
         // },
         {
           label: 'Usuário',
-          command:()=>{router.push("/mapcon/usuario");}
+          // command:()=>{router.push("/mapcon/usuario");}
+          command:()=>{window.location.href = "/mapcon/usuario";}
         },
       ]
     },
@@ -85,7 +97,8 @@ export default function ToolbarMapCon() {
       items: [
         {
           label: 'Conflitos por mês',
-          command:()=>{router.push("/mapcon/graficos/conflitosmes");}
+          // command:()=>{router.push("/mapcon/graficos/conflitosmes");}
+          command:()=>{window.location.href = "/mapcon/graficos/conflitosmes";}
         },
         
       ]

@@ -59,13 +59,7 @@ function Index() {
         <div className={styles.titulo_noticia}>Título da segunda noticia</div>
         <div className={styles.titulo_noticia}>Título da terceira noticia</div>
         <div className={styles.titulo_noticia}>Título da quarta noticia, com tamanho maior e quebrando a linha</div>
-
-
         </div>
-
-
-
-
       </div>
     </div>
 

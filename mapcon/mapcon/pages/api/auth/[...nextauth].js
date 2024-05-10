@@ -17,8 +17,8 @@ export default NextAuth({
             // You can specify whatever fields you are expecting to be submitted.
             // e.g. domain, username, password, 2FA token, etc.
             credentials: {
-                username: { label: "CPF/Username", type: "text" },
-                password: { label: "Senha", type: "password" }
+                username: { label: "Usuário", type: "text" },
+                password: { label: "Senha",   type: "password" }
             },
             async authorize(credentials, req) {
                 const usr = await db('usuario')
@@ -26,7 +26,7 @@ export default NextAuth({
                     .where({ usu_login: credentials.username })
                     .first();
 
-                if (!usr) { // User doesn't exist
+                if (!usr) {
                     return null
                 } else {
                     // Verifying the password
@@ -51,29 +51,28 @@ export default NextAuth({
     //     secret: process.env.JWT_SIGNING_PRIVATE_KEY,
     //   },
     callbacks: {
-        jwt: async (token, user, account, profile, isNewUser) => {
+        jwt: async ({token, user, account, profile}) => {
             //  "user" parameter is the object received from "authorize"
             //  "token" is being send below to "session" callback...
             //  ...so we set "user" param of "token" to object from "authorize"...
             //  ...and return it...
-            console.debug('JWT : ', token, user, account, profile, isNewUser);
             if (user) {
                 token.user = user;
             }
-            // user && (token.user = user);
+            console.debug('JWT : ', token, user, account, profile);
+            console.debug('JWT TOKEN USER : ', token.user);
             return token;
         },
         session: async (session) => {
             console.debug('Session : ', session);
-            console.debug('Session TOKEN USER : ', session.token.token.user);
-            console.debug('Session TOKEN USER : ', session.token.token.token.user);
+            console.debug('Session TOKEN USER : ', session.token.user);
             if (session) {
-              session.user = session.token.token.user;
+              session.user = session.token.user;
               return session;
             } else {
               // Handle the case where session or user is undefined
               console.error('Session or user is undefined', { session });
-              return Promise.resolve(session);
+              return session;
             }
         }
         // session: async (session, user, sessionToken) => {

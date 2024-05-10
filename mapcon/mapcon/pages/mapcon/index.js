@@ -1,19 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image'
-import { Card } from 'primereact/card';
-import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext'
-import Link from 'next/link'
-import styles from '../../styles/index.module.css'
+import React from 'react';
 import ToolbarMapCon from '../../components/toolbar_mapcon';
-import { useRouter } from 'next/router';
-import { getSession, useSession } from 'next-auth/react';
-import Loading from '../../components/loading/loading';
+import { getSession } from 'next-auth/react';
 
 
 function Index(props) {
-  // const router = useRouter();
-  
   return (
     <div>
       <ToolbarMapCon/>
@@ -28,7 +18,8 @@ function Index(props) {
 export async function getServerSideProps(context){
   const session = await getSession({req: context.req})
   console.debug('Session on MAPCON/INDEX.JS : ', session);
-  if(!session){
+  // if(!session){
+  if(0){
     return {
       redirect: {
         destination: '/login',
@@ -42,7 +33,6 @@ export async function getServerSideProps(context){
       session
     }
   }
-
 }
 
 

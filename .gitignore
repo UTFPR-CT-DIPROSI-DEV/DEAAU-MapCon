@@ -1,13 +1,12 @@
-private_key.pem
+*.pem
 *.sh
 *.jpeg
 # *.sql
-mapcon.tar.gz
-crawler.tar.gz
+*.tar.gz
 local.csv
 tmp.py
 my-crawler/
 python_crawlers/
-.env.local
+*.env.local
 backup*
 mapcon/node_modules_2/

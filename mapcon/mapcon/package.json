@@ -38,7 +38,8 @@
     "react-leaflet": "^4.2.1",
     "react-pro-sidebar": "^1.1.0",
     "react-transition-group": "^4.4.1",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "yarn": "^1.22.22"
   },
   "devDependencies": {
     "@types/react": "18.2.45",
