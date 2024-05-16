@@ -17,9 +17,6 @@ import styles from './datatable.module.css'
 
 
 const TableCrud = forwardRef((props, ref) => {
-
-
-
     // const client = useApolloClient();
 
     const [rows, setRows] = useState([])
@@ -42,7 +39,6 @@ const TableCrud = forwardRef((props, ref) => {
         updateDatatable() {
             search()
         }
-
     }));
 
 
@@ -58,9 +54,6 @@ const TableCrud = forwardRef((props, ref) => {
 
 
     const search = () => {
-
-
-
         searchDataTable().then(
             result => {
                 setRows(result['data']['data'])
@@ -68,18 +61,14 @@ const TableCrud = forwardRef((props, ref) => {
             },
             error => {
             }
-
         );
     }
 
 
     async function searchDataTable(sField, sOrder, p = null, rows = null) {
-
         setloading(true)
 
         try {
-
-
             const ret = await axios.get(props.url, {
                 params: {
                     filters: JSON.stringify([{ "type": typeFilter, "field": field, "value": value }]),
@@ -90,21 +79,15 @@ const TableCrud = forwardRef((props, ref) => {
             })
 
             return ret;
-
-
-
         } catch (e) {
 
         } finally {
             setloading(false)
         }
-
-
     }
 
 
     function orderDataTable(e) {
-
         searchDataTable(e.sortField, e.sortOrder).then(
             result => {
                 setRows(result['data']['data'])
@@ -118,7 +101,6 @@ const TableCrud = forwardRef((props, ref) => {
     }
 
     function pagDataTable(e) {
-
         searchDataTable(null, null, e.page, e.rows).then(
             result => {
                 setRows(result['data']['data'])
@@ -128,7 +110,6 @@ const TableCrud = forwardRef((props, ref) => {
                 setFirst(e.first)
             }
         )
-
     }
 
     function selectDataTable(e) {
@@ -155,7 +136,6 @@ const TableCrud = forwardRef((props, ref) => {
 
 
     const responsiveBodyTemplate = (rowData, field, header) => {
-
         return (
             <React.Fragment>
                 <span className="p-column-title">{header}</span>
@@ -165,9 +145,7 @@ const TableCrud = forwardRef((props, ref) => {
     }
 
     return (
-
         <div>
-
             {/* <div className={styles.title_form}>{props.title}</div> */}
             <div className="p-fluid p-formgrid p-grid  p-align-end">
                 <div className="p-field p-col-12 p-md-3">
@@ -198,19 +176,13 @@ const TableCrud = forwardRef((props, ref) => {
                 <DataTable header={props.title} className="p-datatable-responsive-demo" id="dt_01" loading={loading} selectionMode="multiple" lazy={true} resizableColumns={true} selection={selected} onSelectionChange={e => selectDataTable(e)} columnResizeMode="fit" sortField={sortField} sortOrder={sortOrder} onSort={(e) => orderDataTable(e)} value={rows}>
                     {/* {props.children} */}
                     {props.children.map(child => child.props.field !== undefined && child.props.body == undefined ? <Column  {...child.props} body={(rowData => responsiveBodyTemplate(rowData, child.props.field, child.props.header))}></Column> : <Column  {...child.props}></Column>)}
-
                 </DataTable>
                 <Paginator id="paginator" first={first} rows={rowsPerPage} rowsPerPageOptions={[10, 20, 30]} totalRecords={total} onPageChange={(e) => pagDataTable(e)}></Paginator>
             </div>
 
         </div>
-
-    );
-
-
+    ); // return
 })
-
-
 
 
 export default TableCrud;

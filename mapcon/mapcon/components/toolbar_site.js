@@ -74,10 +74,8 @@ export default function ToolbarSite() {
 
   return (
     <div>
-      <div>
         {/* se eu quiser pegar os dados da autenticação... {session && session.user.name} */}
         <Menubar start={start} model={items} end={right_toolbar} />
-      </div>
     </div>
   );
 

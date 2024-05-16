@@ -54,7 +54,6 @@ export default function CidadePage(props) {
             data: r.data,
             cidades: r2.data['data']
         })
-
     }
 
 
@@ -82,12 +81,10 @@ export default function CidadePage(props) {
 
     // Essa function atualiza fecha o dialog e atualiza o datatable o form tiver atualizado
     function closeFormDialog(update) {
-
         setshowForm(false)
         if (update) {
             childRef.current.updateDatatable()
         }
-
     }
 
     // Filtros

@@ -34,34 +34,24 @@ export default function ProtestoPage(props) {
     }, [])
 
     async function viewButtonClicked(e) {
-
-
         router.push({
             pathname: '/mapcon/protesto/view',
             query: { id: e[0].num_seq_protesto },
         })
-
-
     }
 
     async function addButtonClicked(e) {
-
         router.push('/mapcon/protesto/add')
-
     }
 
     async function editButtonClicked(row) {
-
         router.push({
             pathname: '/mapcon/protesto/edit',
             query: { id: row[0].num_seq_protesto },
         })
-
     }
 
-
     async function deleteButtonClicked(e, search) {
-
         confirmDialog({
         message: 'Tem certeza que deseja remover os dados selecionados?',
         header: 'Confirmação',

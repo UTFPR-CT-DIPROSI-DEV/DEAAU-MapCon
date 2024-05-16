@@ -46,7 +46,7 @@ export default function MainMap({ conflitos }) {
 
     return (
         <>
-            <MapContainer zoomControl={false} style={{ height: "100vh", width: "100vw" }} center={latLng(position)} zoom={10} scrollWheelZoom={false}>
+            <MapContainer zoomControl={true} style={{ height: "calc(100vh - 43px - 1.125rem)", width: "100vw" }} center={latLng(position)} zoom={10} scrollWheelZoom={true}>
                 <TileLayer
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png" />
@@ -61,7 +61,7 @@ export default function MainMap({ conflitos }) {
                     </CircleMarker>)
                 })}
 
-                <ZoomControl position={'topright'}></ZoomControl>
+                {/* <ZoomControl position={'topright'}></ZoomControl> */}
             </MapContainer>
            
         </>
