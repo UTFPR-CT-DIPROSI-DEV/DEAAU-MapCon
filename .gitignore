@@ -5,7 +5,6 @@
 *.tar.gz
 local.csv
 tmp.py
-my-crawler/
 python_crawlers/
 *.env.local
 backup*
