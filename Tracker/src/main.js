@@ -37,10 +37,10 @@ const crawler = new CheerioCrawler({
 
 const defaultURLS = [
     "https://www.tribunapr.com.br/noticias/parana/",
-    "http://www.brasildefatopr.com.br/",
-    "http://www.bemparana.com.br/",
-    "http://bandnewsfmcuritiba.com/",
-    "http://www.bandab.com.br/"
+    // "http://www.brasildefatopr.com.br/",
+    // "http://www.bemparana.com.br/",
+    // "http://bandnewsfmcuritiba.com/",
+    // "http://www.bandab.com.br/"
 ];
 
 await crawler.run(defaultURLS);
