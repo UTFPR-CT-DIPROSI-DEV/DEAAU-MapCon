@@ -7,52 +7,82 @@ function classifier() {
 
 // -====================================================================- //
 
-// Filters URLs from "https://www.tribunapr.com.br/noticias/parana/"
-// that are not actual articles. 
-function filter_TRIBUNAPR(URLs) {
-    const filteredURLs = URLs.filter((url) => {
-        return url.includes("https://www.tribunapr.com.br/noticias/curitiba-regiao/");
-    });
-    return filteredURLs;
-}
-
-// Filters URLs from "http://www.brasildefatopr.com.br/"
-// that are not actual articles. 
-function filter_BRASILDEFATOPR() {
-
-}
-
-// Filters URLs from "http://www.bemparana.com.br/"
-// that are not actual articles. 
-function filter_BEMPARANA() {
-
-}
-
-// Filters URLs from "http://bandnewsfmcuritiba.com/"
-// that are not actual articles. 
-function filter_BANDNEWSCURITIBA() {
-
-}
-
-// Filters URLs from "http://www.bandab.com.br/"
-// that are not actual articles. 
-function filter_BANDAB() {
-
-}
-
-
-// Filters URLs by subdomain.
-// IMPORTANT: All URLs in the list must be from the same domain.
-function filter_URLs(URLs) {
-    if (URLs[0].includes("https://www.tribunapr.com.br/")) {
-        return filter_TRIBUNAPR(URLs);
-    } else if (URLs[0].includes("http://www.brasildefatopr.com.br/")) {
-        return filter_BRASILDEFATOPR(URLs);
-    } else if (URLs[0].includes("http://www.bemparana.com.br/")) {
-        return filter_BEMPARANA(URLs);
-    } else if (URLs[0].includes("http://bandnewsfmcuritiba.com/")) {
-        return filter_BANDNEWSCURITIBA(URLs);
-    } else if (URLs[0].includes("http://www.bandab.com.br/")) {
-        return filter_BANDAB(URLs);
+// Filters URL from "https://www.tribunapr.com.br/noticias/parana/"
+// that is not an actual article. 
+function filter_TRIBUNAPR(URL) {
+    const exclude_list = [
+                            "/page/",
+                         ];
+    if (URL.includes("www.tribunapr.com.br/noticias/curitiba-regiao/") && URL.split("//")[1] !== "www.tribunapr.com.br/noticias/curitiba-regiao/") {
+        for (const element of exclude_list) {
+            if (URL.includes(element)) return false;
+        }
+        return true;
     }
 }
+
+// Filters URL from "http://www.brasildefatopr.com.br/"
+// that is not an actual article. 
+const regex = /\/(\d{4})\/(\d{2})\/(\d{2})\//;
+function filter_BRASILDEFATOPR(URL) {
+    return regex.test(URL);
+}
+
+// Filters URL from "http://www.bemparana.com.br/"
+// that is not an actual article.  
+function filter_BEMPARANA(URL) {
+    return URL.includes("www.bemparana.com.br/noticias/parana/") &&
+            URL.split("//")[1] !== "www.bemparana.com.br/noticias/parana/";
+}
+
+// Filters URL from "https://bandnewsfmcuritiba.com/"
+// that is not an actual article.  
+function filter_BANDNEWSCURITIBA(URL) {
+    const exclude_list = ["/ultimas-noticias/",
+                          "editoria",
+                          "/institucional",
+                          "/contato",
+                          "/arquivo/",
+                          "/endereco",
+                          "episodio",
+                          "/colunas/",
+                          "/especiais",
+                          "/author/",
+                          "/curitiba/",
+                          "/estado-parana/",
+                          "/politica_cat/",
+                          "/esportes",
+                          "ep-",
+                        ];
+    if (URL.includes("bandnewsfmcuritiba.com") && URL.split("//")[1].split("/").length === 3) {
+        for (const element of exclude_list) {
+            if (URL.includes(element)) return false;
+        }
+        return true;
+    }    
+}
+
+// Filters URL from "https://www.bandab.com.br/"
+// that is not an actual article.  
+function filter_BANDAB(URL) {
+    return URL.includes("www.bandab.com.br/curitiba/") && URL.split("//")[1] !== "www.bandab.com.br/curitiba/";
+}
+
+
+// Filters URL by subdomain.
+// IMPORTANT: All URL in the list must be from the same domain.
+function filter_URL(URL) {
+    if (URL.includes("www.tribunapr.com.br/")) {
+        return filter_TRIBUNAPR(URL);       //
+    } else if (URL.includes("www.brasildefatopr.com.br/")) {
+        return filter_BRASILDEFATOPR(URL);  //
+    } else if (URL.includes("www.bemparana.com.br/")) {
+        return filter_BEMPARANA(URL);       //
+    } else if (URL.includes("bandnewsfmcuritiba.com/")) {
+        return filter_BANDNEWSCURITIBA(URL);//
+    } else if (URL.includes("www.bandab.com.br/")) {
+        return filter_BANDAB(URL);          //
+    }
+}
+
+export { classifier, filter_URL };
