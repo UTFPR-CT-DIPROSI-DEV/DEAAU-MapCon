@@ -6,7 +6,8 @@
     "type": "module",
     "description": "Crawling project",
     "scripts": {
-        "start": "node src/main.js"
+        "start": "node src/main.js",
+        "test": "node src/test.js"
     },
     "dependencies": {
         "crawlee": "^3.0.0",
