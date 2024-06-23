@@ -1,7 +1,6 @@
-import { CheerioCrawler, Dataset, cookieStringToToughCookie } from "crawlee";
+import { CheerioCrawler, Dataset, log } from "crawlee";
 import { classifier, filter_URL } from "./classifier.js";
-
-const newsToVisit = [];
+import db from "./db/db.js";
 
 // Function to remove accented characters
 function removeAccents(str) {
@@ -18,16 +17,29 @@ function removeAccents(str) {
     return cleanStr.normalize('NFC'); // Normalize back to NFC form (optional)
 }
 
-const allowed_resources = [
-                            "text/html",
-                            "text/xml",
-                            "application/xhtml+xml",
-                            "application/xml",
-                            "application/json",
-                          ];
+log.setLevel(log.LEVELS.ERROR);
 
 const crawler = new CheerioCrawler({
     maxRequestRetries: 0,
+    failedRequestHandler: async ({ request }) => {
+        log.error(`Request ${request.url} failed too many times.`);
+    },
+    preNavigationHooks: [
+        async ({request}) => {
+            const blockedExtensions = ['xml', 'png', 'jpg', 'jpeg', 'webp', 'pdf', 'zip'];
+            // Check if the URL ends with one of the allowed extensions
+            const url = new URL(request.url);
+            const path = url.pathname.toLowerCase();
+
+            // If the URL does not end with one of the allowed extensions, skip the request
+            if (blockedExtensions.some(ext => path.endsWith(ext))) {
+                console.log(`Skipping ${request.url} due to unsupported file type.`);
+                request.noRetry = true;
+                return;
+                // throw new Error(`Unsupported file type for URL: ${request.url}`);
+            }
+        }
+    ],
     async requestHandler({ request, response, body, contentType, $ }) {
         try {
             const title = $('title').text();
@@ -48,14 +60,8 @@ const crawler = new CheerioCrawler({
             const sameOriginUrls = absoluteUrls
             .filter((url) => url.origin === origin)
             .map((url) => url.href);
-            
-            // Printing the found URLs
-            // console.debug(`The title of "${request.url}" is: ${title}.`);
-            // console.debug(`\nFound ${sameOriginUrls.length} links :`);
-            // for (let i = 0; i < sameOriginUrls.length; i++) {
-            //     console.debug(`\t - ${sameOriginUrls[i]}`);
-            // }
-            
+
+            // Creating an object with the data scraped from the current page
             const results = {
                 url: request.loadedUrl,
                 title: removeAccents(title),
@@ -66,7 +72,7 @@ const crawler = new CheerioCrawler({
             if (filter_URL(request.loadedUrl)) {
                 // results.classification = classifier(title);
                 await Dataset.pushData(results);
-                console.debug(results.url);
+                log.debug(results.url);
             }
             
             // Finally, we have to add the URLs to the queue
@@ -79,13 +85,16 @@ const crawler = new CheerioCrawler({
 })
 
 const defaultURLS = [
-    "https://www.tribunapr.com.br/noticias/parana/",
-    // "http://www.brasildefatopr.com.br/",
+    // "https://www.tribunapr.com.br/noticias/parana/",
+    "http://www.brasildefatopr.com.br/",
     // "http://www.bemparana.com.br/",
     // "http://bandnewsfmcuritiba.com/",
     // "http://www.bandab.com.br/"
 ];
 
-await crawler.run(defaultURLS);
-// const url = " https://bandnewsfmcuritiba.com/hemofilia-e-genetica-e-acomete-principalmente-os-homens/";
-// console.debug(url.split("//")[1].split("/"));
+// await crawler.run(defaultURLS);
+const res = await db.table('test').columnInfo();
+console.log(res);
+db.raw("SELECT * FROM test").then((result) => {
+    console.log(result.rows);
+});

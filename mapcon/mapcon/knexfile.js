@@ -22,7 +22,7 @@ module.exports = {
     password: process.env.DB_PASS
   },
   pool: {
-    min: 2,
+    min: 0,
     max: 10
   },
   // migrations: {
