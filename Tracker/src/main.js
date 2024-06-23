@@ -1,5 +1,6 @@
 import { CheerioCrawler, Dataset, log } from "crawlee";
 import { classifier, filter_URL } from "./classifier.js";
+import * as cheerio from 'cheerio';
 import db from "./db/db.js";
 
 // Function to remove accented characters
@@ -17,7 +18,29 @@ function removeAccents(str) {
     return cleanStr.normalize('NFC'); // Normalize back to NFC form (optional)
 }
 
-log.setLevel(log.LEVELS.ERROR);
+// Function to extract all possible text elements from an HTML body
+// while filtering out unwanted elements (gtag, script, style, etc.)
+function extractText(html) {
+    // Define the blacklist of tags to remove
+    const blacklist = ['script', 'style', 'gtag'];
+
+    // Load the HTML into cheerio
+    const $ = cheerio.load(html);
+
+    // Iterate over the blacklist, removing the tags
+    blacklist.forEach(tag => {
+        $(tag).remove();
+    });
+
+    let text = $('body').text();
+
+    text = text.replace(/\n\s*\n/g, '\n');
+
+    // Extract and return the text from the modified HTML
+    return text;
+}
+
+log.setLevel(log.LEVELS.DEBUG);
 
 const crawler = new CheerioCrawler({
     maxRequestRetries: 0,
@@ -65,14 +88,17 @@ const crawler = new CheerioCrawler({
             const results = {
                 url: request.loadedUrl,
                 title: removeAccents(title),
+                protesto: false,
+                content: extractText(body),  // Make content last to improve readability
             };
             
             // Saving the data scraped from the current page to the dataset
             // if it passes the filters.
             if (filter_URL(request.loadedUrl)) {
                 // results.classification = classifier(title);
+                results.protesto = classifier(results.content);
                 await Dataset.pushData(results);
-                log.debug(results.url);
+                log.debug(`URL: ${results.url} - Protesto: ${results.protesto}`);
             }
             
             // Finally, we have to add the URLs to the queue
@@ -81,7 +107,7 @@ const crawler = new CheerioCrawler({
             console.error('ERROR: ', error);
         }
     },
-        maxRequestsPerCrawl: 2000,
+        maxRequestsPerCrawl: 20,
 })
 
 const defaultURLS = [
@@ -92,9 +118,9 @@ const defaultURLS = [
     // "http://www.bandab.com.br/"
 ];
 
-// await crawler.run(defaultURLS);
-const res = await db.table('test').columnInfo();
-console.log(res);
-db.raw("SELECT * FROM test").then((result) => {
-    console.log(result.rows);
-});
+await crawler.run(defaultURLS);
+// const res = await db.table('test').columnInfo();
+// console.log(res);
+// db.raw("SELECT * FROM test").then((result) => {
+//     console.log(result.rows);
+// });

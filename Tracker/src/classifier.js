@@ -1,8 +1,38 @@
 
 // Determines whether or not a given article's subject
 // is related to "Urban conflicts" and "Curitiba".
-function classifier() {
+function classifier(body) {
+    const keywords = [
+                        "conflito",
+                        "protesto",
+                        "manifestação",
+                        "manifestante",
+                        "moradores",
+                        "greve",
+                        "paralisação",
+                        "passeata",
+                        "bloqueio",
+                        "confronto",
+                        "violência",
+                        "violento",
+                        "tensão",
+                        "tumulto",
+                        "invasão",
+                        "ocupação",
+                        "desocupação",
+                        "desalojamento",
+                        "deslocamento",
+                        "reintegração",
+                    ];
+    // Normalize the body content to lowercase
+    const normalizedBody = body.toLowerCase();
+    for (const keyword of keywords) {
+        if (normalizedBody.includes(keyword)) {
+            return true; // Keyword found, content is related
+        }
+    }
 
+    return false; // No keyword found, content is not related
 }
 
 // -====================================================================- //

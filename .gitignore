@@ -2,6 +2,7 @@
 *.sh
 *.jpeg
 # *.sql
+notes2self.md
 *.tar.gz
 local.csv
 tmp.py
