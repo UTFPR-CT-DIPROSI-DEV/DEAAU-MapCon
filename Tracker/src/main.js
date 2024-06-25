@@ -1,44 +1,9 @@
-import { CheerioCrawler, Dataset, log } from "crawlee";
+import { CheerioCrawler, Dataset, log, utils } from "crawlee";
 import { classifier, filter_URL } from "./classifier.js";
-import * as cheerio from 'cheerio';
+import { removeAccents, extractText } from utils.js;
 import db from "./db/db.js";
 
-// Function to remove accented characters
-function removeAccents(str) {
-    // Regex to match any character with the Unicode property 'diacritic'
-    const regex = /[\u0300-\u036f\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/g;
-    
-    // Normalize the string to decompose combined characters into their individual components
-    const normalizedStr = str.normalize('NFD');
-    
-    // Replace the accented characters using the regex
-    let cleanStr = normalizedStr.replace(regex, '');
-    cleanStr = cleanStr.replace(/“|”/g, '');
-    
-    return cleanStr.normalize('NFC'); // Normalize back to NFC form (optional)
-}
 
-// Function to extract all possible text elements from an HTML body
-// while filtering out unwanted elements (gtag, script, style, etc.)
-function extractText(html) {
-    // Define the blacklist of tags to remove
-    const blacklist = ['script', 'style', 'gtag'];
-
-    // Load the HTML into cheerio
-    const $ = cheerio.load(html);
-
-    // Iterate over the blacklist, removing the tags
-    blacklist.forEach(tag => {
-        $(tag).remove();
-    });
-
-    let text = $('body').text();
-
-    text = text.replace(/\n\s*\n/g, '\n');
-
-    // Extract and return the text from the modified HTML
-    return text;
-}
 
 log.setLevel(log.LEVELS.DEBUG);
 
@@ -119,6 +84,7 @@ const defaultURLS = [
 ];
 
 await crawler.run(defaultURLS);
+
 // const res = await db.table('test').columnInfo();
 // console.log(res);
 // db.raw("SELECT * FROM test").then((result) => {

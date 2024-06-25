@@ -9,6 +9,7 @@ import { InputText } from 'primereact/inputtext';
 import { Paginator } from 'primereact/paginator';
 import axios from 'axios';
 import styles from './datatable.module.css'
+import { set } from 'react-hook-form';
 
 
 /*
@@ -20,6 +21,7 @@ const TableCrud = forwardRef((props, ref) => {
     // const client = useApolloClient();
 
     const [rows, setRows] = useState([])
+    const [total, setTotal] = useState(0)
     const [field, setField] = useState(props.filters[0].value)
     const [typeFilter, setTypeFilter] = useState('contain')
     const [value, setValue] = useState('')
@@ -28,14 +30,11 @@ const TableCrud = forwardRef((props, ref) => {
     const [selected, setSelected] = useState([])
     const [sortField, setSortField] = useState(null)
     const [sortOrder, setsortOrder] = useState(null)
-    //const [items] = useState(null)
     const [first, setFirst] = useState(null)
-    const [total, settotal] = useState(null)
     const [loading, setloading] = useState(false)
 
 
     useImperativeHandle(ref, () => ({
-
         updateDatatable() {
             search()
         }
@@ -57,9 +56,11 @@ const TableCrud = forwardRef((props, ref) => {
         searchDataTable().then(
             result => {
                 setRows(result['data']['data'])
-                settotal(result['data']['total'])
+                setTotal(result['data']['total'])
+                console.debug('result: ', result['data']['data'], ' rows: ', rows, ' total: ', total);
             },
             error => {
+                console.debug('error: ', error);
             }
         );
     }
@@ -67,7 +68,6 @@ const TableCrud = forwardRef((props, ref) => {
 
     async function searchDataTable(sField, sOrder, p = null, rows = null) {
         setloading(true)
-
         try {
             const ret = await axios.get(props.url, {
                 params: {
@@ -77,10 +77,9 @@ const TableCrud = forwardRef((props, ref) => {
                     page: p != null ? p : page
                 }
             })
-
             return ret;
         } catch (e) {
-
+            console.error(e)
         } finally {
             setloading(false)
         }
@@ -88,10 +87,11 @@ const TableCrud = forwardRef((props, ref) => {
 
 
     function orderDataTable(e) {
+        console.debug(e);
         searchDataTable(e.sortField, e.sortOrder).then(
             result => {
                 setRows(result['data']['data'])
-                settotal(result['data']['total'])
+                setTotal(result['data']['total'])
                 setSortField(e.sortField == null ? sortField : e.sortField)
                 setsortOrder(e.sortOrder == null ? sortOrder : e.sortOrder)
 
@@ -104,7 +104,7 @@ const TableCrud = forwardRef((props, ref) => {
         searchDataTable(null, null, e.page, e.rows).then(
             result => {
                 setRows(result['data']['data'])
-                settotal(result['data']['total'])
+                setTotal(result['data']['total'])
                 setRowsPerPage(e.rows == null ? rowsPerPage : e.rows)
                 setPage(e.page == null ? page : e.page)
                 setFirst(e.first)
@@ -174,8 +174,10 @@ const TableCrud = forwardRef((props, ref) => {
 
             <div className="datatable-responsive-demo">
                 <DataTable header={props.title} className="p-datatable-responsive-demo" id="dt_01" loading={loading} selectionMode="multiple" lazy={true} resizableColumns={true} selection={selected} onSelectionChange={e => selectDataTable(e)} columnResizeMode="fit" sortField={sortField} sortOrder={sortOrder} onSort={(e) => orderDataTable(e)} value={rows}>
-                    {/* {props.children} */}
-                    {props.children.map(child => child.props.field !== undefined && child.props.body == undefined ? <Column  {...child.props} body={(rowData => responsiveBodyTemplate(rowData, child.props.field, child.props.header))}></Column> : <Column  {...child.props}></Column>)}
+                    {props.children.map((child, index) => 
+                        child.props.field !== undefined && child.props.body == undefined
+                        ? <Column  key={child.props.field + "_" + index} {...child.props} body={(rowData => responsiveBodyTemplate(rowData, child.props.field, child.props.header))}></Column>
+                        : <Column key={child.props.field + "_" + index} {...child.props}></Column>)}
                 </DataTable>
                 <Paginator id="paginator" first={first} rows={rowsPerPage} rowsPerPageOptions={[10, 20, 30]} totalRecords={total} onPageChange={(e) => pagDataTable(e)}></Paginator>
             </div>

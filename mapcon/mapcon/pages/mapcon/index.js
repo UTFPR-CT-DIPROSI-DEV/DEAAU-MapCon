@@ -17,9 +17,8 @@ function Index(props) {
 
 export async function getServerSideProps(context){
   const session = await getSession({req: context.req})
-  console.debug('Session on MAPCON/INDEX.JS : ', session);
-  // if(!session){
-  if(0){
+  console.debug('session', session);
+  if(!session){
     return {
       redirect: {
         destination: '/login',

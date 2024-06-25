@@ -7,8 +7,10 @@ export default NextAuth({
     // Configure one or more authentication providers
     session: {
         strategy: 'jwt',
-        jwt: true
+        jwt: true,
+        updateAge: 24 * 60 * 60, // 24 hours
     },
+    secret: process.env.NEXTAUTH_SECRET,
     providers: [
         CredentialsProvider({
             // The name to display on the sign in form (e.g. 'Sign in with...')
@@ -34,7 +36,6 @@ export default NextAuth({
                         let ret = {
                             id: usr.usu_login,
                             perfil: usr.perfil_usuario_num_seq_perfil_usuario,
-                            pushid: usr.pushid
                         }
                         console.debug('Authorize : ', ret);
                         return ret;
@@ -59,12 +60,9 @@ export default NextAuth({
             if (user) {
                 token.user = user;
             }
-            console.debug('JWT : ', token, user, account, profile);
-            console.debug('JWT TOKEN USER : ', token.user);
             return token;
         },
         session: async (session) => {
-            console.debug('Session : ', session);
             console.debug('Session TOKEN USER : ', session.token.user);
             if (session) {
               session.user = session.token.user;

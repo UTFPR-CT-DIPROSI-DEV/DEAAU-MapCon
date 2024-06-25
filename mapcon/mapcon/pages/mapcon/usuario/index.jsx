@@ -25,27 +25,25 @@ export default function UsuarioPage(props) {
     // Para conseguir atualizar datatable
     const childRef = useRef();
 
-    useEffect(async () => {
-
-        // ReSenha para login caso não esteja autenticado
-        const session = await getSession()
+    const login = async () => {
+        const session = await getSession();
         if (!session) {
-            router.push('/login')
+          router.push("/login");
         } else {
-            setloading(false)
+          setloading(false);
         }
-
-    }, [])
+      };
+    
+      useEffect(() => {
+        login();
+      }, []);
 
 
     async function addButtonClicked(e) {
-
         setshowForm({ visible: true })
-
     }
 
     async function editButtonClicked(row) {
-
         const r = await axios.get('/api/mapcon/usuario', { params: { id: row[0].num_seq_usuario } })
         
         setshowForm({
@@ -124,7 +122,6 @@ export default function UsuarioPage(props) {
             <ToolbarMapCon></ToolbarMapCon>
             <div className="p-grid p-formgrid p-m-lg-3 p-m-2">
                 <div className="p-col-12 p-mb-12 p-lg-12 p-mb-lg-0">
-
                     <TableCrud ref={childRef}
                         {...props}
                         title="Usuários"
@@ -145,18 +142,13 @@ export default function UsuarioPage(props) {
             {showForm.visible ? <UsuarioForm showForm={showForm} closeForm={(update) => closeFormDialog(update)}></UsuarioForm> : null}
             {showSenhaForm.visible ? <UsuarioSenhaForm showForm={showSenhaForm} closeForm={(update) => closeSenhaDialog(update)}></UsuarioSenhaForm> : null}
         </div>
-
     );
-
 }
 
 /*
     Dialog que permite atualizar a situação de um cadastro
 */
 function UsuarioSenhaForm(props) {
-
-
-
     const { control, watch, handleSubmit, errors } = useForm({ defaultValues: props.showForm.values });
 
     const watchSenha = watch('usu_senha')
@@ -189,13 +181,13 @@ function UsuarioSenhaForm(props) {
                         <label htmlFor="usu_senha">Senha*</label>
                         <Controller name="usu_senha" rules={{ required: true }} control={control} render={({ onChange, value }) =>
                             // <InputText disabled={props.view} className={errors.usu_senha ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
-                            <Password disabled={props.view} promptLabel={'Digite uma senha'} weakLabel={'Fraca'} mediumLabel={'Média'} strongLabel={'Forte'} className={errors.usu_senha ? "p-invalid" : ""} value={value} onChange={onChange}></Password>
+                            <Password disabled={props.view} promptLabel={'Digite uma senha'} weakLabel={'Fraca'} mediumLabel={'Média'} strongLabel={'Forte'} className={props.usu_senha ? "p-invalid" : ""} value={value} onChange={onChange}></Password>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="usu_senha_repetir">Repetir Senha*</label>
                         <Controller name="usu_senha_repetir" rules={{ validate: value => value === watchSenha }} control={control} render={({ onChange, value }) =>
-                            <InputText disabled={props.view} type="password" className={errors.usu_senha_repetir ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
+                            <InputText disabled={props.view} type="password" className={props.usu_senha_repetir ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
 
@@ -235,15 +227,13 @@ function UsuarioForm(props) {
     const perfis = [
         {
             id : 1,
-            value: 'ADMIN'
+            value: 'Administrador'
         },
         {
             id : 2,
             value: 'Usuário'
         },
     ]
-
-
 
     return (
         <Dialog header="Usuário" className="p-fluid" modal visible={props.showForm.visible} onHide={() => props.closeForm(false)}>
@@ -252,7 +242,7 @@ function UsuarioForm(props) {
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="usu_login">Login (username)*</label>
                         <Controller name="usu_login" rules={{ required: true }} control={control} render={({ onChange, value }) =>
-                            <InputText disabled={props.view} className={errors.usu_login ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
+                            <InputText disabled={props.view} className={props.usu_login ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
                     {props.showForm.data == undefined ?
@@ -260,13 +250,13 @@ function UsuarioForm(props) {
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="usu_senha">Senha*</label>
                         <Controller name="usu_senha" rules={{ required: true }} control={control} render={({ onChange, value }) =>
-                            <Password disabled={props.view} promptLabel={'Digite uma senha'} weakLabel={'Fraca'} mediumLabel={'Média'} strongLabel={'Forte'} className={errors.usu_senha ? "p-invalid" : ""} value={value} onChange={onChange}></Password>
+                            <Password disabled={props.view} promptLabel={'Digite uma senha'} weakLabel={'Fraca'} mediumLabel={'Média'} strongLabel={'Forte'} className={props.usu_senha ? "p-invalid" : ""} value={value} onChange={onChange}></Password>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="usu_senha_repetir">Repetir Senha*</label>
                         <Controller name="usu_senha_repetir" rules={{ validate: value => value === watchSenha }} control={control} render={({ onChange, value }) =>
-                            <InputText disabled={props.view} type="password" className={errors.usu_senha_repetir ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
+                            <InputText disabled={props.view} type="password" className={props.usu_senha_repetir ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
                     
@@ -275,7 +265,7 @@ function UsuarioForm(props) {
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="perfil_usuario_num_seq_perfil_usuario">Perfil*</label>
                         <Controller name="perfil_usuario_num_seq_perfil_usuario" rules={{ required: true }} control={control} render={({ onChange, value }) =>
-                            <Dropdown className={errors.perfil_usuario_num_seq_perfil_usuario && 'p-invalid'} value={value} options={perfis} onChange={e => onChange(e.value)} optionLabel="value" optionValue="id" showClear placeholder="Selecione um Perfil" />
+                            <Dropdown className={props.perfil_usuario_num_seq_perfil_usuario && 'p-invalid'} value={value} options={perfis} onChange={e => onChange(e.value)} optionLabel="value" optionValue="id" showClear placeholder="Selecione um Perfil" />
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-12">

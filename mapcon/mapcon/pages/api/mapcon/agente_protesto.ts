@@ -7,7 +7,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getSession({ req })
 
     if (session) {
-
         if (req.method == 'GET' && req.query.id) {
             res.status(200).json(await base.getModel('agente_protesto', { 'num_seq_agente_protesto': req.query.id }))
         } else if (req.method == 'GET') {
@@ -19,11 +18,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         } else if (req.method == 'DELETE'){
             res.status(200).json(await base.deleteModel('agente_protesto',{ 'num_seq_agente_protesto': req.body.num_seq_agente_protesto }))
         }
-
     } else {
-
         res.status(401).json({ "Acesso Negado": "Você não possui permissão para acessar esses dados." })
-
     }
 
 }

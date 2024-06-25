@@ -1,7 +1,6 @@
 import React from 'react';
 import dynamic, { noSSR } from 'next/dynamic'
 import db from '../lib/back/db.js';
-// import SideMenu from '../components/mapcon/sidemenu.jsx';
 import ToolbarSite from '../components/toolbar_site';
 
 
@@ -9,7 +8,6 @@ function Index(props) {
   const MainMap = dynamic(() => import("../components/mapcon/main_map"), { ssr: false });
   return (
     <div>
-      {/* <SideMenu></SideMenu> */}
       <ToolbarSite /> 
       <MainMap conflitos={props.conflitos}/>
     </div>

@@ -5,11 +5,9 @@ var bcrypt = require('bcryptjs');
 
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-
-    const session = await getSession({ req })
-
+    const session = await getSession({ req });
+    console.debug('session ts api', session);
     if (session) {
-
         if (req.method == 'GET' && req.query.id) {
             res.status(200).json(await base.getModel('usuario', { 'num_seq_usuario': req.query.id }))
         } else if (req.method == 'GET') {
@@ -26,11 +24,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             console.log(req)
             res.status(200).json(await base.deleteModel('usuario',{ 'num_seq_usuario': req.body.num_seq_usuario }))
         }
-
     } else {
-
         res.status(401).json({ "Acesso Negado": "Você não possui permissão para acessar esses dados." })
-
     }
 
 }

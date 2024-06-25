@@ -27,13 +27,17 @@ export default function NoticiasRastreadasPage(props) {
   // Para conseguir atualizar datatable
   const childRef = useRef();
 
-  useEffect(async () => {
+  const login = async () => {
     const session = await getSession();
     if (!session) {
       router.push("/login");
     } else {
       setloading(false);
     }
+  };
+
+  useEffect(() => {
+    login();
   }, []);
 
   async function deleteButtonClicked(e, search) {

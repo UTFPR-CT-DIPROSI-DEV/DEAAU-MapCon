@@ -8,7 +8,7 @@ var base = {
 
     // Busca todos os registros 
     getModels: async function (table, search, join=null) {
-
+        
         var getModel = db(table);
 
         if(join){
@@ -23,8 +23,6 @@ var base = {
   
             
             f.forEach(filter => {
-
-                
                 if (filter.type == 'contain') {
                     let v = filter.value.replace(/ /gi, '%')
                     getModel.where(filter.field, 'ilike', '%' + v + '%');
@@ -33,7 +31,6 @@ var base = {
                     
                     getModel.where(filter.field, filter.value);
                 }
-
             });
         }
 
@@ -60,7 +57,8 @@ var base = {
 
             if (o.order == 1) {
                 getModel.orderBy(o.field, 'ASC');
-            } else if (o.order == -1) {
+            // } else if (o.order == -1) {
+            } else {
                 getModel.orderBy(o.field, 'DESC');
             }
         }
