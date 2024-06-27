@@ -65,7 +65,6 @@ const TableCrud = forwardRef((props, ref) => {
         );
     }
 
-
     async function searchDataTable(sField, sOrder, p = null, rows = null) {
         setloading(true)
         try {
@@ -149,15 +148,15 @@ const TableCrud = forwardRef((props, ref) => {
             {/* <div className={styles.title_form}>{props.title}</div> */}
             <div className="p-fluid p-formgrid p-grid  p-align-end">
                 <div className="p-field p-col-12 p-md-3">
-                    <label htmlFor="firstname6">Buscar em</label>
-                    <Dropdown id="dd_field" value={field} options={props.filters} onChange={(e) => { changedTheFilterField(e.value) }} />
+                    <label htmlFor="dd_field">Buscar em</label>
+                    <Dropdown name="dd_field" value={field} options={props.filters} onChange={(e) => { changedTheFilterField(e.value) }} />
                 </div>
                 <div className="p-field p-col-12 p-md-3">
-                    <label htmlFor="lastname6">Tipo de Busca</label>
-                    <Dropdown id="dd_type" value={typeFilter} options={props.filters[props.filters.findIndex(filter => filter.value === field)].types} onChange={(e) => { setTypeFilter(e.value) }} placeholder="Tipo de Busca" />
+                    <label htmlFor="dd_type">Tipo de Busca</label>
+                    <Dropdown name="dd_type" value={typeFilter} options={props.filters[props.filters.findIndex(filter => filter.value === field)].types} onChange={(e) => { setTypeFilter(e.value) }} placeholder="Tipo de Busca" />
                 </div>
                 <div className="p-field p-col-12 p-md-3">
-                    <label htmlFor="city">Valor</label>
+                    <label htmlFor="input_value">Valor</label>
                     <InputText id="input_value" value={value} onKeyDown={(e) => keyPress(e)} onChange={(e) => setValue(e.target.value)} />
                 </div>
                 <div className="p-field p-col-12 p-md-3">

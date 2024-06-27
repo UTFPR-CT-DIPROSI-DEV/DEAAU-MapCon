@@ -1,4 +1,4 @@
-import React, { useEffect,useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import TableCrud from '../../../lib/front/cruddatatable/datatable';
 import { Column } from 'primereact/column';
 import { useRouter } from 'next/router'
@@ -55,50 +55,41 @@ export default function UsuarioPage(props) {
 
 
     async function deleteButtonClicked(e, search) {
-
         confirmDialog({
-        message: 'Tem certeza que deseja remover os dados selecionados?',
-        header: 'Confirmação',
-        icon: 'pi pi-exclamation-triangle',
-        accept: () => removeRows(e),
-        acceptLabel: 'Sim',
-        rejectLabel: 'Não'
-        // reject: () => rejectFunc()
-    });
-        
+            message: 'Tem certeza que deseja remover os dados selecionados?',
+            header: 'Confirmação',
+            icon: 'pi pi-exclamation-triangle',
+            accept: () => removeRows(e),
+            acceptLabel: 'Sim',
+            rejectLabel: 'Não'
+            // reject: () => rejectFunc()
+        });   
     }
 
     async function removeRows(e){
         for (const item of e) {
             await axios.delete('/api/mapcon/usuario', { data: { num_seq_usuario: item.num_seq_usuario } })
         }
-
         childRef.current.updateDatatable()
     }
 
     // Essa function atualiza fecha o dialog e atualiza o datatable o form tiver atualizado
     function closeFormDialog(update) {
-
         setshowForm(false)
         if (update) {
             childRef.current.updateDatatable()
         }
-
     }
 
     async function openSenhaDialog(row) {
-
         setshowSenhaForm({
             visible: true,
             num: row.num_seq_usuario
         })
-
     }
 
     function closeSenhaDialog(update) {
-
         setshowSenhaForm(false)
-
     }
 
     // Filtros
@@ -106,13 +97,11 @@ export default function UsuarioPage(props) {
         { label: 'Username', value: 'usu_login', types: ['contain', 'equal'] },
     ];
 
-
     function actionBodyTemplate(rowData) {
         return (
             <React.Fragment>
                 <span className="p-column-title">Ações</span>
                 <Button icon='pi pi-key' className="p-button-primary p-mr-2" onClick={() => openSenhaDialog(rowData)} />
-
             </React.Fragment>
         );
     }
@@ -136,7 +125,6 @@ export default function UsuarioPage(props) {
 
                         <Column header="Ações" body={actionBodyTemplate}></Column>
                     </TableCrud>
-
                 </div>
             </div>
             {showForm.visible ? <UsuarioForm showForm={showForm} closeForm={(update) => closeFormDialog(update)}></UsuarioForm> : null}
@@ -154,8 +142,7 @@ function UsuarioSenhaForm(props) {
     const watchSenha = watch('usu_senha')
 
     const onSubmit = async data => {
-
-        console.log(data)
+        console.log('ATUALIZANDO SENHA', data)
         delete data['usu_senha_repetir']
 
         const r = await axios.put('/api/mapcon/usuario',
@@ -181,13 +168,13 @@ function UsuarioSenhaForm(props) {
                         <label htmlFor="usu_senha">Senha*</label>
                         <Controller name="usu_senha" rules={{ required: true }} control={control} render={({ onChange, value }) =>
                             // <InputText disabled={props.view} className={errors.usu_senha ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
-                            <Password disabled={props.view} promptLabel={'Digite uma senha'} weakLabel={'Fraca'} mediumLabel={'Média'} strongLabel={'Forte'} className={props.usu_senha ? "p-invalid" : ""} value={value} onChange={onChange}></Password>
+                            <Password id="usu_senha" disabled={props.view} promptLabel={'Digite uma senha'} weakLabel={'Fraca'} mediumLabel={'Média'} strongLabel={'Forte'} className={props.usu_senha ? "p-invalid" : ""} value={value} onChange={onChange}></Password>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="usu_senha_repetir">Repetir Senha*</label>
                         <Controller name="usu_senha_repetir" rules={{ validate: value => value === watchSenha }} control={control} render={({ onChange, value }) =>
-                            <InputText disabled={props.view} type="password" className={props.usu_senha_repetir ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
+                            <InputText id="usu_senha_repetir" disabled={props.view} type="password" className={props.usu_senha_repetir ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
 
@@ -205,21 +192,19 @@ function UsuarioSenhaForm(props) {
     Dialog para formulário de inclusão/edição do crud
 */
 function UsuarioForm(props) {
-
     const { control, watch, handleSubmit, errors } = useForm({ defaultValues: props.showForm.data });
 
     const onSubmit = async data => {
-
-        if(props.showForm.data){ // Editar
+        console.debug('DATA: ', data);
+        console.debug('PROPS DATA: ', props);
+        if(props.showForm.data) {
             const r = await axios.put('/api/mapcon/usuario',{num_seq_usuario: props.showForm.data.num_seq_usuario,...data})
-        }else{
+        } else {
+            console.debug('SESSION ON SUBMIT', await getSession());
             delete data['usu_senha_repetir']
             const r = await axios.post('/api/mapcon/usuario',data)
         }
-        
-
         props.closeForm(true)
-
     }
 
     const watchSenha = watch('usu_senha')
@@ -240,23 +225,23 @@ function UsuarioForm(props) {
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="p-fluid p-formgrid p-grid p-mt-lg-4 p-mt-4">
                     <div className="p-field p-col-12 p-md-12">
-                        <label htmlFor="usu_login">Login (username)*</label>
-                        <Controller name="usu_login" rules={{ required: true }} control={control} render={({ onChange, value }) =>
-                            <InputText disabled={props.view} className={props.usu_login ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
+                        <label htmlFor="usu_login">Username*</label>
+                        <Controller name="usu_login" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                            <InputText id="usu_login" disabled={props.view} className={props.usu_login ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
                     {props.showForm.data == undefined ?
                     <React.Fragment>
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="usu_senha">Senha*</label>
-                        <Controller name="usu_senha" rules={{ required: true }} control={control} render={({ onChange, value }) =>
-                            <Password disabled={props.view} promptLabel={'Digite uma senha'} weakLabel={'Fraca'} mediumLabel={'Média'} strongLabel={'Forte'} className={props.usu_senha ? "p-invalid" : ""} value={value} onChange={onChange}></Password>
+                        <Controller name="usu_senha" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                            <Password id="usu_senha" disabled={props.view} promptLabel={'Digite uma senha'} weakLabel={'Fraca'} mediumLabel={'Média'} strongLabel={'Forte'} className={props.usu_senha ? "p-invalid" : ""} value={value} onChange={onChange}></Password>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="usu_senha_repetir">Repetir Senha*</label>
-                        <Controller name="usu_senha_repetir" rules={{ validate: value => value === watchSenha }} control={control} render={({ onChange, value }) =>
-                            <InputText disabled={props.view} type="password" className={props.usu_senha_repetir ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
+                        <Controller name="usu_senha_repetir" rules={{ validate: value => value === watchSenha }} control={control} render={({field: { onChange, value }}) =>
+                            <InputText id="usu_senha_repetir" disabled={props.view} type="password" className={props.usu_senha_repetir ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
                     
@@ -264,12 +249,22 @@ function UsuarioForm(props) {
                     :null}
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="perfil_usuario_num_seq_perfil_usuario">Perfil*</label>
-                        <Controller name="perfil_usuario_num_seq_perfil_usuario" rules={{ required: true }} control={control} render={({ onChange, value }) =>
-                            <Dropdown className={props.perfil_usuario_num_seq_perfil_usuario && 'p-invalid'} value={value} options={perfis} onChange={e => onChange(e.value)} optionLabel="value" optionValue="id" showClear placeholder="Selecione um Perfil" />
+                        <Controller name="perfil_usuario_num_seq_perfil_usuario" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                            <Dropdown
+                                id="perfil_usuario_num_seq_perfil_usuario"
+                                className={props.perfil_usuario_num_seq_perfil_usuario && 'p-invalid'}
+                                value={value}
+                                options={perfis}
+                                onChange={e => onChange(e.value)} // Adding a default no-op function
+                                optionLabel="value"
+                                optionValue="id"
+                                showClear
+                                placeholder="Selecione um Perfil"
+                            />                        
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-12">
-                        <Button label={props.showForm.data !== undefined ? "Atualizar" : "Adicionar"} icon="pi pi-check" />
+                        <Button label={props.showForm.data == undefined ? "Adicionar" : "Atualizar"} icon="pi pi-check" />
                     </div>
                 </div>
             </form>
