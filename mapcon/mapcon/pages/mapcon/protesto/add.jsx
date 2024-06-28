@@ -13,8 +13,6 @@ import ToolbarSite from '../../../components/toolbar_site';
 
 // TODO: Adicionar isSubmiting para evitar envio duplicado os dados
 export default function ProtestoForm(props) {
-
-
     const router = useRouter()
 
     const { control, watch, handleSubmit, errors } = useForm({

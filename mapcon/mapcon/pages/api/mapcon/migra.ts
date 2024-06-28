@@ -1,15 +1,16 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import captureWebsite from "capture-website";
-import { getSession } from "next-auth/react";
+// import { getSession } from "next-auth/react";
+import { getServerSession } from 'next-auth/next';
 import db from "../../../lib/back/db";
 import { v1 as uuidv1 } from "uuid";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getSession({ req });
+  // const session = await getSession({ req });
+    const session = await getServerSession(req , res, {});;
 
   if (session) {
     console.log(req.body);
-
     if (!req.body.is_protesto) {
       await db("crawling.crawling_news")
         .where({ url: req.body.url })

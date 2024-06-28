@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getSession } from 'next-auth/react';
 import base from '../../../lib/back/base_query'
 import { getServerSession } from 'next-auth/next';
+// import { getSession } from 'next-auth/react';
 var bcrypt = require('bcryptjs');
 
 

@@ -1,10 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getSession } from 'next-auth/react';
+import { getServerSession } from 'next-auth/next';
+// import { getSession } from 'next-auth/react';
 import db from '../../../lib/back/db';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 
-    const session = await getSession({ req })
+    // const session = await getSession({ req });
+    const session = await getServerSession(req , res, {});
 
     if (session) {
 

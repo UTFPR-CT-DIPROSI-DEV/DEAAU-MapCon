@@ -42,9 +42,7 @@ export default NextAuth({
                     } else {
                         return null;
                     }
-
                 }
-
             }
         })
     ],

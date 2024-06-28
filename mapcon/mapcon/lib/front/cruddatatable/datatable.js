@@ -57,7 +57,7 @@ const TableCrud = forwardRef((props, ref) => {
             result => {
                 setRows(result['data']['data'])
                 setTotal(result['data']['total'])
-                console.debug('result: ', result['data']['data'], ' rows: ', rows, ' total: ', total);
+                console.debug('result: ', result['data']['data'], ' total: ', result['data']['total']);
             },
             error => {
                 console.debug('error: ', error);

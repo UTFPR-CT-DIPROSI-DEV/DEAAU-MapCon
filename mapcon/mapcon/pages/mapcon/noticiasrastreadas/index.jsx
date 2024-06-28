@@ -242,7 +242,7 @@ function MigraNoticiaForm({ showForm, closeForm }) {
             <Controller
               name="is_protesto"
               control={control}
-              render={({ onChange, value }) => (
+              render={({field: { onChange, value }}) => (
                 <InputSwitch
                   checked={value}
                   onChange={(e) => onChange(e.value)}
@@ -261,7 +261,7 @@ function MigraNoticiaForm({ showForm, closeForm }) {
                 name="existente"
                 rules={{ required: true }}
                 control={control}
-                render={({ onChange, value }) => (
+                render={({field: { onChange, value }}) => (
                   <>
                     {close_protests?.map((protest) => (
                       <div className="p-field-radiobutton">
@@ -300,7 +300,7 @@ function MigraNoticiaForm({ showForm, closeForm }) {
                 name="data"
                 rules={{ required: true }}
                 control={control}
-                render={({ onChange, value }) => (
+                render={({field: { onChange, value }}) => (
                   <Calendar
                     value={data}
                     onChange={(e) => onChange(e.value)}
@@ -319,10 +319,10 @@ function MigraNoticiaForm({ showForm, closeForm }) {
                 name="titulo"
                 rules={{ required: true }}
                 control={control}
-                render={({ onChange, value }) => (
+                render={({field: { onChange, value }}) => (
                   <InputText
                     disabled={!isProtesto}
-                    className={errors.titulo ? "p-invalid" : ""}
+                    // className={errors.titulo ? "p-invalid" : ""}
                     value={value}
                     onChange={onChange}
                   ></InputText>

@@ -137,12 +137,13 @@ export default function UsuarioPage(props) {
     Dialog que permite atualizar a situação de um cadastro
 */
 function UsuarioSenhaForm(props) {
-    const { control, watch, handleSubmit, errors } = useForm({ defaultValues: props.showForm.values });
+    // const { control, watch, handleSubmit, errors } = useForm({ defaultValues: props.showForm.values });
+    const { watch, handleSubmit, control, formState, reset } = useForm({ defaultValues: props.showForm.values });
 
     const watchSenha = watch('usu_senha')
 
     const onSubmit = async data => {
-        console.log('ATUALIZANDO SENHA', data)
+        console.debug('ATUALIZANDO SENHA', data)
         delete data['usu_senha_repetir']
 
         const r = await axios.put('/api/mapcon/usuario',
@@ -152,12 +153,8 @@ function UsuarioSenhaForm(props) {
             })
 
         props.closeForm(true)
-
+        
     }
-
-
-  
-
 
     return (
         <Dialog header="Atualizar Senha" className="p-fluid" modal visible={props.showForm.visible} onHide={() => props.closeForm(false)}>
@@ -176,10 +173,10 @@ function UsuarioSenhaForm(props) {
                         <Controller name="usu_senha_repetir" rules={{ validate: value => value === watchSenha }} control={control} render={({ onChange, value }) =>
                             <InputText id="usu_senha_repetir" disabled={props.view} type="password" className={props.usu_senha_repetir ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
-                    </div>
+                    </div>  
 
                     <div className="p-field p-col-12 p-md-offset-6 p-md-6">
-                        <Button label={"Atualizar"} icon="pi pi-check" />
+                        <Button label={"Atualizar"} icon="pi pi-check"/>
                     </div>
                 </div>
             </form>

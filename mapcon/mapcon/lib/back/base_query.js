@@ -5,35 +5,28 @@ const db = require('../../lib/back/db');
 */
 var base = {
 
-
     // Busca todos os registros 
     getModels: async function (table, search, join=null) {
-        
         var getModel = db(table);
 
         if(join){
             getModel.joinRaw(join)
         }
         
-
         // Adicionando as buscas
         if (search['filters']) {
-
             const f =  JSON.parse(search['filters'])
-  
-            
+            //
             f.forEach(filter => {
                 if (filter.type == 'contain') {
                     let v = filter.value.replace(/ /gi, '%')
                     getModel.where(filter.field, 'ilike', '%' + v + '%');
                 }
                 if (filter.type == 'equal') {
-                    
                     getModel.where(filter.field, filter.value);
                 }
             });
         }
-
 
 
         // Adicionando o limit
