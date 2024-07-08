@@ -1,13 +1,17 @@
+# Files / REGEX
+
+Tracker/src/test.js
 *.pem
-*.sh
 *.jpeg
-# *.sql
+backup*
 notes2self.md
 *.tar.gz
 local.csv
 tmp.py
-python_crawlers/
 *.env.local
-backup*
-mapcon/node_modules_2/
-Tracker/src/test.js
+
+# Directories
+
+# *.sql
+python_crawlers/
+Schemas/
