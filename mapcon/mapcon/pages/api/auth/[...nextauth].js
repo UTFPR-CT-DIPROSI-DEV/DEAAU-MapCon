@@ -29,19 +29,16 @@ export default NextAuth({
                     .first();
 
                 if (!usr) {
-                    return null
-                } else {
-                    // Verifying the password
-                    if (bcrypt.compareSync(credentials.password, usr.usu_senha)) {
+                    return null;
+                } else if (bcrypt.compareSync(credentials.password, usr.usu_senha)) {
                         let ret = {
                             id: usr.usu_login,
                             perfil: usr.perfil_usuario_num_seq_perfil_usuario,
-                        }
+                        };
                         console.debug('Authorize : ', ret);
                         return ret;
-                    } else {
-                        return null;
-                    }
+                } else {
+                    return null;
                 }
             }
         })

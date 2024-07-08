@@ -122,9 +122,22 @@ export default function NoticiasRastreadasPage(props) {
       <React.Fragment>
         <span className="p-column-title">Ações</span>
         <Button
-          icon="pi pi-external-link"
+          icon="pi pi-pencil"
           className="p-button-primary p-mr-2"
           onClick={() => processNews(rowData)}
+        />
+      </React.Fragment>
+    );
+  }
+  
+  function openURLBodyTemplate(rowData) {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">URL</span>
+        <Button
+          icon="pi pi-link"
+          className="p-button-primary p-mr-2"
+          onClick={() => window.open(rowData.url, "_blank")}
         />
       </React.Fragment>
     );
@@ -146,19 +159,32 @@ export default function NoticiasRastreadasPage(props) {
             // onEditButtonClicked={editButtonClicked}
             // onDeleteButtonClicked={deleteButtonClicked}
             url="/api/mapcon/crawling_news"
-          >
-            <Column
+          > 
+            {/*  */}
+            <Column 
               field="data"
               body={dataBodyTemplate}
               header="Data"
               sortable={true}
             />
-            <Column field="titulo" header="Título" sortable={true} />
+            {/*  */}
+            <Column 
+              field="titulo" 
+              header="Título" 
+              sortable={true} 
+            />
+            {/*  */}
             <Column
               field="tipo_predicted"
               body={predictedTemplate}
               header="Tipo (Predição)"
               sortable={true}
+            />
+            {/*  */}
+            <Column
+              field="url"
+              body={openURLBodyTemplate}
+              header="URL"
             />
             <Column header="Ações" body={actionBodyTemplate}></Column>
           </TableCrud>
