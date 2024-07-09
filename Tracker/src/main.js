@@ -1,11 +1,20 @@
-import { CheerioCrawler, Dataset, log, utils } from "crawlee";
+import { CheerioCrawler, Dataset, log } from "crawlee";
 import { classifier, filter_URL } from "./classifier.js";
-import { removeAccents, extractText } from utils.js;
+import { removeAccents, extractText, saveRunStatus, readRunStatus, getArticleDate } from "./utils.js";
 import db from "./db/db.js";
 
-
-
+// Set the log level to DEBUG to see all the logs
 log.setLevel(log.LEVELS.DEBUG);
+
+console.debug('Read status: ', readRunStatus());
+
+const defaultURLS = [
+    "https://www.tribunapr.com.br/noticias/parana/",
+    "http://www.brasildefatopr.com.br/",
+    "http://www.bemparana.com.br/",
+    "http://bandnewsfmcuritiba.com/",
+    "http://www.bandab.com.br/"
+];
 
 const crawler = new CheerioCrawler({
     maxRequestRetries: 0,
@@ -23,8 +32,6 @@ const crawler = new CheerioCrawler({
             if (blockedExtensions.some(ext => path.endsWith(ext))) {
                 console.log(`Skipping ${request.url} due to unsupported file type.`);
                 request.noRetry = true;
-                return;
-                // throw new Error(`Unsupported file type for URL: ${request.url}`);
             }
         }
     ],
@@ -46,24 +53,26 @@ const crawler = new CheerioCrawler({
             // Filtering out the URLs that are not  
             // from the same origin.                
             const sameOriginUrls = absoluteUrls
-            .filter((url) => url.origin === origin)
-            .map((url) => url.href);
+                .filter((url) => url.origin === origin)
+                .map((url) => url.href);
 
             // Creating an object with the data scraped from the current page
-            const results = {
-                url: request.loadedUrl,
-                title: removeAccents(title),
+            const data = {
+                url     : request.loadedUrl,
+                cities  : [],
+                title   : removeAccents(title),
+                date    : '',
                 protesto: false,
-                content: extractText(body),  // Make content last to improve readability
+                // content : extractText(body),  // Make content last to improve readability
             };
             
             // Saving the data scraped from the current page to the dataset
-            // if it passes the filters.
+            // if it passes the 'is article' filters.
             if (filter_URL(request.loadedUrl)) {
-                // results.classification = classifier(title);
-                results.protesto = classifier(results.content);
-                await Dataset.pushData(results);
-                log.debug(`URL: ${results.url} - Protesto: ${results.protesto}`);
+                data.protesto = classifier(extractText(body));
+                data.date = await getArticleDate(data.url);
+                await Dataset.pushData(data);
+                log.debug(`URL: ${data.url} - Protesto: ${data.protesto}`);
             }
             
             // Finally, we have to add the URLs to the queue
@@ -72,21 +81,10 @@ const crawler = new CheerioCrawler({
             console.error('ERROR: ', error);
         }
     },
-        maxRequestsPerCrawl: 20,
-})
+        maxRequestsPerCrawl: 1000,
+});
 
-const defaultURLS = [
-    // "https://www.tribunapr.com.br/noticias/parana/",
-    "http://www.brasildefatopr.com.br/",
-    // "http://www.bemparana.com.br/",
-    // "http://bandnewsfmcuritiba.com/",
-    // "http://www.bandab.com.br/"
-];
-
+// Run the crawler with the default URLs
 await crawler.run(defaultURLS);
 
-// const res = await db.table('test').columnInfo();
-// console.log(res);
-// db.raw("SELECT * FROM test").then((result) => {
-//     console.log(result.rows);
-// });
+// console.debug('Status: ', saveRunStatus());

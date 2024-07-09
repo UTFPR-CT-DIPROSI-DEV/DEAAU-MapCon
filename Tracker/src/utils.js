@@ -1,5 +1,9 @@
-import * as fs from fs;
+import * as fs from 'fs';
 import * as cheerio from 'cheerio';
+import axios from "axios";
+
+// Define global path variable
+const FILE_PATH = 'runStatus.log';
 
 // Function to remove accented characters
 export function removeAccents(str) {
@@ -38,13 +42,98 @@ export function extractText(html) {
     return text;
 }
 
-// Function to get RUNNING status of the crawler and save it to the
-// .run_status.JSON file, keeping track of the ON-periods of the crawler.
-export function saveRunStatus(status) {
+// Function to get the current DAY and TIME and append it to a JSON 
+// file and returning the JSON object
+export function saveRunStatus() {
+    fs.open(FILE_PATH, 'a', (err, fd) => {
+        if (err) {
+            console.error(`Error opening the file: ${err}`);
+        } else {
+            fs.readFile(FILE_PATH, 'utf8', (err, data) => {
+                if (err) {
+                    console.error(`Error reading the file: ${err}`);
+                } else {
+                    fs.close(fd, (err) => {
+                        if (err) {
+                            console.error(`Error closing the file: ${err}`);
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+    const date = new Date();
     const runStatus = {
-        status,
-        lastRun: new Date().toISOString(),
+        day: date.toLocaleDateString(),
     };
 
-    fs.writeFileSync('./run_status.json', JSON.stringify(runStatus, null, 2));
+    // Append the run status to the file
+    fs.appendFileSync(FILE_PATH, JSON.stringify(runStatus) + '\n');
+
+    return runStatus;
+}
+
+// Function to read the data from the JSON/LOG file and
+// parse it into JSON objects
+export function readRunStatus() {
+    try {
+        const data = fs.readFileSync(FILE_PATH, 'utf8');
+        const runStatus = data.split('\n')
+                              .filter(line => line.trim() !== '')
+                              .map(line => {return JSON.parse(line)});
+        return runStatus;
+    } catch (err) {
+        if(err.code === 'ENOENT') {
+            console.debug('The file does not exist.');
+            return [];
+        } else {
+            console.error(`Error reading the file: ${err}`);
+        }
+    }
+}
+
+// Function to retrieve the date of an article from a given URL
+const dateRegex = /\/(\d{4})\/(\d{2})\/(\d{2})\//;
+export async function getArticleDate(url) {
+    try {
+        const match = url.match(dateRegex);
+        if (match !== null) {
+            return `${match[1]}-${match[2]}-${match[3]}`;
+        }
+
+        // Fetch the HTML content of the article
+        const { data } = await axios.get(url);
+        
+        // Regular expression to filter only the date (and not time)
+        const reg = /[0-9]{4}-[0-9]{2}-[0-9]{2}/;
+
+        // Load the HTML into Cheerio
+        const $ = cheerio.load(data);
+        
+        // Example 1: Date in a <meta> tag
+        let date = $('meta[property="article:published_time"]').attr('content');
+        if (date) return date.match(reg)[0];
+        
+        // Example 2: Date in a <time> tag
+        date = $('time[datetime]').attr('datetime');
+        if (date) return date.match(reg)[0];
+        
+        // Example 3: Date in a specific class or ID
+        date = $('.publish-date').text();
+        if (date) return date.trim().match(reg)[0];
+        
+        date = $('#publish-date').text();
+        if (date) return date.trim().match(reg)[0];
+
+        // Example 4: Date in a <span> tag with class "published updated"
+        date = $('span.published').attr('rel');
+        if (date) return date.match(reg)[0];
+        
+        // If none of the above selectors match, return null or an appropriate message
+        return 'Date not found';
+    } catch (error) {
+        console.error('Error fetching article date:', error);
+        return 'Error fetching article date';
+    }
 }

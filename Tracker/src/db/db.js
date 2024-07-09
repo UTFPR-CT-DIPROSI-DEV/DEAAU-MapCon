@@ -18,8 +18,8 @@ const db = knex({
     },
 });
 
-await db.raw("SELECT VERSION()").then(() => {
-    console.debug('Database connection established!');
-});
+// await db.raw("SELECT VERSION()").then(() => {
+//     console.debug('Database connection established!');
+// });
 
 export default db;

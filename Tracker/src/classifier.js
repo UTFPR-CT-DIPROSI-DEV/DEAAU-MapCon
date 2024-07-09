@@ -1,4 +1,3 @@
-
 // Determines whether or not a given article's subject
 // is related to "Urban conflicts" and "Curitiba".
 function classifier(body) {
@@ -53,9 +52,9 @@ function filter_TRIBUNAPR(URL) {
 
 // Filters URL from "http://www.brasildefatopr.com.br/"
 // that is not an actual article. 
-const regex = /\/(\d{4})\/(\d{2})\/(\d{2})\//;
+const dateRegex = /\/(\d{4})\/(\d{2})\/(\d{2})\//;
 function filter_BRASILDEFATOPR(URL) {
-    return regex.test(URL);
+    return dateRegex.test(URL);
 }
 
 // Filters URL from "http://www.bemparana.com.br/"
