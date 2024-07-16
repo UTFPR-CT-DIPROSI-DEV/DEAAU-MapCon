@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as cheerio from 'cheerio';
 import axios from "axios";
+import db from "./db/db.js";
 
 // Define global path variable
 const FILE_PATH = 'runStatus.log';
@@ -42,9 +43,29 @@ export function extractText(html) {
     return text;
 }
 
+// Function to concatenate two JSON objects
+function jsonConcat(o1, o2) {
+    for (let key in o2) {
+     o1[key] = o2[key];
+    }
+    return o1;
+}
+
+// Function to format a date object into a string
+export function formatDate(date) {
+    return date.toLocaleString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    }).replace(',', '');
+};
+
 // Function to get the current DAY and TIME and append it to a JSON 
 // file and returning the JSON object
-export function saveRunStatus() {
+export function saveRunStatus(run) {
     fs.open(FILE_PATH, 'a', (err, fd) => {
         if (err) {
             console.error(`Error opening the file: ${err}`);
@@ -64,9 +85,11 @@ export function saveRunStatus() {
     });
 
     const date = new Date();
-    const runStatus = {
+    let runStatus = {
         day: date.toLocaleDateString(),
     };
+
+    runStatus = jsonConcat(runStatus, run);
 
     // Append the run status to the file
     fs.appendFileSync(FILE_PATH, JSON.stringify(runStatus) + '\n');
@@ -136,4 +159,11 @@ export async function getArticleDate(url) {
         console.error('Error fetching article date:', error);
         return 'Error fetching article date';
     }
+}
+
+// Function to save the crawled data to the DATABASE
+export async function saveToDB(data) {
+    // Insert the data into the database
+    const res = await db.withSchema('crawling').table('crawling_news').insert(data);
+    console.log(res);
 }

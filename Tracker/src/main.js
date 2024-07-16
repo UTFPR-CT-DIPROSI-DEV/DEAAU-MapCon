@@ -1,7 +1,7 @@
 import { CheerioCrawler, Dataset, log } from "crawlee";
 import { classifier, filter_URL } from "./classifier.js";
-import { removeAccents, extractText, saveRunStatus, readRunStatus, getArticleDate } from "./utils.js";
-import db from "./db/db.js";
+import { removeAccents, extractText, formatDate, saveRunStatus, saveToDB, readRunStatus, getArticleDate } from "./utils.js";
+import cron from 'node-cron';
 
 // Set the log level to DEBUG to see all the logs
 log.setLevel(log.LEVELS.DEBUG);
@@ -12,8 +12,8 @@ const defaultURLS = [
     "https://www.tribunapr.com.br/noticias/parana/",
     "http://www.brasildefatopr.com.br/",
     "http://www.bemparana.com.br/",
+    "http://www.bandab.com.br/",
     "http://bandnewsfmcuritiba.com/",
-    "http://www.bandab.com.br/"
 ];
 
 const crawler = new CheerioCrawler({
@@ -37,21 +37,22 @@ const crawler = new CheerioCrawler({
     ],
     async requestHandler({ request, response, body, contentType, $ }) {
         try {
-            const title = $('title').text();
+            const title1 = $('title').text();
+            const title2 = $('.post-title').first().text();
+            const title = title2.startsWith(title1) ? title2 : title1;
             
             const links = $('a[href]')
-            .map((_, el) => $(el).attr('href'))
-            .get();
+                .map((_, el) => $(el).attr('href'))
+                .get();
             
-            // Resolving relative URLs,
-            // otherwise they would be unusable for crawling.
-            const { origin } = new URL(request.loadedUrl);
+            // Resolving relative URLs, otherwise
+            // they would be unusable for crawling.
             const absoluteUrls = links.map(
                 (link) => new URL(link, request.loadedUrl),
             );
             
-            // Filtering out the URLs that are not  
-            // from the same origin.                
+            // Filtering out the URLs that are not from the same origin.                
+            const { origin } = new URL(request.loadedUrl);
             const sameOriginUrls = absoluteUrls
                 .filter((url) => url.origin === origin)
                 .map((url) => url.href);
@@ -59,20 +60,26 @@ const crawler = new CheerioCrawler({
             // Creating an object with the data scraped from the current page
             const data = {
                 url     : request.loadedUrl,
-                cities  : [],
-                title   : removeAccents(title),
-                date    : '',
-                protesto: false,
-                // content : extractText(body),  // Make content last to improve readability
+                // cidades : [{}],
+                titulo  : removeAccents(title),
+                termos  : [],
+                content : extractText(body),  // Make content last to improve readability
+                data    : '',
+                tipo    : 'f',
             };
             
-            // Saving the data scraped from the current page to the dataset
-            // if it passes the 'is article' filters.
+            // Saving the data scraped from the current page to
+            // the dataset if it passes the 'is article' filters.
             if (filter_URL(request.loadedUrl)) {
-                data.protesto = classifier(extractText(body));
-                data.date = await getArticleDate(data.url);
+                const [protesto, termos] = classifier(data.content);
+                data.tipo = protesto === true ? 't' : 'f';
+                data.data = await getArticleDate(data.url);
+                data.termos = termos;
                 await Dataset.pushData(data);
-                log.debug(`URL: ${data.url} - Protesto: ${data.protesto}`);
+                if (data.tipo === 't') {
+                    saveToDB(data);
+                }
+                log.debug(`URL: ${data.url} - Protesto: ${data.protesto} - Title: ${title} - Title 2: ${title2}`);
             }
             
             // Finally, we have to add the URLs to the queue
@@ -81,10 +88,13 @@ const crawler = new CheerioCrawler({
             console.error('ERROR: ', error);
         }
     },
-        maxRequestsPerCrawl: 1000,
+        maxRequestsPerCrawl: 50,
 });
 
-// Run the crawler with the default URLs
-await crawler.run(defaultURLS);
-
-// console.debug('Status: ', saveRunStatus());
+cron.schedule('* * * * *', async () => {
+    const date = new Date();
+    console.log(`Running a new task at ${formatDate(date)}`);
+    // Run the crawler with the default URLs
+    await crawler.run(defaultURLS);
+    console.debug('Status: ', saveRunStatus());
+});

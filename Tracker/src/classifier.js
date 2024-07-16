@@ -25,13 +25,15 @@ function classifier(body) {
                     ];
     // Normalize the body content to lowercase
     const normalizedBody = body.toLowerCase();
+    let termos = [];
+    let found = false;
     for (const keyword of keywords) {
         if (normalizedBody.includes(keyword)) {
-            return true; // Keyword found, content is related
+            termos.push(keyword);
+            found = true;
         }
     }
-
-    return false; // No keyword found, content is not related
+    return [found, termos];
 }
 
 // -====================================================================- //
