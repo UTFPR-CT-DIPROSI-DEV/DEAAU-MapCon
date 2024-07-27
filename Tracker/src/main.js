@@ -1,12 +1,15 @@
-import { CheerioCrawler, Dataset, log } from "crawlee";
+import { CheerioCrawler, log, RequestQueue } from "crawlee";
 import { classifier, filter_URL } from "./classifier.js";
-import { removeAccents, extractText, formatDate, saveRunStatus, saveToDB, readRunStatus, getArticleDate } from "./utils.js";
+import { removeAccents, extractText, formatDate, saveRunStatus, saveToDB, readRunStatus, getArticleDate, cleanURL } from "./utils.js";
 import cron from 'node-cron';
 
+
 // Set the log level to DEBUG to see all the logs
-log.setLevel(log.LEVELS.DEBUG);
+log.setLevel(process.env.LOG_LEVEL);
 
 console.debug('Read status: ', readRunStatus());
+
+let run_additions = 0;
 
 const defaultURLS = [
     "https://www.tribunapr.com.br/noticias/parana/",
@@ -16,8 +19,17 @@ const defaultURLS = [
     "http://bandnewsfmcuritiba.com/",
 ];
 
+// Initialize a request queue
+const requestQueue = await RequestQueue.open();
+
+// Add starting URLs to the request queue
+for(const URL of defaultURLS) {
+    await requestQueue.addRequest({ url: URL });
+}
+
 const crawler = new CheerioCrawler({
-    maxRequestRetries: 0,
+    requestQueue,
+    maxRequestRetries: 3,
     failedRequestHandler: async ({ request }) => {
         log.error(`Request ${request.url} failed too many times.`);
     },
@@ -30,12 +42,12 @@ const crawler = new CheerioCrawler({
 
             // If the URL does not end with one of the allowed extensions, skip the request
             if (blockedExtensions.some(ext => path.endsWith(ext))) {
-                console.log(`Skipping ${request.url} due to unsupported file type.`);
+                log.debug(`Skipping ${request.url} due to unsupported file type.`);
                 request.noRetry = true;
             }
         }
     ],
-    async requestHandler({ request, response, body, contentType, $ }) {
+    async requestHandler({ request, $, body, enqueueLinks }) {
         try {
             const title1 = $('title').text();
             const title2 = $('.post-title').first().text();
@@ -59,7 +71,7 @@ const crawler = new CheerioCrawler({
 
             // Creating an object with the data scraped from the current page
             const data = {
-                url     : request.loadedUrl,
+                url     : cleanURL(request.loadedUrl),
                 // cidades : [{}],
                 titulo  : removeAccents(title),
                 termos  : [],
@@ -75,26 +87,39 @@ const crawler = new CheerioCrawler({
                 data.tipo = protesto === true ? 't' : 'f';
                 data.data = await getArticleDate(data.url);
                 data.termos = termos;
-                await Dataset.pushData(data);
+                // await Dataset.pushData(data);
                 if (data.tipo === 't') {
+                    run_additions++;   
                     saveToDB(data);
                 }
                 log.debug(`URL: ${data.url} - Protesto: ${data.protesto} - Title: ${title} - Title 2: ${title2}`);
             }
             
             // Finally, we have to add the URLs to the queue
-            await crawler.addRequests(sameOriginUrls);
+            // await crawler.addRequests(sameOriginUrls);
+            await enqueueLinks({
+                urls: sameOriginUrls,
+                strategy: 'same-hostname',
+            });
         } catch (error) {
             console.error('ERROR: ', error);
         }
     },
-        maxRequestsPerCrawl: 50,
+        maxRequestsPerCrawl: 1000,
 });
 
-cron.schedule('* * * * *', async () => {
-    const date = new Date();
-    console.log(`Running a new task at ${formatDate(date)}`);
-    // Run the crawler with the default URLs
-    await crawler.run(defaultURLS);
-    console.debug('Status: ', saveRunStatus());
-});
+
+// Schedule the crawler to run every day at midnight
+// cron.schedule('0 0 * * *', async () => {
+//     const date = new Date();
+//     console.log(`Running Crawler at ${formatDate(date)}`);
+
+//     // Run the crawler with the default URLs
+//     await crawler.run(defaultURLS);
+//     console.debug('Status: ', saveRunStatus());
+// });
+
+// Run the crawler with the default URLs
+await crawler.run();
+
+console.log(`Tried adding: ${run_additions} new entries`);

@@ -1,27 +1,30 @@
+import { removeAccents } from "./utils.js";
+
 // Determines whether or not a given article's subject
 // is related to "Urban conflicts" and "Curitiba".
 function classifier(body) {
     const keywords = [
-                        "conflito",
-                        "protesto",
-                        "manifestação",
-                        "manifestante",
-                        "moradores",
-                        "greve",
-                        "paralisação",
-                        "passeata",
-                        "bloqueio",
-                        "confronto",
-                        "violência",
-                        "violento",
-                        "tensão",
-                        "tumulto",
-                        "invasão",
-                        "ocupação",
-                        "desocupação",
-                        "desalojamento",
-                        "deslocamento",
-                        "reintegração",
+                        " conflito",
+                        " protesto",
+                        " manifestação",
+                        " manifestante",
+                        " moradores",
+                        " greve",
+                        " paralisação",
+                        " passeata",
+                        " bloqueio",
+                        " confronto",
+                        " violência",
+                        " violento",
+                        " tensão",
+                        " tumulto",
+                        " invasão",
+                        " ocupação",
+                        " ocupações",
+                        " desocupação",
+                        " desalojamento",
+                        " deslocamento",
+                        " reintegração",
                     ];
     // Normalize the body content to lowercase
     const normalizedBody = body.toLowerCase();
@@ -29,7 +32,7 @@ function classifier(body) {
     let found = false;
     for (const keyword of keywords) {
         if (normalizedBody.includes(keyword)) {
-            termos.push(keyword);
+            termos.push(removeAccents(keyword));
             found = true;
         }
     }

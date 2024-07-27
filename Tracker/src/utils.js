@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as cheerio from 'cheerio';
+import { log } from 'crawlee';
 import axios from "axios";
 import db from "./db/db.js";
 
@@ -163,7 +164,31 @@ export async function getArticleDate(url) {
 
 // Function to save the crawled data to the DATABASE
 export async function saveToDB(data) {
-    // Insert the data into the database
-    const res = await db.withSchema('crawling').table('crawling_news').insert(data);
-    console.log(res);
+    try {
+        // Insert the data into the database
+        const res = await db.withSchema('crawling').table('crawling_news').insert(data);
+        log.debug(res);
+    } catch (error) {
+        log.debug('Error inserting data into the database: ');
+        // Handle specific error cases, for example if the requested URL is already saved
+        if (error.code === '23505') {
+            log.debug('URL already exists in the database');
+            // Handle the error case here
+        } else {
+            log.error(error);
+            // Handle other error cases here
+        }
+    }
+}
+
+// Function to filter out URLs to be used as primary keys on the DB
+export function cleanURL(url) {
+    try {
+      const urlObj = new URL(url);
+      // Constructing the base URL without the search and hash parts
+      return urlObj.origin + urlObj.pathname;
+    } catch (error) {
+      log.error('Invalid URL:', error);
+      return null;
+    }
 }
