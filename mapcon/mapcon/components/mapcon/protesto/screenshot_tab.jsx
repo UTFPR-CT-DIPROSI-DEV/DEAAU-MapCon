@@ -11,10 +11,6 @@ import axios from "axios";
 import { useEffect } from "react";
 
 export function ScreenshotTab({ screenshots }) {
-
- 
-
-
     function acoesTemplate(rowData) {
         const img_link = `/images/news/${rowData.id}.jpeg`
         return <a target="blank" href={img_link}>{rowData.id}</a>;

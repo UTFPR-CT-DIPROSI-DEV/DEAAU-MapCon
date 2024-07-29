@@ -23,17 +23,19 @@ export default function formaparticipacaoPage(props) {
     // Para conseguir atualizar datatable
     const childRef = useRef();
 
-    useEffect(async () => {
-
-        // Redireciona para login caso não esteja autenticado
-        const session = await getSession()
+    // Redireciona para login caso não esteja autenticado
+    const login = async () => {
+        const session = await getSession();
         if (!session) {
-            router.push('/login')
+          router.push("/login");
         } else {
-            setloading(false)
+          setloading(false);
         }
-
-    }, [])
+    };
+    
+    useEffect(() => {
+        login();
+    }, []);
 
 
     async function addButtonClicked(e) {

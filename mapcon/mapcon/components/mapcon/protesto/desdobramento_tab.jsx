@@ -63,19 +63,19 @@ export function DesdobramentoTab({ protestId, selected }, props) {
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="desdobramento">Desdobramento*</label>
                         <Controller name="desdobramento" rules={{ required: true }} control={control} render={({ onChange, value }) =>
-                            <InputText disabled={props.view} className={errors.desdobramento ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
+                            <InputText disabled={props.view} className={props.desdobramento ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="fonte_desdobramento">Fonte*</label>
                         <Controller name="fonte_desdobramento" rules={{ required: true }} control={control} render={({ onChange, value }) =>
-                            <InputText disabled={props.view} className={errors.fonte_desdobramento ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
+                            <InputText disabled={props.view} className={props.fonte_desdobramento ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="descritor_desdobramento">Descritor</label>
                         <Controller name="descritor_desdobramento" control={control} render={({ onChange, value }) =>
-                            <InputTextarea disabled={props.view} rows={5} className={errors.descritor_desdobramento ? "p-invalid" : ""} value={value} onChange={onChange}></InputTextarea>
+                            <InputTextarea disabled={props.view} rows={5} className={props.descritor_desdobramento ? "p-invalid" : ""} value={value} onChange={onChange}></InputTextarea>
                         } />
                     </div>
 

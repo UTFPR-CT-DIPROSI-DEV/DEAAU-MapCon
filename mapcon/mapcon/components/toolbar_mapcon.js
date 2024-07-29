@@ -18,13 +18,13 @@ export default function ToolbarMapCon() {
       items: [
         {
           label: 'Notícias Rastreadas',
-          // command:()=>{router.push("/mapcon/noticiasrastreadas");}
-          command:()=>{window.location.href = "/mapcon/noticiasrastreadas";}
+          command:()=>{router.push("/mapcon/noticiasrastreadas");}
+          // command:()=>{window.location.href = "/mapcon/noticiasrastreadas";}
         },
         {
           label: 'Protesto',
-          // command:()=>{router.push("/mapcon/protesto");}
-          command:()=>{window.location.href = "/mapcon/protesto";}
+          command:()=>{router.push("/mapcon/protesto");}
+          // command:()=>{window.location.href = "/mapcon/protesto";}
         },
         {
           label: 'Conflito',
@@ -33,8 +33,8 @@ export default function ToolbarMapCon() {
         },
         {
           label: 'Agente',
-          // command:()=>{router.push("/mapcon/agente_protesto");}
-          command:()=>{window.location.href = "/mapcon/agente_protesto";}
+          command:()=>{router.push("/mapcon/agente_protesto");}
+          // command:()=>{window.location.href = "/mapcon/agente_protesto";}
         },
         // {
         //   label: 'Notícias do Blog'
@@ -46,8 +46,8 @@ export default function ToolbarMapCon() {
       items: [
         {
           label: 'Categoria do Objeto',
-          // command:()=>{router.push("/mapcon/catobj");}
-          command:()=>{window.location.href = "/mapcon/catobj";}
+          command:()=>{router.push("/mapcon/catobj");}
+          // command:()=>{window.location.href = "/mapcon/catobj";}
         },
         {
           label: 'Repertório de Ação',
@@ -111,7 +111,8 @@ export default function ToolbarMapCon() {
   const right_toolbar = (
     <div>
       {!session ?
-        <Button label='Login' onClick={() => signIn()} className="p-button-secondary" style={{ marginRight: '.25em' }} icon="pi pi-user" /> :
+        <Button label='Login' onClick={() => signIn()} className="p-button-secondary" style={{ marginRight: '.25em' }} icon="pi pi-user" /> 
+      :
         <Button label='Logout' onClick={() => signOut()} className="p-button-secondary" style={{ marginRight: '.25em' }} icon="pi pi-user" />
       }
     </div>

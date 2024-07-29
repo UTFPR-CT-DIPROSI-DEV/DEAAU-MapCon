@@ -67,13 +67,13 @@ export function FormaProtestoTab({ protestId, options, selected }, props) {
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="forma_protesto">Forma de Protesto*</label>
                         <Controller name="forma_protesto" rules={{ required: true }} control={control} render={({ onChange, value }) =>
-                            <InputText disabled={props.view} className={errors.forma_protesto ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
+                            <InputText disabled={props.view} className={props.forma_protesto ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="repertorio_acao_num_seq_repertorio_acao">Repertório da Ação*</label>
                         <Controller name="repertorio_acao_num_seq_repertorio_acao" rules={{ required: true }} control={control} render={({ onChange, value }) =>
-                            <Dropdown className={errors.repertorio_acao_num_seq_repertorio_acao && 'p-invalid'} value={value} options={options} onChange={e => onChange(e.value)} optionLabel="name" optionValue="id" filter filterBy="name" showClear placeholder="Selecione uma categoria" />
+                            <Dropdown className={props.repertorio_acao_num_seq_repertorio_acao && 'p-invalid'} value={value} options={options} onChange={e => onChange(e.value)} optionLabel="name" optionValue="id" filter filterBy="name" showClear placeholder="Selecione uma categoria" />
                         } />
                     </div>
 

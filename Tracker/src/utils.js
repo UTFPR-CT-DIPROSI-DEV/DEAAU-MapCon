@@ -88,6 +88,7 @@ export function saveRunStatus(run) {
     const date = new Date();
     let runStatus = {
         day: date.toLocaleDateString(),
+        time: date.toLocaleTimeString(),
     };
 
     runStatus = jsonConcat(runStatus, run);
@@ -168,16 +169,16 @@ export async function saveToDB(data) {
         // Insert the data into the database
         const res = await db.withSchema('crawling').table('crawling_news').insert(data);
         log.debug(res);
+        return 1;
     } catch (error) {
         log.debug('Error inserting data into the database: ');
         // Handle specific error cases, for example if the requested URL is already saved
         if (error.code === '23505') {
             log.debug('URL already exists in the database');
-            // Handle the error case here
         } else {
             log.error(error);
-            // Handle other error cases here
         }
+        return 0;
     }
 }
 

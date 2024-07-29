@@ -1,4 +1,4 @@
-import React, { useEffect,useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import TableCrud from '../../../lib/front/cruddatatable/datatable';
 import { Column } from 'primereact/column';
 import { useRouter } from 'next/router'
@@ -13,7 +13,7 @@ import moment from 'moment';
 // TODO: Adicionar uma coluna com label colorido para identificar cadastros concluídos e não concluídos
 export default function ProtestoPage(props) {
 
-    const router = useRouter()
+    const router = useRouter();
 
     const [showForm, setshowForm] = useState({ visible: false })
     const [loading, setloading] = useState(true)
@@ -21,17 +21,19 @@ export default function ProtestoPage(props) {
     // Para conseguir atualizar datatable
     const childRef = useRef();
 
-    useEffect(async () => {
-
-        // Redireciona para login caso não esteja autenticado
-        const session = await getSession()
+    // Redireciona para login caso não esteja autenticado
+    const login = async () => {
+        const session = await getSession();
         if (!session) {
-            router.push('/login')
+          router.push("/login");
         } else {
-            setloading(false)
+          setloading(false);
         }
-
-    }, [])
+    };
+    
+    useEffect(() => {
+        login();
+    }, []);
 
     async function viewButtonClicked(e) {
         router.push({
@@ -45,6 +47,7 @@ export default function ProtestoPage(props) {
     }
 
     async function editButtonClicked(row) {
+        console.log(row)
         router.push({
             pathname: '/mapcon/protesto/edit',
             query: { id: row[0].num_seq_protesto },
@@ -80,7 +83,6 @@ export default function ProtestoPage(props) {
 
 
     const dataBodyTemplate = (rowData) => {
-
         return (
             <div>
                 <span className="p-column-title">Data Cadastro</span>
@@ -90,11 +92,10 @@ export default function ProtestoPage(props) {
     }
 
     const statusTemplate = (rowData) => {
-
         return (
             <div>
                 <span className="p-column-title">Status</span>
-                {rowData.status == 0 ? <Tag className="p-mr-2" severity="warning" value="Em Preenchimento"></Tag> : <Tag className="p-mr-2" value="Finalizado"></Tag>}
+                {rowData.status == 0 ? <Tag className="p-mr-2" severity="warning" value="Em Preenchimento"/> : <Tag className="p-mr-2" value="Finalizado"/>}
             </div>
         );
     }
