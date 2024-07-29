@@ -12,7 +12,7 @@ import { RadioButton } from "primereact/radiobutton";
 import { useForm, Controller } from "react-hook-form";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
-import { confirmDialog } from "primereact/confirmdialog";
+import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 import { InputSwitch } from "primereact/inputswitch";
 import { Tag } from "primereact/tag";
 import { Calendar } from "primereact/calendar";
@@ -148,6 +148,7 @@ export default function NoticiasRastreadasPage(props) {
   ) : (
     <div>
       <ToolbarMapCon/>
+      <ConfirmDialog/>
       <div className="p-grid p-formgrid p-m-lg-3 p-m-2">
         <div className="p-col-12 p-mb-12 p-lg-12 p-mb-lg-0">
           <TableCrud
@@ -206,8 +207,7 @@ export default function NoticiasRastreadasPage(props) {
 function MigraNoticiaForm({ showForm, closeForm }) {
   const { visible, information, close_protests } = showForm;
 
-  const { url, cidades, content, data, termos, tipo, tipo_predicted, titulo } =
-    information;
+  const { url, cidades, content, data, termos, tipo, tipo_predicted, titulo } = information;
 
   const [sending, setSending] = useState(false);
 
@@ -215,19 +215,19 @@ function MigraNoticiaForm({ showForm, closeForm }) {
     defaultValues: {
       is_protesto: false,
       existente: null,
-      // data: moment(data).format('dd/mm/yyyy'),
+      data: moment(data).format('dd/mm/yyyy'),
       titulo: titulo,
     },
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (dados) => {
     setSending(true);
-    data.url = url;
+    dados.url = url;
 
-    data.data = moment(data.data).format("yyyy-MM-DD");
+    dados.data = moment(dados.data).format("yyyy-MM-DD");
 
     const ret = await axios
-      .post(`/api/mapcon/migra`, data)
+      .post(`/api/mapcon/migra`, dados)
       .then(() => setSending(false))
       .catch(() => setSending(false));
     closeForm(true);

@@ -1,6 +1,6 @@
 import { Column } from "primereact/column";
 import { Button } from "primereact/button"
-import { confirmDialog } from 'primereact/confirmdialog';
+import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog';
 import { DataTable } from "primereact/datatable";
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
@@ -58,23 +58,24 @@ export function DesdobramentoTab({ protestId, selected }, props) {
 
     return (
         <React.Fragment>
+            <ConfirmDialog/>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="p-fluid p-formgrid p-grid p-mt-lg-2 p-mt-2">
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="desdobramento">Desdobramento*</label>
-                        <Controller name="desdobramento" rules={{ required: true }} control={control} render={({ onChange, value }) =>
+                        <Controller name="desdobramento" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
                             <InputText disabled={props.view} className={props.desdobramento ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="fonte_desdobramento">Fonte*</label>
-                        <Controller name="fonte_desdobramento" rules={{ required: true }} control={control} render={({ onChange, value }) =>
+                        <Controller name="fonte_desdobramento" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
                             <InputText disabled={props.view} className={props.fonte_desdobramento ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="descritor_desdobramento">Descritor</label>
-                        <Controller name="descritor_desdobramento" control={control} render={({ onChange, value }) =>
+                        <Controller name="descritor_desdobramento" control={control} render={({field: { onChange, value }}) =>
                             <InputTextarea disabled={props.view} rows={5} className={props.descritor_desdobramento ? "p-invalid" : ""} value={value} onChange={onChange}></InputTextarea>
                         } />
                     </div>

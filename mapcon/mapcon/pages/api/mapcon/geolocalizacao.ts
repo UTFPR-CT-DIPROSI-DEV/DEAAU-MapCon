@@ -10,7 +10,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getServerSession(req , res, {});
 
     if (session) {
-
         if (req.method == 'GET' && req.query.id) {
             res.status(200).json(await base.getModel('geolocalizacao', { 'num_seq_geolocalizacao': req.query.id }))
         } else if (req.method == 'GET' && req.query.protesto_num_seq_protesto) {
@@ -32,9 +31,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
     } else {
-
         res.status(401).json({ "Acesso Negado": "Você não possui permissão para acessar esses dados." })
-
     }
 
 }

@@ -11,7 +11,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { useForm, Controller } from "react-hook-form";
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
-import { confirmDialog } from 'primereact/confirmdialog';
+import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog';
 import {Password} from 'primereact/password';
 
 export default function UsuarioPage(props) {
@@ -108,7 +108,8 @@ export default function UsuarioPage(props) {
 
     return (loading ? <Loading></Loading> :
         <div>
-            <ToolbarMapCon></ToolbarMapCon>
+            <ToolbarMapCon/>
+            <ConfirmDialog/>
             <div className="p-grid p-formgrid p-m-lg-3 p-m-2">
                 <div className="p-col-12 p-mb-12 p-lg-12 p-mb-lg-0">
                     <TableCrud ref={childRef}
@@ -163,14 +164,14 @@ function UsuarioSenhaForm(props) {
         
                 <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="usu_senha">Senha*</label>
-                        <Controller name="usu_senha" rules={{ required: true }} control={control} render={({ onChange, value }) =>
+                        <Controller name="usu_senha" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
                             // <InputText disabled={props.view} className={errors.usu_senha ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                             <Password id="usu_senha" disabled={props.view} promptLabel={'Digite uma senha'} weakLabel={'Fraca'} mediumLabel={'Média'} strongLabel={'Forte'} className={props.usu_senha ? "p-invalid" : ""} value={value} onChange={onChange}></Password>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="usu_senha_repetir">Repetir Senha*</label>
-                        <Controller name="usu_senha_repetir" rules={{ validate: value => value === watchSenha }} control={control} render={({ onChange, value }) =>
+                        <Controller name="usu_senha_repetir" rules={{ validate: value => value === watchSenha }} control={control} render={({field: { onChange, value }}) =>
                             <InputText id="usu_senha_repetir" disabled={props.view} type="password" className={props.usu_senha_repetir ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>  

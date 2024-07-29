@@ -11,7 +11,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { useForm, Controller } from "react-hook-form";
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
-import { confirmDialog } from 'primereact/confirmdialog';
+import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog';
 
 export default function FontesProtestoPage(props) {
 
@@ -97,6 +97,7 @@ export default function FontesProtestoPage(props) {
     return (loading ? <Loading></Loading> :
         <div>
             <ToolbarMapCon></ToolbarMapCon>
+            <ConfirmDialog/>
             <div className="p-grid p-formgrid p-m-lg-3 p-m-2">
                 <div className="p-col-12 p-mb-12 p-lg-12 p-mb-lg-0">
 
@@ -154,7 +155,7 @@ function CategoriaObjetoForm(props) {
                 <div className="p-fluid p-formgrid p-grid p-mt-lg-4 p-mt-4">
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="desc_fonte_protesto">Fonte Protesto*</label>
-                        <Controller name="desc_fonte_protesto" rules={{ required: true }} control={control} render={({ onChange, value }) =>
+                        <Controller name="desc_fonte_protesto" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
                             <InputText disabled={props.view} className={errors.fonteprotesto ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>

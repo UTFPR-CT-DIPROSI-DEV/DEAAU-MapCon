@@ -11,7 +11,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { useForm, Controller } from "react-hook-form";
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
-import { confirmDialog } from 'primereact/confirmdialog';
+import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog';
 
 export default function RepertorioAcaoPage(props) {
 
@@ -23,27 +23,25 @@ export default function RepertorioAcaoPage(props) {
     // Para conseguir atualizar datatable
     const childRef = useRef();
 
-    useEffect(async () => {
-
-        // Redireciona para login caso não esteja autenticado
-        const session = await getSession()
-        if (!session) {
-            router.push('/login')
-        } else {
-            setloading(false)
+    useEffect(() => {
+        const login = async () => {
+            // Redireciona para login caso não esteja autenticado
+            const session = await getSession()
+            if (!session) {
+                router.push('/login')
+            } else {
+                setloading(false)
+            }
         }
-
+        login()
     }, [])
 
 
     async function addButtonClicked(e) {
-
         setshowForm({ visible: true })
-
     }
 
     async function editButtonClicked(row) {
-
         const r = await axios.get('/api/mapcon/repacao', { params: { id: row[0].num_seq_repertorio_acao } })
         
         setshowForm({
@@ -55,7 +53,6 @@ export default function RepertorioAcaoPage(props) {
 
 
     async function deleteButtonClicked(e, search) {
-
         confirmDialog({
         message: 'Tem certeza que deseja remover os dados selecionados?',
         header: 'Confirmação',
@@ -94,7 +91,8 @@ export default function RepertorioAcaoPage(props) {
 
     return (loading ? <Loading></Loading> :
         <div>
-            <ToolbarMapCon></ToolbarMapCon>
+            <ToolbarMapCon/>
+            <ConfirmDialog/>
             <div className="p-grid p-formgrid p-m-lg-3 p-m-2">
                 <div className="p-col-12 p-mb-12 p-lg-12 p-mb-lg-0">
 
@@ -152,8 +150,8 @@ function CategoriaObjetoForm(props) {
                 <div className="p-fluid p-formgrid p-grid p-mt-lg-4 p-mt-4">
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="desc_repertorio_acao">Descrição do Repertório da Ação*</label>
-                        <Controller name="desc_repertorio_acao" rules={{ required: true }} control={control} render={({ onChange, value }) =>
-                            <InputText disabled={props.view} className={errors.repacao ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
+                        <Controller name="desc_repertorio_acao" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                            <InputText disabled={props.view} className={errors ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-12">

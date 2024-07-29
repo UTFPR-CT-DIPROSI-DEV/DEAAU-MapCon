@@ -11,7 +11,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { useForm, Controller } from "react-hook-form";
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
-import { confirmDialog } from 'primereact/confirmdialog';
+import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog';
 
 export default function AgenteProtestoPage(props) {
 
@@ -63,17 +63,15 @@ export default function AgenteProtestoPage(props) {
 
 
     async function deleteButtonClicked(e, search) {
-
         confirmDialog({
-        message: 'Tem certeza que deseja remover os dados selecionados?',
-        header: 'Confirmação',
-        icon: 'pi pi-exclamation-triangle',
-        accept: () => removeRows(e),
-        acceptLabel: 'Sim',
-        rejectLabel: 'Não'
-        // reject: () => rejectFunc()
-    });
-        
+            message: 'Tem certeza que deseja remover os dados selecionados?',
+            header: 'Confirmação',
+            icon: 'pi pi-exclamation-triangle',
+            accept: () => removeRows(e),
+            acceptLabel: 'Sim',
+            rejectLabel: 'Não'
+            // reject: () => rejectFunc()
+        });
     }
 
     async function removeRows(e){
@@ -103,6 +101,7 @@ export default function AgenteProtestoPage(props) {
     return (loading ? <Loading></Loading> :
         <div>
             <ToolbarMapCon></ToolbarMapCon>
+            <ConfirmDialog/>
             <div className="p-grid p-formgrid p-m-lg-3 p-m-2">
                 <div className="p-col-12 p-mb-12 p-lg-12 p-mb-lg-0">
 
@@ -166,13 +165,13 @@ function AgenteForm(props) {
                 <div className="p-fluid p-formgrid p-grid p-mt-lg-4 p-mt-4">
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="agente_protesto">Nome do Agente*</label>
-                        <Controller name="agente_protesto" rules={{ required: true }} control={control} render={({ onChange, value }) =>
+                        <Controller name="agente_protesto" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
                             <InputText disabled={props.view} className={errors.bairro ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="categoria_agente_num_seq_categoria_agente">Categoria do Agente*</label>
-                        <Controller name="categoria_agente_num_seq_categoria_agente" rules={{ required: true }} control={control} render={({ onChange, value }) =>
+                        <Controller name="categoria_agente_num_seq_categoria_agente" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
                             <Dropdown className={errors.categoria_agente_num_seq_categoria_agente && 'p-invalid'} value={value} options={categoria_agentes} onChange={e => onChange(e.value)} optionLabel="desc_categoria_agente" optionValue="num_seq_categoria_agente" showClear placeholder="Selecione uma Categoria" />
                         } />
                     </div>

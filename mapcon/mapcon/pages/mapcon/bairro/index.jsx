@@ -11,7 +11,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { useForm, Controller } from "react-hook-form";
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
-import { confirmDialog } from 'primereact/confirmdialog';
+import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog';
 
 export default function BairroPage(props) {
 
@@ -63,7 +63,6 @@ export default function BairroPage(props) {
 
 
     async function deleteButtonClicked(e, search) {
-
         confirmDialog({
             message: 'Tem certeza que deseja remover os dados selecionados?',
             header: 'Confirmação',
@@ -73,7 +72,6 @@ export default function BairroPage(props) {
             rejectLabel: 'Não'
             // reject: () => rejectFunc()
         });
-
     }
 
     async function removeRows(e) {
@@ -103,9 +101,9 @@ export default function BairroPage(props) {
     return (loading ? <Loading></Loading> :
         <div>
             <ToolbarMapCon></ToolbarMapCon>
+            <ConfirmDialog/>
             <div className="p-grid p-formgrid p-m-lg-3 p-m-2">
                 <div className="p-col-12 p-mb-12 p-lg-12 p-mb-lg-0">
-
                     <TableCrud ref={childRef}
                         {...props}
                         title="Bairros"
@@ -129,7 +127,6 @@ export default function BairroPage(props) {
     );
 
 }
-
 
 
 /*
@@ -167,13 +164,13 @@ function BairroForm(props) {
                 <div className="p-fluid p-formgrid p-grid p-mt-lg-4 p-mt-4">
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="bairro">Nome do Bairro*</label>
-                        <Controller name="bairro" rules={{ required: true }} control={control} render={({ onChange, value }) =>
+                        <Controller name="bairro" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
                             <InputText disabled={props.view} className={errors.bairro ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="cidade_num_seq_cidade">Cidade*</label>
-                        <Controller name="cidade_num_seq_cidade" rules={{ required: true }} control={control} render={({ onChange, value }) =>
+                        <Controller name="cidade_num_seq_cidade" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
                             <Dropdown className={errors.cidade_num_seq_cidade && 'p-invalid'} value={value} options={cidades} onChange={e => onChange(e.value)} optionLabel="cidade" optionValue="num_seq_cidade" showClear placeholder="Selecione uma Cidade" />
                         } />
                     </div>

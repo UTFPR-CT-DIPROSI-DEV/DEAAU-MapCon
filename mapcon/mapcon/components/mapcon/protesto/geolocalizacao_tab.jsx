@@ -4,7 +4,7 @@ import { MapContainer, TileLayer, Marker, Popup, GeoJSON, useMapEvent, useMapEve
 import 'leaflet/dist/leaflet.css';
 import { useState } from 'react';
 import { icon } from "leaflet"
-import { useForm, Controller, reset } from 'react-hook-form';
+import { useForm, Controller, reset, get } from 'react-hook-form';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button'
 import { Dropdown } from 'primereact/dropdown';
@@ -25,10 +25,12 @@ export default function GeolocalizacaohMap({ protestId }) {
     const [showForm, setShowForm] = useState({ visible: false })
     const [coordenadas, setCoordenadas] = useState(null)
 
-    useEffect(async () => {
-        
+    const getCoords = async () => {
         const r = await axios.get('/api/mapcon/geolocalizacao', { params: { protesto_num_seq_protesto: protestId } })
         r.data ? setCoordenadas({latitude:r.data.latitude , longitude: r.data.longitude}) : null
+    }
+    useEffect(() => {
+        getCoords()
     }, [])
 
     function onMapRightClicked(pos, marker_pos) {
@@ -48,7 +50,7 @@ export default function GeolocalizacaohMap({ protestId }) {
 
     return (
         <>
-            <MapContainer style={{ height: 400, width: "100%" }} center={latLng(position)} zoom={10} scrollWheelZoom={false}>
+            <MapContainer style={{ height: 400, width: "100%" }} center={latLng(position)} zoom={10} scrollWheelZoom={true}>
                 <TileLayer
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png" />
@@ -114,31 +116,19 @@ function GeolocalizacaoForm({ showForm, closeForm }) {
 
 
     useEffect(() => {
-    reset( showForm.data )
+        reset( showForm.data )
     }, [showForm.data])
 
 
-    // console.log(showForm)
+    console.log(showForm)
 
     const onSubmit = async data => {
-
-        
-        
-      
-
         data['protesto_num_seq_protesto'] = showForm.data.protesto_num_seq_protesto
-
-
         const r = await axios.post('/api/mapcon/geolocalizacao',data)
 
-
-      
         showForm.marker_pos(showForm.pos)
         closeForm(true)
-
     }
-
-
 
     return (
 
@@ -147,26 +137,26 @@ function GeolocalizacaoForm({ showForm, closeForm }) {
                 <div className="p-fluid p-formgrid p-grid p-mt-lg-4 p-mt-4">
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="latitude">Latitude*</label>
-                        <Controller name="latitude" rules={{ required: true }} control={control} render={({ onChange, value }) =>
-                            <InputText disabled={true} className={errors.latitude ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
+                        <Controller name="latitude" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                            <InputText disabled={true} className={showForm.latitude ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="longitude">Longitude*</label>
-                        <Controller name="longitude" rules={{ required: true }} control={control} render={({ onChange, value }) =>
-                            <InputText disabled={true}  className={errors.longitude ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
+                        <Controller name="longitude" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                            <InputText disabled={true}  className={showForm.longitude ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="nivel_exatidao">Nível de Exatidão*</label>
-                        <Controller name="nivel_exatidao" rules={{ required: true }} control={control} render={({ onChange, value }) =>
-                            <Dropdown className={errors.nivel_exatidao && 'p-invalid'} value={value} options={exatidao} onChange={e => onChange(e.value)} optionLabel="id" optionValue="id" showClear placeholder="Selecione um nível de exatidão" />
+                        <Controller name="nivel_exatidao" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                            <Dropdown className={showForm.nivel_exatidao && 'p-invalid'} value={value} options={exatidao} onChange={e => onChange(e.value)} optionLabel="id" optionValue="id" showClear placeholder="Selecione um nível de exatidão" />
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="raio">Raio*</label>
-                        <Controller name="raio" rules={{ required: true }} control={control} render={({ onChange, value }) =>
-                            <InputText className={errors.raio ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
+                        <Controller name="raio" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                            <InputText className={showForm.raio ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
 

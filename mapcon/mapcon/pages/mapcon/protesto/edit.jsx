@@ -20,7 +20,6 @@ import { ObjetoProtestoTab } from '../../../components/mapcon/protesto/objeto_pr
 import { FormaProtestoTab } from '../../../components/mapcon/protesto/forma_protesto_tab'
 import { DesdobramentoTab } from '../../../components/mapcon/protesto/desdobramento_tab'
 import { FonteTab } from '../../../components/mapcon/protesto/fonte_tab'
-// import GeolocalizacaoTab from '../../../components/mapcon/protesto/geolocalizacao_tab';
 
 import dynamic from 'next/dynamic'
 import { LocalTab } from '../../../components/mapcon/protesto/local_tab';
@@ -37,7 +36,6 @@ export default function ProtestoForm(props) {
     const router = useRouter();
 
     const toast = useRef(null);
-
 
     const { control, watch, handleSubmit, errors } = useForm({
         defaultValues: props.form
@@ -70,7 +68,6 @@ export default function ProtestoForm(props) {
         if (props.id) {
             data['num_seq_protesto'] = props.id
 
-            // console.log(data)
             axios.put('/api/mapcon/protesto', data).then(r => {
                 toast.current.show({ severity: 'success', summary: 'Dados Atualizados', detail: 'Os dados foram atualizados com sucesso.', life: 3000 });
             })
@@ -112,7 +109,7 @@ export default function ProtestoForm(props) {
             </div>
             {/* <div className="p-field p-col-12 p-md-6">
             <label htmlFor="cidade_num_seq_cidade">Conflito</label>
-            <Controller name="cidade_num_seq_cidade" rules={{ required: true }} control={control} render={({ onChange, value }) =>
+            <Controller name="cidade_num_seq_cidade" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
                 <Dropdown className={props.cidade_num_seq_cidade && 'p-invalid'} value={value} options={cidades} onChange={e => onChange(e.value)} optionLabel="cidade" optionValue="num_seq_cidade" showClear placeholder="Selecione uma Cidade" />
             } />
         </div> */}
@@ -135,8 +132,6 @@ export default function ProtestoForm(props) {
         </div>
     </form>)
 
-
-
     return (
         <div>
             <Toast ref={toast} />
@@ -156,7 +151,6 @@ export default function ProtestoForm(props) {
                     <Accordion className="accordion-custom">
                         <AccordionTab header={<React.Fragment><span>Geral</span></React.Fragment>}>
                             {form_geral}
-
                         </AccordionTab>
                         <AccordionTab header={<React.Fragment><span>Objeto do Protesto</span></React.Fragment>}>
                             <ObjetoProtestoTab protestId={props.id} selected={props.objetos_protesto} options={props.objetos_protesto_all} ></ObjetoProtestoTab>

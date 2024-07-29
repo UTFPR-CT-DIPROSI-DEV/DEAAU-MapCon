@@ -7,7 +7,7 @@ import ToolbarMapCon from '../../../components/toolbar_mapcon';
 import Loading from '../../../components/loading/loading';
 import { getSession } from 'next-auth/react';
 import { Tag } from 'primereact/tag';
-import { confirmDialog } from 'primereact/confirmdialog';
+import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog';
 import moment from 'moment';
 
 // TODO: Adicionar uma coluna com label colorido para identificar cadastros concluídos e não concluídos
@@ -104,6 +104,7 @@ export default function ProtestoPage(props) {
     return (loading ? <Loading></Loading> :
         <div>
             <ToolbarMapCon></ToolbarMapCon>
+            <ConfirmDialog/>
             <div className="p-grid p-formgrid p-m-lg-3 p-m-2">
                 <div className="p-col-12 p-mb-12 p-lg-12 p-mb-lg-0">
 

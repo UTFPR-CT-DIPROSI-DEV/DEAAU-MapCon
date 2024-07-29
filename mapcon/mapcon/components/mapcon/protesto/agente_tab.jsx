@@ -1,6 +1,6 @@
 import { Column } from "primereact/column";
 import { Button } from "primereact/button"
-import { confirmDialog } from 'primereact/confirmdialog';
+import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog';
 import { DataTable } from "primereact/datatable";
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Dropdown } from "primereact/dropdown";
@@ -46,8 +46,6 @@ export function AgenteTab({ protestId, opt_col,opt_forma, selected }, props) {
     }
 
     async function removeValue(e) {
-
-
         confirmDialog({
             message: 'Tem certeza que deseja remover esse registro?',
             header: 'Confirmação',
@@ -71,18 +69,19 @@ export function AgenteTab({ protestId, opt_col,opt_forma, selected }, props) {
 
     return (
         <React.Fragment>
+            <ConfirmDialog/>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="p-fluid p-formgrid p-grid p-mt-lg-2 p-mt-2">
 
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="agente_protesto_num_seq_agente_protesto">Nome do Coletivo*</label>
-                        <Controller name="agente_protesto_num_seq_agente_protesto" rules={{ required: true }} control={control} render={({ onChange, value }) =>
+                        <Controller name="agente_protesto_num_seq_agente_protesto" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
                             <Dropdown className={props.agente_protesto_num_seq_agente_protesto && 'p-invalid'} value={value} options={opt_col} onChange={e => onChange(e.value)} optionLabel="name" optionValue="id" filter filterBy="name" showClear placeholder="Selecione um coletivo" />
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="forma_participacao_num_seq_forma_participacao">Forma de Participação*</label>
-                        <Controller name="forma_participacao_num_seq_forma_participacao" rules={{ required: true }} control={control} render={({ onChange, value }) =>
+                        <Controller name="forma_participacao_num_seq_forma_participacao" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
                             <Dropdown className={props.forma_participacao_num_seq_forma_participacao && 'p-invalid'} value={value} options={opt_forma} onChange={e => onChange(e.value)} optionLabel="name" optionValue="id" filter filterBy="name" showClear placeholder="Selecione uma forma" />
                         } />
                     </div>

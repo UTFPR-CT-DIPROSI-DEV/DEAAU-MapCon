@@ -11,7 +11,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { useForm, Controller } from "react-hook-form";
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
-import { confirmDialog } from 'primereact/confirmdialog';
+import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog';
 
 export default function CatObjPage(props) {
 
@@ -39,35 +39,29 @@ export default function CatObjPage(props) {
 
 
     async function addButtonClicked(e) {
-
         setshowForm({ visible: true })
-
     }
 
     async function editButtonClicked(row) {
-
         const r = await axios.get('/api/mapcon/catobj', { params: { id: row[0].num_seq_categoria_objeto } })
         
         setshowForm({
             visible: true,
             data: r.data,
         })
-
     }
 
 
     async function deleteButtonClicked(e, search) {
-
         confirmDialog({
-        message: 'Tem certeza que deseja remover os dados selecionados?',
-        header: 'Confirmação',
-        icon: 'pi pi-exclamation-triangle',
-        accept: () => removeRows(e),
-        acceptLabel: 'Sim',
-        rejectLabel: 'Não'
-        // reject: () => rejectFunc()
-    });
-        
+            message: 'Tem certeza que deseja remover os dados selecionados?',
+            header: 'Confirmação',
+            icon: 'pi pi-exclamation-triangle',
+            accept: () => removeRows(e),
+            acceptLabel: 'Sim',
+            rejectLabel: 'Não',
+            // reject: () => rejectFunc()
+        });
     }
 
     async function removeRows(e){
@@ -97,6 +91,7 @@ export default function CatObjPage(props) {
     return (loading ? <Loading></Loading> :
         <div>
             <ToolbarMapCon></ToolbarMapCon>
+            <ConfirmDialog/>
             <div className="p-grid p-formgrid p-m-lg-3 p-m-2">
                 <div className="p-col-12 p-mb-12 p-lg-12 p-mb-lg-0">
 
@@ -134,19 +129,14 @@ function CategoriaObjetoForm(props) {
     const { control, handleSubmit, errors } = useForm({ defaultValues: props.showForm.data });
 
     const onSubmit = async data => {
-
         if(props.showForm.data){ // Editar
-            const r = await axios.put('/api/mapcon/catobj',{num_seq_categoria_objeto: props.showForm.data.num_seq_categoria_objeto,...data})
+            const r = await axios.put('/api/mapcon/catobj', {num_seq_categoria_objeto: props.showForm.data.num_seq_categoria_objeto,...data})
         }else{
-            const r = await axios.post('/api/mapcon/catobj',data)
+            const r = await axios.post('/api/mapcon/catobj', data)
         }
         
-
         props.closeForm(true)
-
     }
-
-
 
     return (
         <Dialog header="Categoria do Objeto" className="p-fluid" modal visible={props.showForm.visible} onHide={() => props.closeForm(false)}>
@@ -154,8 +144,8 @@ function CategoriaObjetoForm(props) {
                 <div className="p-fluid p-formgrid p-grid p-mt-lg-4 p-mt-4">
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="desc_categoria_objeto">Nome da categoria do objeto*</label>
-                        <Controller name="desc_categoria_objeto" rules={{ required: true }} control={control} render={({ onChange, value }) =>
-                            <InputText disabled={props.view} className={errors.catobj ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
+                        <Controller name="desc_categoria_objeto" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                            <InputText disabled={props.view} className={errors ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-12">

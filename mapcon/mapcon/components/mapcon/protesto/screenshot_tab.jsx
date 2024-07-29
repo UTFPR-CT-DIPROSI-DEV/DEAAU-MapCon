@@ -1,6 +1,5 @@
 import { Column } from "primereact/column";
 import { Button } from "primereact/button"
-import { confirmDialog } from 'primereact/confirmdialog';
 import { DataTable } from "primereact/datatable";
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Dropdown } from "primereact/dropdown";
