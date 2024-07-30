@@ -54,7 +54,7 @@ export default function RepertorioAcaoPage(props) {
 
     async function deleteButtonClicked(e, search) {
         confirmDialog({
-        message: 'Tem certeza que deseja remover os dados selecionados?',
+        message: e.length > 1 ? 'Tem certeza que deseja remover os dados selecionados?' : 'Tem certeza que deseja remover o dado selecionado?',
         header: 'Confirmação',
         icon: 'pi pi-exclamation-triangle',
         accept: () => removeRows(e),
@@ -127,7 +127,7 @@ export default function RepertorioAcaoPage(props) {
 */
 function CategoriaObjetoForm(props) {
 
-    const { control, handleSubmit, errors } = useForm({ defaultValues: props.showForm.data });
+    const { control, handleSubmit, formState: { errors } } = useForm({ defaultValues: props.showForm.data });
 
     const onSubmit = async data => {
 
@@ -150,7 +150,7 @@ function CategoriaObjetoForm(props) {
                 <div className="p-fluid p-formgrid p-grid p-mt-lg-4 p-mt-4">
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="desc_repertorio_acao">Descrição do Repertório da Ação*</label>
-                        <Controller name="desc_repertorio_acao" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                        <Controller name="desc_repertorio_acao" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
                             <InputText disabled={props.view} className={errors ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>

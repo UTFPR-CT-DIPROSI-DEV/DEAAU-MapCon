@@ -64,9 +64,6 @@ a{
 }
 
 
-
-
-
 /* Responsive Datatable */
 
 .datatable-responsive-demo .p-datatable-responsive-demo .p-datatable-tbody > tr > td .p-column-title {
@@ -106,4 +103,10 @@ a{
 .pro-sidebar > .pro-sidebar-inner {
   background: #972333 !important;
   color: white;
+}
+
+.p-dropdown-clear-icon {
+  position: absolute;
+  top: 53%;
+  transform: translate(0, -50%);
 }

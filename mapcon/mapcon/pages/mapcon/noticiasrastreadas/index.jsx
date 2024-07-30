@@ -27,16 +27,15 @@ export default function NoticiasRastreadasPage(props) {
   // Para conseguir atualizar datatable
   const childRef = useRef();
 
-  const login = async () => {
-    const session = await getSession();
-    if (!session) {
-      router.push("/login");
-    } else {
-      setloading(false);
-    }
-  };
-
   useEffect(() => {
+    const login = async () => {
+      const session = await getSession();
+      if (!session) {
+        router.push("/login");
+      } else {
+        setloading(false);
+      }
+    };
     login();
   }, []);
 
@@ -268,7 +267,7 @@ function MigraNoticiaForm({ showForm, closeForm }) {
             <Controller
               name="is_protesto"
               control={control}
-              render={({field: { onChange, value }}) => (
+              render={({field: { onChange, value = '' }}) => (
                 <InputSwitch
                   checked={value}
                   onChange={(e) => onChange(e.value)}
@@ -287,7 +286,7 @@ function MigraNoticiaForm({ showForm, closeForm }) {
                 name="existente"
                 rules={{ required: true }}
                 control={control}
-                render={({field: { onChange, value }}) => (
+                render={({field: { onChange, value = '' }}) => (
                   <>
                     {close_protests?.map((protest) => (
                       <div className="p-field-radiobutton">
@@ -326,7 +325,7 @@ function MigraNoticiaForm({ showForm, closeForm }) {
                 name="data"
                 rules={{ required: true }}
                 control={control}
-                render={({field: { onChange, value }}) => (
+                render={({field: { onChange, value = '' }}) => (
                   <Calendar
                     value={data}
                     onChange={(e) => onChange(e.value)}
@@ -345,7 +344,7 @@ function MigraNoticiaForm({ showForm, closeForm }) {
                 name="titulo"
                 rules={{ required: true }}
                 control={control}
-                render={({field: { onChange, value }}) => (
+                render={({field: { onChange, value = '' }}) => (
                   <InputText
                     disabled={!isProtesto}
                     // className={errors.titulo ? "p-invalid" : ""}

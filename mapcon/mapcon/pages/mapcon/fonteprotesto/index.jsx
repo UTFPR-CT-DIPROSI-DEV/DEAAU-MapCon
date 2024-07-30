@@ -24,50 +24,43 @@ export default function FontesProtestoPage(props) {
     const childRef = useRef();
 
     // Redireciona para login caso não esteja autenticado
-    const login = async () => {
-        const session = await getSession();
-        if (!session) {
-          router.push("/login");
-        } else {
-          setloading(false);
-        }
-    };
-    
     useEffect(() => {
+        const login = async () => {
+            const session = await getSession();
+            if (!session) {
+              router.push("/login");
+            } else {
+              setloading(false);
+            }
+        };    
         login();
     }, []);
 
 
     async function addButtonClicked(e) {
-
         setshowForm({ visible: true })
-
     }
 
     async function editButtonClicked(row) {
-
         const r = await axios.get('/api/mapcon/fonteprotesto', { params: { id: row[0].num_seq_fonte_protesto } })
         
         setshowForm({
             visible: true,
             data: r.data,
         })
-
     }
 
 
     async function deleteButtonClicked(e, search) {
-
         confirmDialog({
-        message: 'Tem certeza que deseja remover os dados selecionados?',
+        message: e.length > 1 ? 'Tem certeza que deseja remover os dados selecionados?' : 'Tem certeza que deseja remover o dado selecionado?',
         header: 'Confirmação',
         icon: 'pi pi-exclamation-triangle',
         accept: () => removeRows(e),
         acceptLabel: 'Sim',
         rejectLabel: 'Não'
         // reject: () => rejectFunc()
-    });
-        
+    });        
     }
 
     async function removeRows(e){
@@ -80,12 +73,10 @@ export default function FontesProtestoPage(props) {
 
     // Essa function atualiza fecha o dialog e atualiza o datatable o form tiver atualizado
     function closeFormDialog(update) {
-
         setshowForm(false)
         if (update) {
             childRef.current.updateDatatable()
         }
-
     }
 
     // Filtros
@@ -115,16 +106,13 @@ export default function FontesProtestoPage(props) {
 
                         {/* <Column header="Ações" body={actionBodyTemplate}></Column> */}
                     </TableCrud>
-
                 </div>
             </div>
             {showForm.visible ? <CategoriaObjetoForm showForm={showForm} closeForm={(update) => closeFormDialog(update)}></CategoriaObjetoForm> : null}
         </div>
-
     );
 
 }
-
 
 
 /*
@@ -132,19 +120,16 @@ export default function FontesProtestoPage(props) {
 */
 function CategoriaObjetoForm(props) {
 
-    const { control, handleSubmit, errors } = useForm({ defaultValues: props.showForm.data });
+    const { control, handleSubmit, formState: { errors } } = useForm({ defaultValues: props.showForm.data });
 
     const onSubmit = async data => {
-
         if(props.showForm.data){ // Editar
             const r = await axios.put('/api/mapcon/fonteprotesto',{num_seq_fonte_protesto: props.showForm.data.num_seq_fonte_protesto,...data})
         }else{
             const r = await axios.post('/api/mapcon/fonteprotesto',data)
-        }
-        
+        }        
 
         props.closeForm(true)
-
     }
 
 
@@ -155,7 +140,7 @@ function CategoriaObjetoForm(props) {
                 <div className="p-fluid p-formgrid p-grid p-mt-lg-4 p-mt-4">
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="desc_fonte_protesto">Fonte Protesto*</label>
-                        <Controller name="desc_fonte_protesto" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                        <Controller name="desc_fonte_protesto" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
                             <InputText disabled={props.view} className={errors.fonteprotesto ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>

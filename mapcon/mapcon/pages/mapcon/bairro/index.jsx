@@ -24,33 +24,28 @@ export default function BairroPage(props) {
     const childRef = useRef();
 
     // Redireciona para login caso não esteja autenticado
-    const login = async () => {
-        const session = await getSession();
-        if (!session) {
-          router.push("/login");
-        } else {
-          setloading(false);
-        }
-    };
-    
     useEffect(() => {
+        const login = async () => {
+            const session = await getSession();
+            if (!session) {
+              router.push("/login");
+            } else {
+              setloading(false);
+            }
+        };
         login();
     }, []);
 
 
     async function addButtonClicked(e) {
-
         const r2 = await axios.get('/api/mapcon/cidade?limit=-1')
 
         setshowForm({ visible: true, cidades: r2.data['data'] })
-
     }
 
     async function editButtonClicked(row) {
-
         const r = await axios.get('/api/mapcon/bairro', { params: { id: row[0].num_seq_bairro } })
         const r2 = await axios.get('/api/mapcon/cidade?limit=-1')
-
 
         setshowForm({
             //visible: true,
@@ -58,13 +53,12 @@ export default function BairroPage(props) {
             cidades: r2.data['data'],
             visible: true
         })
-
     }
 
 
     async function deleteButtonClicked(e, search) {
         confirmDialog({
-            message: 'Tem certeza que deseja remover os dados selecionados?',
+            message: e.length > 1 ? 'Tem certeza que deseja remover os dados selecionados?' : 'Tem certeza que deseja remover o dado selecionado?',
             header: 'Confirmação',
             icon: 'pi pi-exclamation-triangle',
             accept: () => removeRows(e),
@@ -84,12 +78,10 @@ export default function BairroPage(props) {
 
     // Essa function atualiza fecha o dialog e atualiza o datatable o form tiver atualizado
     function closeFormDialog(update) {
-
         setshowForm(false)
         if (update) {
             childRef.current.updateDatatable()
         }
-
     }
 
     // Filtros
@@ -133,44 +125,33 @@ export default function BairroPage(props) {
     Dialog para formulário de inclusão/edição do crud
 */
 function BairroForm(props) {
-
     const cidades = props.showForm.cidades;
-    const { control, handleSubmit, errors } = useForm({ defaultValues: props.showForm.data });
-
-
-
+    const { control, handleSubmit, formState: { errors } } = useForm({ defaultValues: props.showForm.data });
 
     const onSubmit = async data => {
-
         if (props.showForm.data) { // Editar
             const r = await axios.put('/api/mapcon/bairro', { num_seq_bairro: props.showForm.data.num_seq_bairro, ...data })
         } else {
             const r = await axios.post('/api/mapcon/bairro', data)
         }
 
-
         props.closeForm(true)
-
     }
 
 
-
-
-
     return (
-
         <Dialog header="Bairro" className="p-fluid" modal visible={props.showForm.visible} onHide={() => props.closeForm(false)}>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="p-fluid p-formgrid p-grid p-mt-lg-4 p-mt-4">
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="bairro">Nome do Bairro*</label>
-                        <Controller name="bairro" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                        <Controller name="bairro" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
                             <InputText disabled={props.view} className={errors.bairro ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="cidade_num_seq_cidade">Cidade*</label>
-                        <Controller name="cidade_num_seq_cidade" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                        <Controller name="cidade_num_seq_cidade" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
                             <Dropdown className={errors.cidade_num_seq_cidade && 'p-invalid'} value={value} options={cidades} onChange={e => onChange(e.value)} optionLabel="cidade" optionValue="num_seq_cidade" showClear placeholder="Selecione uma Cidade" />
                         } />
                     </div>

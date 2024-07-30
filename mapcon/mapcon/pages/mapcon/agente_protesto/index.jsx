@@ -24,33 +24,28 @@ export default function AgenteProtestoPage(props) {
     const childRef = useRef();
 
     // Redireciona para login caso não esteja autenticado
-    const login = async () => {
-        const session = await getSession();
-        if (!session) {
-          router.push("/login");
-        } else {
-          setloading(false);
-        }
-    };
-    
     useEffect(() => {
+        const login = async () => {
+            const session = await getSession();
+            if (!session) {
+              router.push("/login");
+            } else {
+              setloading(false);
+            }
+        };
         login();
     }, []);
 
 
     async function addButtonClicked(e) {
-
         const r2 = await axios.get('/api/mapcon/catagente?limit=-1')
 
         setshowForm({ visible: true, categoria_agentes: r2.data['data'] })
-
     }
 
     async function editButtonClicked(row) {
-
         const r = await axios.get('/api/mapcon/agente_protesto', { params: { id: row[0].num_seq_agente_protesto } })
         const r2 = await axios.get('/api/mapcon/catagente?limit=-1')
-
         
         setshowForm({
             //visible: true,
@@ -58,13 +53,12 @@ export default function AgenteProtestoPage(props) {
             categoria_agentes: r2.data['data'],
             visible: true
         })
-
     }
 
 
     async function deleteButtonClicked(e, search) {
         confirmDialog({
-            message: 'Tem certeza que deseja remover os dados selecionados?',
+            message: e.length > 1 ? 'Tem certeza que deseja remover os dados selecionados?' : 'Tem certeza que deseja remover o dado selecionado?',
             header: 'Confirmação',
             icon: 'pi pi-exclamation-triangle',
             accept: () => removeRows(e),
@@ -84,12 +78,10 @@ export default function AgenteProtestoPage(props) {
 
     // Essa function atualiza fecha o dialog e atualiza o datatable o form tiver atualizado
     function closeFormDialog(update) {
-
         setshowForm(false)
         if (update) {
             childRef.current.updateDatatable()
         }
-
     }
 
     // Filtros
@@ -124,12 +116,9 @@ export default function AgenteProtestoPage(props) {
             </div>
             {showForm.visible ? <AgenteForm showForm={showForm} closeForm={(update) => closeFormDialog(update)}></AgenteForm> : null}
         </div>
-
     );
 
 }
-
-
 
 /*
     Dialog para formulário de inclusão/edição do crud
@@ -137,9 +126,7 @@ export default function AgenteProtestoPage(props) {
 function AgenteForm(props) {
 
     const categoria_agentes = props.showForm.categoria_agentes;
-    const { control, handleSubmit, errors } = useForm({ defaultValues: props.showForm.data });
-
-
+    const { control, handleSubmit, formState: { errors } } = useForm({ defaultValues: props.showForm.data });
 
     const onSubmit = async data => {
 
@@ -165,13 +152,13 @@ function AgenteForm(props) {
                 <div className="p-fluid p-formgrid p-grid p-mt-lg-4 p-mt-4">
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="agente_protesto">Nome do Agente*</label>
-                        <Controller name="agente_protesto" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                        <Controller name="agente_protesto" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
                             <InputText disabled={props.view} className={errors.bairro ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="categoria_agente_num_seq_categoria_agente">Categoria do Agente*</label>
-                        <Controller name="categoria_agente_num_seq_categoria_agente" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                        <Controller name="categoria_agente_num_seq_categoria_agente" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
                             <Dropdown className={errors.categoria_agente_num_seq_categoria_agente && 'p-invalid'} value={value} options={categoria_agentes} onChange={e => onChange(e.value)} optionLabel="desc_categoria_agente" optionValue="num_seq_categoria_agente" showClear placeholder="Selecione uma Categoria" />
                         } />
                     </div>

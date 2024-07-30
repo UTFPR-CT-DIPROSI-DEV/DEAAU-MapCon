@@ -94,25 +94,25 @@ export function LocalTab({ protestId, options, selected }, props) {
 
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="endereco">Referência*</label>
-                        <Controller name="endereco" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                        <Controller name="endereco" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
                             <InputTextarea disabled={props.view} rows={5} className={props.endereco ? "p-invalid" : ""} value={value} onChange={onChange}></InputTextarea>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="cidade_num_seq_cidade">Cidade*</label>
-                        <Controller name="cidade_num_seq_cidade" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                        <Controller name="cidade_num_seq_cidade" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
                             <Dropdown className={props.cidade_num_seq_cidade && 'p-invalid'} value={value} options={options} onChange={e => onChange(e.value)} optionLabel="name" optionValue="id" filter filterBy="name" showClear placeholder="Selecione uma cidade" />
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="bairro_num_seq_bairro">Bairro*</label>
-                        <Controller name="bairro_num_seq_bairro" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                        <Controller name="bairro_num_seq_bairro" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
                             <Dropdown className={props.bairro_num_seq_bairro && 'p-invalid'} value={value} options={bairros} onChange={e => onChange(e.value)} optionLabel="bairro" optionValue="num_seq_bairro" filter filterBy="bairro" showClear placeholder="Selecione um bairro" />
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="origem_manifestacao">Origem e/ou Manifestação</label>
-                        <Controller name="origem_manifestacao" control={control} render={({field: { onChange, value }}) =>
+                        <Controller name="origem_manifestacao" control={control} render={({field: { onChange, value = '' }}) =>
                             <Dropdown className={props.origem_manifestacao && 'p-invalid'} value={value} options={origens} onChange={e => onChange(e.value)} optionLabel="name" optionValue="id" filter filterBy="name" showClear placeholder="Selecione uma opção" />
                         } />
                     </div>

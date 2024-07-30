@@ -22,16 +22,15 @@ export default function ProtestoPage(props) {
     const childRef = useRef();
 
     // Redireciona para login caso não esteja autenticado
-    const login = async () => {
-        const session = await getSession();
-        if (!session) {
-          router.push("/login");
-        } else {
-          setloading(false);
-        }
-    };
-    
     useEffect(() => {
+        const login = async () => {
+            const session = await getSession();
+            if (!session) {
+              router.push("/login");
+            } else {
+              setloading(false);
+            }
+        };
         login();
     }, []);
 
@@ -56,15 +55,14 @@ export default function ProtestoPage(props) {
 
     async function deleteButtonClicked(e, search) {
         confirmDialog({
-        message: 'Tem certeza que deseja remover os dados selecionados?',
-        header: 'Confirmação',
-        icon: 'pi pi-exclamation-triangle',
-        accept: () => removeRows(e),
-        acceptLabel: 'Sim',
-        rejectLabel: 'Não'
-        // reject: () => rejectFunc()
-    });
-        
+            message: e.length > 1 ? 'Tem certeza que deseja remover os dados selecionados?' : 'Tem certeza que deseja remover o dado selecionado?',
+            header: 'Confirmação',
+            icon: 'pi pi-exclamation-triangle',
+            accept: () => removeRows(e),
+            acceptLabel: 'Sim',
+            rejectLabel: 'Não'
+            // reject: () => rejectFunc()
+        });
     }
 
     async function removeRows(e){
@@ -107,7 +105,6 @@ export default function ProtestoPage(props) {
             <ConfirmDialog/>
             <div className="p-grid p-formgrid p-m-lg-3 p-m-2">
                 <div className="p-col-12 p-mb-12 p-lg-12 p-mb-lg-0">
-
                     <TableCrud ref={childRef}
                         {...props}
                         title="Protestos"
@@ -125,7 +122,6 @@ export default function ProtestoPage(props) {
 
                         {/* <Column header="Ações" body={actionBodyTemplate}></Column> */}
                     </TableCrud>
-
                 </div>
             </div>
         </div>

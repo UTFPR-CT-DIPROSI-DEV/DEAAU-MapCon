@@ -63,14 +63,14 @@ export function FonteTab({ protestId, options, selected }, props) {
                 <div className="p-fluid p-formgrid p-grid p-mt-lg-2 p-mt-2">
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="fonte_protesto_num_seq_fonte_protesto">Fonte*</label>
-                        <Controller name="fonte_protesto_num_seq_fonte_protesto" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                        <Controller name="fonte_protesto_num_seq_fonte_protesto" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
                             <Dropdown className={props.fonte_protesto_num_seq_fonte_protesto && 'p-invalid'} value={value} options={options} onChange={e => onChange(e.value)} optionLabel="name" optionValue="id" filter filterBy="name" showClear placeholder="Selecione uma fonte" />
                         } />
                     </div>
 
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="referencia">Referência</label>
-                        <Controller name="referencia" control={control} render={({field: { onChange, value }}) =>
+                        <Controller name="referencia" control={control} render={({field: { onChange, value = '' }}) =>
                             <InputTextarea disabled={props.view} rows={5} className={props.referencia ? "p-invalid" : ""} value={value} onChange={onChange}></InputTextarea>
                         } />
                     </div>

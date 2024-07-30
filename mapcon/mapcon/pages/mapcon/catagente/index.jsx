@@ -24,41 +24,36 @@ export default function CatAgentePage(props) {
     const childRef = useRef();
 
     // Redireciona para login caso não esteja autenticado
-    const login = async () => {
-        const session = await getSession();
-        if (!session) {
-          router.push("/login");
-        } else {
-          setloading(false);
-        }
-    };
-    
     useEffect(() => {
+        const login = async () => {
+            const session = await getSession();
+            if (!session) {
+              router.push("/login");
+            } else {
+              setloading(false);
+            }
+        };
         login();
     }, []);
 
 
     async function addButtonClicked(e) {
-
         setshowForm({ visible: true })
-
     }
 
     async function editButtonClicked(row) {
-
         const r = await axios.get('/api/mapcon/catagente', { params: { id: row[0].num_seq_categoria_agente } })
         
         setshowForm({
             visible: true,
             data: r.data,
         })
-
     }
 
 
     async function deleteButtonClicked(e, search) {
         confirmDialog({
-            message: 'Tem certeza que deseja remover os dados selecionados?',
+            message: e.length > 1 ? 'Tem certeza que deseja remover os dados selecionados?' : 'Tem certeza que deseja remover o dado selecionado?',
             header: 'Confirmação',
             icon: 'pi pi-exclamation-triangle',
             accept: () => removeRows(e),
@@ -78,12 +73,10 @@ export default function CatAgentePage(props) {
 
     // Essa function atualiza fecha o dialog e atualiza o datatable o form tiver atualizado
     function closeFormDialog(update) {
-
         setshowForm(false)
         if (update) {
             childRef.current.updateDatatable()
         }
-
     }
 
     // Filtros
@@ -123,26 +116,21 @@ export default function CatAgentePage(props) {
 
 }
 
-
-
 /*
     Dialog para formulário de inclusão/edição do crud
 */
 function CategoriaObjetoForm(props) {
 
-    const { control, handleSubmit, errors } = useForm({ defaultValues: props.showForm.data });
+    const { control, handleSubmit, formState: { errors } } = useForm({ defaultValues: props.showForm.data });
 
     const onSubmit = async data => {
-
-        if(props.showForm.data){ // Editar
+        if (props.showForm.data) { // Editar
             const r = await axios.put('/api/mapcon/catagente',{num_seq_categoria_agente: props.showForm.data.num_seq_categoria_agente,...data})
-        }else{
+        } else {
             const r = await axios.post('/api/mapcon/catagente',data)
         }
-        
 
         props.closeForm(true)
-
     }
 
 
@@ -153,8 +141,8 @@ function CategoriaObjetoForm(props) {
                 <div className="p-fluid p-formgrid p-grid p-mt-lg-4 p-mt-4">
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="desc_categoria_agente">Categoria do Agente</label>
-                        <Controller name="desc_categoria_agente" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
-                            <InputText disabled={props.view} className={errors.catagente ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
+                        <Controller name="desc_categoria_agente" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
+                            <InputText disabled={props.view} className={errors.desc_categoria_agente ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-12">

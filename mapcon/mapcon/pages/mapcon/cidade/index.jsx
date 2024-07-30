@@ -24,30 +24,26 @@ export default function CidadePage(props) {
     const childRef = useRef();
 
     // Redireciona para login caso não esteja autenticado
-    const login = async () => {
-        const session = await getSession();
-        if (!session) {
-          router.push("/login");
-        } else {
-          setloading(false);
-        }
-    };
-    
     useEffect(() => {
+        const login = async () => {
+            const session = await getSession();
+            if (!session) {
+              router.push("/login");
+            } else {
+              setloading(false);
+            }
+        };
         login();
     }, []);
 
 
     async function addButtonClicked(e) {
-
         const r2 = await axios.get('/api/mapcon/cidade?limit=-1')
 
         setshowForm({ visible: true, cidades: r2.data['data'] })
-
     }
 
     async function editButtonClicked(row) {
-
         const r = await axios.get('/api/mapcon/cidade', { params: { id: row[0].num_seq_cidade } })
         const r2 = await axios.get('/api/mapcon/cidade?limit=-1')
 
@@ -60,17 +56,15 @@ export default function CidadePage(props) {
 
 
     async function deleteButtonClicked(e, search) {
-
         confirmDialog({
-        message: 'Tem certeza que deseja remover os dados selecionados?',
-        header: 'Confirmação',
-        icon: 'pi pi-exclamation-triangle',
-        accept: () => removeRows(e),
-        acceptLabel: 'Sim',
-        rejectLabel: 'Não'
-        // reject: () => rejectFunc()
-    });
-        
+            message: e.length > 1 ? 'Tem certeza que deseja remover os dados selecionados?' : 'Tem certeza que deseja remover o dado selecionado?',
+            header: 'Confirmação',
+            icon: 'pi pi-exclamation-triangle',
+            accept: () => removeRows(e),
+            acceptLabel: 'Sim',
+            rejectLabel: 'Não'
+            // reject: () => rejectFunc()
+        });
     }
 
     async function removeRows(e){
@@ -126,23 +120,19 @@ export default function CidadePage(props) {
 
 }
 
-
-
 /*
     Dialog para formulário de inclusão/edição do crud
 */
 function CidadeForm(props) {
 
-    const { control, handleSubmit, errors } = useForm({ defaultValues: props.showForm.data });
+    const { control, handleSubmit, formState: { errors } } = useForm({ defaultValues: props.showForm.data });
 
     const onSubmit = async data => {
-
-        if(props.showForm.data){ // Editar
+        if (props.showForm.data) { // Editar
             const r = await axios.put('/api/mapcon/cidade',{num_seq_cidade: props.showForm.data.num_seq_cidade,...data})
-        }else{
+        } else {
             const r = await axios.post('/api/mapcon/cidade',data)
         }
-        
 
         props.closeForm(true)
 
@@ -156,7 +146,7 @@ function CidadeForm(props) {
                 <div className="p-fluid p-formgrid p-grid p-mt-lg-4 p-mt-4">
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="cidade">Nome da Cidade*</label>
-                        <Controller name="cidade" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                        <Controller name="cidade" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
                             <InputText disabled={props.view} className={errors.cidade ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>

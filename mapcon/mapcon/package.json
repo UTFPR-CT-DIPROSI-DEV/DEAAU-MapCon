@@ -4,8 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000",
+    "start": "next start -p 3000",
     "build": "next build",
-    "start": "next start -p 3000"
+    "clean-output": "rimraf ./build",
+    "copy-files": "copyfiles .next/**/* node_modules/**/* package.json package-lock.json .env.local build",
+    "build-and-copy": "npm run clean-output && npm run build && npm run copy-files"
   },
   "browserslist": [
     ">0.2%",

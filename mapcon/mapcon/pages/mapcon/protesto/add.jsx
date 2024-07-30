@@ -15,7 +15,7 @@ import ToolbarSite from '../../../components/toolbar_site';
 export default function ProtestoForm(props) {
     const router = useRouter()
 
-    const { control, watch, handleSubmit, errors } = useForm({
+    const { control, watch, handleSubmit, formState: { errors } } = useForm({
         defaultValues: props.form
     });
 
@@ -45,15 +45,15 @@ export default function ProtestoForm(props) {
                             <div className="p-fluid p-formgrid p-grid p-mt-lg-4 p-mt-4">
                                 <div className="p-field p-col-12 p-md-9">
                                     <label htmlFor="tema_protesto">Tema*</label>
-                                    {/* <Controller name="tema_protesto" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                                    <Controller name="tema_protesto" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
                                         <InputText disabled={props.view} className={errors.tema_protesto ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
-                                    }/> */}
+                                    }/>
                                 </div>
                                 <div className="p-field p-col-12 p-md-3">
                                     <label htmlFor="data_protesto">Data*</label>
-                                    {/* <Controller name="data_protesto" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                                    <Controller name="data_protesto" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
                                         <InputMask disabled={props.view} className={errors.data_protesto ? "p-invalid" : ""} unmask={false} mask="99/99/9999" value={value} onChange={e => onChange(e.value)}></InputMask>
-                                    }/> */}
+                                    }/>
                                 </div>
                                 <div className="p-field p-col-12 p-md-offset-9 p-md-3">
                                     {!props.view ? <Button label="Adicionar" icon="pi pi-check" /> : null}

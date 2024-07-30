@@ -104,7 +104,7 @@ function GeolocalizacaoForm({ showForm, closeForm }) {
         { id: 'Estimado' },
         { id: 'Percurso' }
     ]
-    const { control, handleSubmit, errors, reset } = useForm({
+    const { control, handleSubmit, formState: { errors }, reset } = useForm({
         defaultValues: {
             nivel_exatidao: '',
             latitude: '',
@@ -137,25 +137,25 @@ function GeolocalizacaoForm({ showForm, closeForm }) {
                 <div className="p-fluid p-formgrid p-grid p-mt-lg-4 p-mt-4">
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="latitude">Latitude*</label>
-                        <Controller name="latitude" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                        <Controller name="latitude" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
                             <InputText disabled={true} className={showForm.latitude ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="longitude">Longitude*</label>
-                        <Controller name="longitude" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                        <Controller name="longitude" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
                             <InputText disabled={true}  className={showForm.longitude ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="nivel_exatidao">Nível de Exatidão*</label>
-                        <Controller name="nivel_exatidao" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                        <Controller name="nivel_exatidao" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
                             <Dropdown className={showForm.nivel_exatidao && 'p-invalid'} value={value} options={exatidao} onChange={e => onChange(e.value)} optionLabel="id" optionValue="id" showClear placeholder="Selecione um nível de exatidão" />
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="raio">Raio*</label>
-                        <Controller name="raio" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+                        <Controller name="raio" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
                             <InputText className={showForm.raio ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>

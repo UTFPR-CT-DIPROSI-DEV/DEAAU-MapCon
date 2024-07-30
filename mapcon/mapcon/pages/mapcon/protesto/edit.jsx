@@ -37,7 +37,7 @@ export default function ProtestoForm(props) {
 
     const toast = useRef(null);
 
-    const { control, watch, handleSubmit, errors } = useForm({
+    const { control, watch, handleSubmit, formState: { errors } } = useForm({
         defaultValues: props.form
     });
 
@@ -79,51 +79,51 @@ export default function ProtestoForm(props) {
         <div className="p-fluid p-formgrid p-grid p-mt-lg-2 p-mt-2">
             <div className="p-field p-col-12 p-md-9">
                 <label htmlFor="tema_protesto">Tema*</label>
-                <Controller name="tema_protesto" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
-                    <InputText disabled={props.view} className={props.tema_protesto ? "" : ""} value={value} onChange={onChange}></InputText>
+                <Controller name="tema_protesto" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
+                    <InputText disabled={props.view} className={errors.tema_protesto ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                 } />
             </div>
             <div className="p-field p-col-12 p-md-3">
                 <label htmlFor="data_protesto">Data*</label>
-                <Controller name="data_protesto" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
-                    <InputMask disabled={props.view} className={props.data_protesto ? "p-invalid" : ""} unmask={false} mask="99/99/9999" value={value} onChange={e => onChange(e.value)}></InputMask>
+                <Controller name="data_protesto" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
+                    <InputMask disabled={props.view} className={errors.data_protesto ? "p-invalid" : ""} unmask={false} mask="99/99/9999" value={value} onChange={e => onChange(e.value)}></InputMask>
                 } />
             </div>
             <div className="p-field p-col-12 p-md-9">
                 <label htmlFor="desc_protesto">Descrição Sumária</label>
-                <Controller name="desc_protesto" control={control} render={({field: { onChange, value }}) =>
-                    <InputText disabled={props.view} className={props.desc_protesto ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
+                <Controller name="desc_protesto" control={control} render={({field: { onChange, value = '' }}) =>
+                    <InputText disabled={props.view} className={errors.desc_protesto ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                 } />
             </div>
             <div className="p-field p-col-12 p-md-3">
                 <label htmlFor="qtde_envolvidos_protesto">Quantidade de Envolvidos</label>
-                <Controller name="qtde_envolvidos_protesto" control={control} render={({field: { onChange, value }}) =>
-                    <InputNumber disabled={props.view} className={props.qtde_envolvidos_protesto ? "p-invalid" : ""} value={value} onChange={e => onChange(e.value)}></InputNumber>
+                <Controller name="qtde_envolvidos_protesto" control={control} render={({field: { onChange, value = '' }}) =>
+                    <InputNumber disabled={props.view} className={errors.qtde_envolvidos_protesto ? "p-invalid" : ""} value={value} onChange={e => onChange(e.value)}></InputNumber>
                 } />
             </div>
             <div className="p-field p-col-12 p-md-12">
                 <label htmlFor="desc_detal_protesto">Descrição</label>
-                <Controller name="desc_detal_protesto" control={control} render={({field: { onChange, value }}) =>
-                    <InputTextarea disabled={props.view} rows={5} className={props.desc_detal_protesto ? "p-invalid" : ""} value={value} onChange={onChange}></InputTextarea>
+                <Controller name="desc_detal_protesto" control={control} render={({field: { onChange, value = '' }}) =>
+                    <InputTextarea disabled={props.view} rows={5} className={errors.desc_detal_protesto ? "p-invalid" : ""} value={value} onChange={onChange}></InputTextarea>
                 } />
             </div>
             {/* <div className="p-field p-col-12 p-md-6">
             <label htmlFor="cidade_num_seq_cidade">Conflito</label>
-            <Controller name="cidade_num_seq_cidade" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
+            <Controller name="cidade_num_seq_cidade" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
                 <Dropdown className={props.cidade_num_seq_cidade && 'p-invalid'} value={value} options={cidades} onChange={e => onChange(e.value)} optionLabel="cidade" optionValue="num_seq_cidade" showClear placeholder="Selecione uma Cidade" />
             } />
         </div> */}
             <div className="p-field p-col-12 p-md-6">
                 <label htmlFor="status">Status*</label>
-                <Controller name="status" rules={{ required: true }} control={control} render={({field: { onChange, value }}) =>
-                    <Dropdown className={props.status && 'p-invalid'} value={value} options={status_options} onChange={e => onChange(e.value)} optionLabel="label" optionValue="id" showClear placeholder="Selecione um status" />
+                <Controller name="status" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
+                    <Dropdown className={errors.status && 'p-invalid'} value={value} options={status_options} onChange={(e) => onChange(e.value)} optionLabel="label" optionValue="id" showClear placeholder="Selecione um status" />
                 }/>
             </div>
 
             <div className="p-field p-col-12 p-md-6">
                 <label htmlFor="conflito_num_seq_conflito">Conflito</label>
-                <Controller name="conflito_num_seq_conflito" control={control} render={({field: { onChange, value }}) =>
-                    <Dropdown className={props.conflito_num_seq_conflito && 'p-invalid'} value={value} options={props.conflitos_all} onChange={e => onChange(e.value)} optionLabel="name" optionValue="id" filter filterBy="name"  showClear placeholder="Selecione um conflito" />
+                <Controller name="conflito_num_seq_conflito" control={control} render={({field: { onChange, value = '' }}) =>
+                    <Dropdown className={errors.conflito_num_seq_conflito && 'p-invalid'} value={value} options={props.conflitos_all} onChange={e => onChange(e.value)} optionLabel="name" optionValue="id" filter filterBy="name"  showClear placeholder="Selecione um conflito" />
                 }/>
             </div>
             <div className="p-field p-col-12 p-md-offset-9 p-md-3">

@@ -1,5 +1,4 @@
 # Files / REGEX
-
 Tracker/src/test.js
 *.pem
 *.jpeg
@@ -11,6 +10,7 @@ tmp.py
 *.env.local
 
 # Directories
+BASH/
 
 # *.sql
 python_crawlers/
