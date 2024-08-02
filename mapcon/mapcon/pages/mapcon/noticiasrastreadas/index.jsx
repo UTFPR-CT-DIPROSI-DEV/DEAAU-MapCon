@@ -41,9 +41,9 @@ export default function NoticiasRastreadasPage(props) {
 
   async function deleteButtonClicked(e, search) {
     confirmDialog({
-      message: "Tem certeza que deseja remover os dados selecionados?",
+      message: e.length > 1 ? 'Tem certeza que deseja remover os dados selecionados?' : 'Tem certeza que deseja remover o dado selecionado?',
       header: "Confirmação",
-      icon: "pi pi-exclamation-triangle",
+      icon: "pi pi-exclamation-triangle pi-red",
       accept: () => removeRows(e),
       acceptLabel: "Sim",
       rejectLabel: "Não",
@@ -222,15 +222,22 @@ function MigraNoticiaForm({ showForm, closeForm }) {
   const onSubmit = async (dados) => {
     setSending(true);
     dados.url = url;
-
     dados.data = moment(dados.data).format("yyyy-MM-DD");
 
-    const ret = await axios
+    await axios
       .post(`/api/mapcon/migra`, dados)
       .then(() => setSending(false))
       .catch(() => setSending(false));
     closeForm(true);
   };
+
+  async function removeEl(url) {
+    await axios.delete("/api/mapcon/crawling_news", {
+      data: { url: url },
+    });
+
+    closeForm(true);
+  }
 
   useEffect(() => {
     console.log(close_protests);
@@ -355,12 +362,27 @@ function MigraNoticiaForm({ showForm, closeForm }) {
               />
             </div>
           ) : null}
-          <div className="p-field p-col-12 p-md-offset-6 p-md-6">
-            <Button
-              disabled={sending}
-              label={sending ? "Atualizando..." : "Atualizar"}
-              icon="pi pi-check"
-            />
+          
+          <div style={{
+            position: "relative",
+            display: "inline-flex",
+            width: "100%",
+          }}>
+            <div className="p-col-12 p-md-6">
+              <Button
+                label="Remover Notícia"
+                icon="pi pi-times"
+                onClick={() => removeEl(url)}
+                className="p-button-danger"
+              />
+            </div>
+            <div className="p-col-12 p-md-6">
+              <Button
+                disabled={sending}
+                label={sending ? "Atualizando..." : "Atualizar"}
+                icon="pi pi-check"
+              />
+            </div>
           </div>
         </div>
       </form>

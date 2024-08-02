@@ -7,7 +7,7 @@
     "start": "next start -p 3000",
     "build": "next build",
     "clean-output": "rimraf ./build",
-    "copy-files": "copyfiles .next/**/* node_modules/**/* package.json package-lock.json .env.local build",
+    "copy-files": "copyfiles .next/**/* node_modules/**/* public/**/* package.json package-lock.json .env.local knexfile.js next-env.d.ts tsconfig.json build",
     "build-and-copy": "npm run clean-output && npm run build && npm run copy-files"
   },
   "browserslist": [
@@ -34,7 +34,6 @@
     "primeicons": "^4.1.0",
     "primereact": "^10.2.0-rc.2",
     "process": "^0.11.10",
-    "puppeteer": "^19.11.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.49.2",
@@ -46,7 +45,9 @@
   },
   "devDependencies": {
     "@types/react": "18.2.45",
-    "puppeteer": "^19.11.0",
-    "typescript": "^4.7.4"
+    "typescript": "^4.7.4",
+    "rimraf": "^6.0.1",
+    "sharp": "^0.33.4",
+    "copyfiles": "^2.4.1"
   }
 }

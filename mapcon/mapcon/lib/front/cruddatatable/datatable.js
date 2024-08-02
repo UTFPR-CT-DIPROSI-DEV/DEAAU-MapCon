@@ -57,7 +57,7 @@ const TableCrud = forwardRef((props, ref) => {
             result => {
                 setRows(result['data']['data'])
                 setTotal(result['data']['total'])
-                console.debug('result: ', result['data']['data'], ' total: ', result['data']['total']);
+                // console.debug('result: ', result['data']['data'], ' total: ', result['data']['total']);
             },
             error => {
                 console.debug('error: ', error);
@@ -175,7 +175,7 @@ const TableCrud = forwardRef((props, ref) => {
                 <DataTable header={props.title} className="p-datatable-responsive-demo" id="dt_01" loading={loading} selectionMode="multiple" lazy={true} resizableColumns={true} selection={selected} onSelectionChange={e => selectDataTable(e)} columnResizeMode="fit" sortField={sortField} sortOrder={sortOrder} onSort={(e) => orderDataTable(e)} value={rows}>
                     {props.children.map((child, index) => 
                         child.props.field !== undefined && child.props.body == undefined
-                        ? <Column  key={child.props.field + "_" + index} {...child.props} body={(rowData => responsiveBodyTemplate(rowData, child.props.field, child.props.header))}></Column>
+                        ? <Column key={child.props.field + "_" + index} {...child.props} body={(rowData => responsiveBodyTemplate(rowData, child.props.field, child.props.header))}></Column>
                         : <Column key={child.props.field + "_" + index} {...child.props}></Column>)}
                 </DataTable>
                 <Paginator id="paginator" first={first} rows={rowsPerPage} rowsPerPageOptions={[10, 20, 30]} totalRecords={total} onPageChange={(e) => pagDataTable(e)}></Paginator>

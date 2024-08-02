@@ -93,7 +93,7 @@ export default function ProtestoPage(props) {
         return (
             <div>
                 <span className="p-column-title">Status</span>
-                {rowData.status == 0 ? <Tag className="p-mr-2" severity="warning" value="Em Preenchimento"/> : <Tag className="p-mr-2" value="Finalizado"/>}
+                {rowData.status == 0 ? <Tag className="p-mr-2" severity="warning" value="Em Preenchimento"/> : (rowData.status == 1 ? <Tag className="p-mr-2" severity="success" value="Finalizado"/> : <Tag className="p-mr-2" value="Finalizado (NP)"/>)}
             </div>
         );
     }

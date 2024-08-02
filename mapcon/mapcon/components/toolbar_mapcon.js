@@ -5,7 +5,6 @@ import { Button } from 'primereact/button';
 import Link from "next/link";
 import { signIn, signOut, useSession } from 'next-auth/react'
 
-
 export default function ToolbarMapCon() {
   
   const router = useRouter();

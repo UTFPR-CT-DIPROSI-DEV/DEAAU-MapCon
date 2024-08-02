@@ -5,6 +5,7 @@ import { removeAccents } from "./utils.js";
 function classifier(body) {
     const keywords = [
                         " conflito",
+                        " comunidade",
                         " protesto",
                         " manifestação",
                         " manifestante",

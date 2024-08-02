@@ -25,19 +25,25 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const img_name = uuidv1();
 
       // Tira o screenshot
-      await captureWebsite.file(
-        req.body.url,
-        `public/images/news/${img_name}.jpeg`,
-        {
-          launchOptions: {
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
-          },
-          fullPage: true,
-          scaleFactor: 0.5,
-          quality: 0.5,
-          type: "jpeg",
-        }
-      );
+      let add_screenshot = true;
+      try {
+        await captureWebsite.file(
+          req.body.url,
+          `public/images/news/${img_name}.jpeg`,
+          {
+            launchOptions: {
+              args: ["--no-sandbox", "--disable-setuid-sandbox"],
+            },
+            fullPage: true,
+            scaleFactor: 0.5,
+            quality: 0.5,
+            type: "jpeg",
+          }
+        );
+      } catch (e) {
+        add_screenshot = false;
+        console.log("Erro ao tirar screenshot: ", e);
+      }
 
       if (typeof req.body.existente == "number") {
         // Vincula com um protesto já existente
@@ -49,10 +55,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           referencia: req.body.url,
         });
         // Adicionar documento
-        await db("screenshot").insert({
-          id: img_name,
-          id_protesto: req.body.existente,
-        });
+        if (add_screenshot) {
+          await db("screenshot").insert({
+            id: img_name,
+            id_protesto: req.body.existente,
+          });
+        }
       } else {
         const ret = await db("protesto")
           .insert({
@@ -68,13 +76,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           referencia: req.body.url,
         });
         // Adicionar documento
-        await db("screenshot").insert({
-          id: img_name,
-          id_protesto: ret[0]["num_seq_protesto"],
-        });
+        if (add_screenshot) {
+          await db("screenshot").insert({
+            id: img_name,
+            id_protesto: ret[0]["num_seq_protesto"],
+          });
+        }
       }
     }
-
+    
     res.status(200).json({ ok: "Gerou" });
   }
 };
