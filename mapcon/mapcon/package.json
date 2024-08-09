@@ -6,6 +6,7 @@
     "dev": "next dev -p 3000",
     "start": "next start -p 3000",
     "build": "next build",
+    "test": "node test.js",
     "clean-output": "rimraf ./build",
     "copy-files": "copyfiles .next/**/* node_modules/**/* public/**/* package.json package-lock.json .env.local knexfile.js next-env.d.ts tsconfig.json build",
     "build-and-copy": "npm run clean-output && npm run build && npm run copy-files"
@@ -20,7 +21,6 @@
     "@types/next-auth": "^3.1.24",
     "axios": "^1.6.2",
     "bcryptjs": "^2.4.3",
-    "capture-website": "^2.3.0",
     "chart.js": "^3.5.0",
     "knex": "^3.1.0",
     "latest": "^0.2.0",
@@ -34,6 +34,7 @@
     "primeicons": "^4.1.0",
     "primereact": "^10.2.0-rc.2",
     "process": "^0.11.10",
+    "puppeteer": "^23.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.49.2",
@@ -45,9 +46,9 @@
   },
   "devDependencies": {
     "@types/react": "18.2.45",
-    "typescript": "^4.7.4",
+    "copyfiles": "^2.4.1",
     "rimraf": "^6.0.1",
     "sharp": "^0.33.4",
-    "copyfiles": "^2.4.1"
+    "typescript": "^4.7.4"
   }
 }

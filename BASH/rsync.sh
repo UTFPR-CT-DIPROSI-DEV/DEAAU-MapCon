@@ -11,5 +11,6 @@ DEST=$4
 eval "$(ssh-agent)" > /dev/null
 ssh-add ${PKEYFILE} > /dev/null
 # scp -o ForwardAgent=yes -J ${USERNAME}@${BASTION_HOST} ${SRC} ${DEST}
-rsync -avz --quiet -e "ssh -J ${USERNAME}@${BASTION_HOST}" ${SRC} ${DEST}
+# rsync -avz --quiet -e "ssh -J ${USERNAME}@${BASTION_HOST}" ${SRC} ${DEST}
+rsync -ahz --delete -e "ssh -J ${USERNAME}@${BASTION_HOST}" ${SRC} ${DEST}
 eval "$(ssh-agent -k)" > /dev/null

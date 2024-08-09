@@ -1,20 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import captureWebsite from "capture-website";
-// import { getSession } from "next-auth/react";
+import puppeteer  from "puppeteer";
 import { getServerSession } from 'next-auth/next';
 import db from "../../../lib/back/db";
 import { v1 as uuidv1 } from "uuid";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  // const session = await getSession({ req });
-    const session = await getServerSession(req , res, {});;
+  const session = await getServerSession(req , res, {});;
 
   if (session) {
     console.log(req.body);
     if (!req.body.is_protesto) {
       await db("crawling.crawling_news")
         .where({ url: req.body.url })
-        .update({ tipo: false });
+        .delete();
     } else {
       // Marca como protesto
       await db("crawling.crawling_news")
@@ -27,19 +25,33 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       // Tira o screenshot
       let add_screenshot = true;
       try {
-        await captureWebsite.file(
-          req.body.url,
-          `public/images/news/${img_name}.jpeg`,
-          {
-            launchOptions: {
-              args: ["--no-sandbox", "--disable-setuid-sandbox"],
-            },
-            fullPage: true,
-            scaleFactor: 0.5,
-            quality: 0.5,
-            type: "jpeg",
-          }
-        );
+        // Launch the browser and open a new blank page
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+      
+        // Navigate the page to a URL
+        await page.goto(req.body.url, {
+          waitUntil: 'networkidle2',
+        });
+        await page.screenshot({
+          path: `public/images/news/${img_name}.jpeg`,
+          fullPage: true,
+          type: 'jpeg',
+        });
+        await browser.close();
+        // await captureWebsite.file(
+        //   req.body.url,
+        //   `public/images/news/${img_name}.jpeg`,
+        //   {
+        //     launchOptions: {
+        //       args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        //     },
+        //     fullPage: true,
+        //     scaleFactor: 0.5,
+        //     quality: 0.5,
+        //     type: "jpeg",
+        //   }
+        // );
       } catch (e) {
         add_screenshot = false;
         console.log("Erro ao tirar screenshot: ", e);
@@ -82,9 +94,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             id_protesto: ret[0]["num_seq_protesto"],
           });
         }
+
+        await db("crawling.crawling_news")
+          .where({ url: req.body.url })
+          .delete();
       }
     }
     
-    res.status(200).json({ ok: "Gerou" });
+    res.status(200).json({ ok: "Migrou" });
   }
 };
