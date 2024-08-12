@@ -1,22 +1,21 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require("puppeteer");
 
-console.log('1');
-(async () => {
+async function takeScreenshot(url, img_name) {
     // Launch the browser and open a new blank page
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
   
     // Navigate the page to a URL
-    await page.goto('https://developer.chrome.com/', {
+    await page.goto(url, {
         waitUntil: 'networkidle2',
     });
-    console.log('2');
     await page.screenshot({
-        path: 'ss.jpeg',
+        path: `public/images/news/${img_name}.jpeg`,
         fullPage: true,
         type: 'jpeg',
     });
-
     await browser.close();
-  })();
-console.log('3');
+}
+
+takeScreenshot(process.argv[2], process.argv[3]);
+  

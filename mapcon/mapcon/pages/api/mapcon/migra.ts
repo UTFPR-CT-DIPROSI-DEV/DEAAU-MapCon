@@ -1,8 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import puppeteer  from "puppeteer";
 import { getServerSession } from 'next-auth/next';
 import db from "../../../lib/back/db";
 import { v1 as uuidv1 } from "uuid";
+import { exec } from "child_process";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getServerSession(req , res, {});;
@@ -24,38 +24,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       // Tira o screenshot
       let add_screenshot = true;
-      try {
-        // Launch the browser and open a new blank page
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
-      
-        // Navigate the page to a URL
-        await page.goto(req.body.url, {
-          waitUntil: 'networkidle2',
-        });
-        await page.screenshot({
-          path: `public/images/news/${img_name}.jpeg`,
-          fullPage: true,
-          type: 'jpeg',
-        });
-        await browser.close();
-        // await captureWebsite.file(
-        //   req.body.url,
-        //   `public/images/news/${img_name}.jpeg`,
-        //   {
-        //     launchOptions: {
-        //       args: ["--no-sandbox", "--disable-setuid-sandbox"],
-        //     },
-        //     fullPage: true,
-        //     scaleFactor: 0.5,
-        //     quality: 0.5,
-        //     type: "jpeg",
-        //   }
-        // );
-      } catch (e) {
-        add_screenshot = false;
-        console.log("Erro ao tirar screenshot: ", e);
-      }
+      const command = `node screenshot.js ${req.body.url} ${img_name}`;
+      exec(command, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`Erro ao tirar screenshot: ${error}`);
+          console.log(`stdout: ${stdout}`);
+          console.error(`stderr: ${stderr}`);
+          add_screenshot = false;
+          return;
+        }
+      });
 
       if (typeof req.body.existente == "number") {
         // Vincula com um protesto já existente
@@ -75,11 +53,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
       } else {
         const ret = await db("protesto")
-          .insert({
-            data_protesto: req.body.data,
-            tema_protesto: req.body.titulo,
-          })
-          .returning("*");
+            .insert({
+              data_protesto: req.body.data,
+              tema_protesto: req.body.titulo,
+            })
+            .returning("*");
 
         // Adicionar fonte
         await db("fonte").insert({

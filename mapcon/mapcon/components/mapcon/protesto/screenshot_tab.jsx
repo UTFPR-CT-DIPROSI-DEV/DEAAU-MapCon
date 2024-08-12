@@ -11,7 +11,7 @@ import { useEffect } from "react";
 
 export function ScreenshotTab({ screenshots }) {
     function acoesTemplate(rowData) {
-        const img_link = `/images/news/${rowData.id}.jpeg`
+        const img_link = `/api/news/${rowData.id}.jpeg`;
         return <a target="blank" href={img_link}><img src={img_link} alt={img_link} style={{ width: '100px', height: '200px' }}/></a>;
     }
 

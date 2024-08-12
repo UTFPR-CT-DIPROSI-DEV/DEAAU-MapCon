@@ -1,5 +1,5 @@
 import React from 'react';
-import dynamic, { noSSR } from 'next/dynamic'
+import dynamic from 'next/dynamic'
 import db from '../lib/back/db.js';
 import ToolbarSite from '../components/toolbar_site';
 
