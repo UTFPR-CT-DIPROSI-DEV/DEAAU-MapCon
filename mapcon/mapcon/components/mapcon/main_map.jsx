@@ -51,9 +51,8 @@ export default function MainMap({ conflitos }) {
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png" />
 
-                {conflitos.length > 0 && conflitos.map(element => {
-                    console.log(element)
-                    return (<CircleMarker key={element.protesto_num_seq_protesto} center={[element.latitude, element.longitude]} radius={5} pathOptions={{ color: 'red',fillColor: 'red' }}>
+                {conflitos.length > 0 && conflitos.map((element) => {
+                    return (<CircleMarker key={`${element.protesto_num_seq_protesto}`} center={[element.latitude, element.longitude]} radius={5} pathOptions={{ color: 'red',fillColor: 'red' }}>
                         <Popup>
                             <p><b>{element.data}</b></p>
                             {element.tema_protesto}

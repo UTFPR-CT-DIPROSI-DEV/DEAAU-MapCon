@@ -7,7 +7,6 @@ import ToolbarMapCon from "../../../components/toolbar_mapcon";
 import Loading from "../../../components/loading/loading";
 import { getSession } from "next-auth/react";
 import { Dialog } from "primereact/dialog";
-import { Dropdown } from "primereact/dropdown";
 import { RadioButton } from "primereact/radiobutton";
 import { useForm, Controller } from "react-hook-form";
 import { Button } from "primereact/button";
@@ -16,6 +15,7 @@ import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 import { InputSwitch } from "primereact/inputswitch";
 import { Tag } from "primereact/tag";
 import { Calendar } from "primereact/calendar";
+import { Tooltip } from "primereact/tooltip";
 import moment from "moment";
 
 export default function NoticiasRastreadasPage(props) {
@@ -23,11 +23,13 @@ export default function NoticiasRastreadasPage(props) {
 
   const [showForm, setshowForm] = useState({ visible: false });
   const [loading, setloading] = useState(true);
+  const [defaultDate, setDefaultDate] = useState(new Date());
 
   // Para conseguir atualizar datatable
   const childRef = useRef();
 
   useEffect(() => {
+    setDefaultDate(new Date());
     const login = async () => {
       const session = await getSession();
       if (!session) {
@@ -88,6 +90,7 @@ export default function NoticiasRastreadasPage(props) {
   const filters = [
     { label: "Título", value: "titulo", types: ["contain", "equal"] },
     { label: "URL", value: "url", types: ["contain", "equal"] },
+    { label: "Data", value: "data", types: ["a partir de", "antes de"] },
   ];
 
   const dataBodyTemplate = (rowData) => {
@@ -129,14 +132,18 @@ export default function NoticiasRastreadasPage(props) {
     );
   }
   
-  function openURLBodyTemplate(rowData) {
+  function openURLBodyTemplate(rowData) {   
     return (
       <React.Fragment>
         <span className="p-column-title">URL</span>
         <Button
+          tooltip="Clique com o botão direito do mouse para copiar"
+          tooltipOptions={{showDelay: 800}}
           icon="pi pi-link"
-          className="p-button-primary p-mr-2"
+          className="p-button-primary p-mr-2 urlBtn"
           onClick={() => window.open(rowData.url, "_blank")}
+          onAuxClick={() => navigator.clipboard.writeText(rowData.url)}
+          onContextMenu={(e) => {e.preventDefault()}}
         />
       </React.Fragment>
     );
@@ -194,7 +201,8 @@ export default function NoticiasRastreadasPage(props) {
         <MigraNoticiaForm
           showForm={showForm}
           closeForm={(update) => closeFormDialog(update)}
-        ></MigraNoticiaForm>
+          defaultDate={defaultDate}
+        />
       ) : null}
     </div>
   );
@@ -210,11 +218,11 @@ function MigraNoticiaForm({ showForm, closeForm }) {
 
   const [sending, setSending] = useState(false);
 
-  const { control, watch, handleSubmit, errors } = useForm({
+  const { control, watch, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
       is_protesto: false,
       existente: null,
-      data: moment(data).format('dd/mm/yyyy'),
+      data: new Date(data),
       titulo: titulo,
     },
   });
@@ -239,10 +247,6 @@ function MigraNoticiaForm({ showForm, closeForm }) {
     closeForm(true);
   }
 
-  useEffect(() => {
-    console.log(close_protests);
-  }, []);
-
   const isProtesto = watch("is_protesto");
   const isExistenteSet = watch("existente");
 
@@ -251,8 +255,10 @@ function MigraNoticiaForm({ showForm, closeForm }) {
       header="Avaliar Notícia Rastreada"
       className="p-fluid"
       modal
+      draggable={false}
       visible={showForm.visible}
       onHide={() => closeForm(false)}
+      style={{ width: "60vw" }}
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="p-fluid p-formgrid p-grid p-mt-lg-4 p-mt-4">
@@ -296,7 +302,7 @@ function MigraNoticiaForm({ showForm, closeForm }) {
                 render={({field: { onChange, value = '' }}) => (
                   <>
                     {close_protests?.map((protest) => (
-                      <div className="p-field-radiobutton">
+                      <div className="p-field-radiobutton" key={protest.num_seq_protesto}>
                         <RadioButton
                           inputId="existente"
                           name="existente"
@@ -325,16 +331,16 @@ function MigraNoticiaForm({ showForm, closeForm }) {
               />
             </div>
           ) : null}
-          {isProtesto && isExistenteSet === "novo" ? (
+          {/* {isProtesto && isExistenteSet === "novo" ? (
             <div className="p-field p-col-12 p-md-6">
               <label htmlFor="data">Data*</label>
               <Controller
                 name="data"
                 rules={{ required: true }}
                 control={control}
-                render={({field: { onChange, value = '' }}) => (
+                render={({field: { onChange, value }}) => (
                   <Calendar
-                    value={data}
+                    value={value}
                     onChange={(e) => onChange(e.value)}
                     dateFormat="dd/mm/yy"
                     mask="99/99/9999"
@@ -343,9 +349,9 @@ function MigraNoticiaForm({ showForm, closeForm }) {
                 )}
               />
             </div>
-          ) : null}
+          ) : null} */}
           {isProtesto && isExistenteSet === "novo" ? (
-            <div className="p-field p-col-12 p-md-6">
+            <div className="p-field p-col-12 p-md-12">
               <label htmlFor="titulo">Tema*</label>
               <Controller
                 name="titulo"
@@ -354,7 +360,7 @@ function MigraNoticiaForm({ showForm, closeForm }) {
                 render={({field: { onChange, value = '' }}) => (
                   <InputText
                     disabled={!isProtesto}
-                    // className={errors.titulo ? "p-invalid" : ""}
+                    className={errors.titulo ? "p-invalid" : ""}
                     value={value}
                     onChange={onChange}
                   ></InputText>

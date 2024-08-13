@@ -77,6 +77,7 @@ export default function ProtestoPage(props) {
     // Filtros
     const filters = [
         { label: 'Tema', value: 'tema_protesto', types: ['contain', 'equal'] },
+        { label: "Data", value: "data_protesto", types: ["a partir de", "antes de"] },
     ];
 
 

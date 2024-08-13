@@ -7,7 +7,7 @@ notes2self.md
 *.tar.gz
 local.csv
 tmp.py
-*.env.local
+**/*/.env*
 
 # Directories
 BASH/

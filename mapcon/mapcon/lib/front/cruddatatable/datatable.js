@@ -71,7 +71,8 @@ const TableCrud = forwardRef((props, ref) => {
             const ret = await axios.get(props.url, {
                 params: {
                     filters: JSON.stringify([{ "type": typeFilter, "field": field, "value": value }]),
-                    order: { "order": sOrder ? sOrder : sortOrder, "field": sField ? sField : sortField },
+                    // order: { "order": sOrder ? sOrder : sortOrder, "field": sField ? sField : sortField },
+                    order: JSON.stringify({ "order": sOrder ? sOrder : sortOrder, "field": sField ? sField : sortField }),
                     limit: rows != null ? rows : rowsPerPage,
                     page: p != null ? p : page
                 }
@@ -93,7 +94,6 @@ const TableCrud = forwardRef((props, ref) => {
                 setTotal(result['data']['total'])
                 setSortField(e.sortField == null ? sortField : e.sortField)
                 setsortOrder(e.sortOrder == null ? sortOrder : e.sortOrder)
-
             }
         );
 

@@ -87,6 +87,7 @@ export default function BairroPage(props) {
     // Filtros
     const filters = [
         { label: 'Bairro', value: 'bairro', types: ['contain', 'equal'] },
+        { label: 'Cidade', value: 'cidade', types: ['contain', 'equal'] },
     ];
 
 

@@ -9,11 +9,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getServerSession(req , res, {});
     if (session) {
         if (req.method == 'GET' && req.query.id) {
-            console.debug('req.query.id', req.query.id)
+            // console.debug('req.query.id', req.query.id)
             res.status(200).json(await base.getModel('crawling.crawling_news', { 'url': req.query.id }))
         } else if (req.method == 'GET') {     
-            console.debug('req.query', req.query)    
-            // req.query['where_raw'] = 'tipo is null'   
+            // console.debug('req.query', req.query)    
             res.status(200).json(await base.getModels('crawling.crawling_news', req.query))
         } else if (req.method == 'PUT'){
             res.status(200).json(await base.updateModel('crawling.crawling_news',{ 'url': req.body.url },req.body))

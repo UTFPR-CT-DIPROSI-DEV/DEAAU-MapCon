@@ -25,6 +25,12 @@ var base = {
                 if (filter.type == 'equal') {
                     getModel.where(filter.field, filter.value);
                 }
+                if (filter.type == 'a partir de') {
+                    getModel.where(filter.field, '>=', filter.value);
+                }
+                if (filter.type == 'antes de') {
+                    getModel.where(filter.field, '<', filter.value);
+                }
             });
         }
 
@@ -45,14 +51,14 @@ var base = {
 
         // Ordenando
         if (search['order']) {
-
             const o =  JSON.parse(search['order'])
-
-            if (o.order == 1) {
-                getModel.orderBy(o.field, 'ASC');
-            // } else if (o.order == -1) {
-            } else {
-                getModel.orderBy(o.field, 'DESC');
+            if(o.field) {
+                if (o.order == 1) {
+                    getModel.orderBy(o.field, 'ASC');
+                // } else if (o.order == -1) {
+                } else {
+                    getModel.orderBy(o.field, 'DESC');
+                }
             }
         }
 
