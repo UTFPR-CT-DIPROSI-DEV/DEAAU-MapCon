@@ -2,7 +2,8 @@ import { CheerioCrawler, log, RequestQueue } from "crawlee";
 import { classifier, filter_URL } from "./classifier.js";
 import { 
     removeAccents, 
-    extractText, 
+    extractText,
+    extractTitle,
     saveRunStatus, 
     saveToDB, 
     readRunStatus, 
@@ -63,9 +64,7 @@ async function runCrawler() {
         ],
         async requestHandler({ request, $, body, enqueueLinks }) {
             try {
-                const title1 = $('title').text();
-                const title2 = $('.post-title').first().text();
-                const title = title2.startsWith(title1) ? title2 : title1;
+                const title = extractTitle(body);
                 
                 const links = $('a[href]')
                     .map((_, el) => $(el).attr('href'))
@@ -86,7 +85,7 @@ async function runCrawler() {
                 // Creating an object with the data scraped from the current page
                 const data = {
                     url          : cleanURL(request.loadedUrl),
-                    // cidades      : [{}],
+                    cidades      : JSON.stringify([{"uf": "PR", "municipio": "Curitiba", "populacao": 1933105}]),  // Must be a JSON string before inserting
                     titulo       : removeAccents(title),
                     data_insercao: new Date(),
                     termos       : [],
@@ -101,12 +100,12 @@ async function runCrawler() {
                     const [protesto, termos] = classifier(data.content);
                     data.tipo = protesto === true ? 't' : 'f';
                     data.data = await getArticleDate(data.url);
-                    data.termos = termos;
+                    data.termos = termos.map(termo => removeAccents(termo));
                     // await Dataset.pushData(data);
                     if (data.tipo === 't') {
                         await saveToDB(data);
                     }
-                    log.debug(`URL: ${data.url} - Protesto: ${data.protesto} - Title: ${title} - Title 2: ${title2}`);
+                    log.debug(`URL: ${data.url} -  \u001b[34m Protesto: ${data.tipo}\u001b[0m - \u001b[32m Title: ${title}!\u001b[0m, \u001b[31m Termos: ${data.termos}\u001b[0m`);
                 }
                 
                 // Finally, we have to add the URLs to the queue

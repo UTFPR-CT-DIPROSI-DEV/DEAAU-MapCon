@@ -1,40 +1,45 @@
-import { removeAccents } from "./utils.js";
-
 // Determines whether or not a given article's subject
 // is related to "Urban conflicts" and "Curitiba".
 function classifier(body) {
-    const keywords = [
-        " conflito",
-        " comunidade",
-        " protesto",
-        " manifestação",
-        " manifestante",
-        " moradores",
-        " greve",
-        " paralisação",
-        " passeata",
-        " bloqueio",
-        " confronto",
-        " violento",
-        " tensão",
-        " tumulto",
-        " invasão",
-        " invasões",
-        " ocupação",
-        " ocupações",
-        " desocupação",
-        " desalojamento",
-        " deslocamento",
-        " reintegração",
-    ];
+    // Number defines the amount of matching words needed to classify
+    // the article as a protest.
+    // 1: High confidence, 2: Medium confidence, ...
+    const keywordsDict = {
+        " conflito":      1,
+        " comunidade":    2,
+        " protesto":      1,
+        " protestam":     1,
+        " manifestação":  1,
+        " manifestante":  1,
+        " moradores":     2,
+        " greve":         1,
+        " paralisação":   1,
+        " passeata":      2,
+        " bloqueio":      2,
+        " confronto":     2,
+        " violento":      2,
+        " tensão":        2,
+        " tumulto":       1,
+        " invasão":       1,
+        " invasões":      2,
+        " ocupação":      1,
+        " ocupações":     1,
+        " desocupação":   1,
+        " desalojamento": 1,
+        " deslocamento":  2,
+        " reintegração":  1,
+    };
     // Normalize the body content to lowercase
     const normalizedBody = body.toLowerCase();
     let termos = [];
     let found = false;
-    for (const keyword of keywords) {
+    for (const keyword in keywordsDict) {
         if (normalizedBody.includes(keyword)) {
-            termos.push(removeAccents(keyword));
-            found = true;
+            termos.push((keyword));
+            for(const key of termos) {
+                if (Object.keys(termos).length >= keywordsDict[key])
+                    found = true;
+            }
         }
     }
     return [found, termos];

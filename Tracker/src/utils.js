@@ -37,6 +37,27 @@ export function extractText(html) {
     return text;
 }
 
+// Function to extract the correct title of the articles
+export function extractTitle(html) {
+    // Load the HTML into cheerio
+    const $ = cheerio.load(html);
+
+    // Extract the title from the HTML
+    const matches = $('h1[class*="title"]').map((i, el) => $(el).text()).get();
+    let title = '';
+    if (matches.length === 0) {
+        title = $('title').text();
+    } else {
+        title = matches.reduce((acc, el) => {return el.length > acc.length ? el : acc});
+    }
+
+    // Remove any leading or trailing whitespace
+    title = title.trim();
+
+    return title;
+}
+
+
 // Function to concatenate two JSON objects
 function jsonConcat(o1, o2) {
     for (let key in o2) {
@@ -80,7 +101,7 @@ export function saveRunStatus(run) {
 
     const date = new Date();
     let runStatus = {
-        day: date.toLocaleDateString(),
+        day: date.toLocaleDateString('en-GB'),
         time: date.toLocaleTimeString(),
     };
 
