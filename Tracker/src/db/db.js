@@ -1,6 +1,5 @@
-import dotenv from "dotenv";
-dotenv.config({path: '.env.local'});
-
+import dotenv from 'dotenv';
+dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 import knex from 'knex';
 
 const db = knex({
@@ -18,8 +17,8 @@ const db = knex({
     },
 });
 
-// await db.raw("SELECT VERSION()").then(() => {
-//     console.debug('Database connection established!');
-// });
+await db.raw("SELECT VERSION()").then(() => {
+    console.debug('Database connection established!');
+});
 
 export default db;

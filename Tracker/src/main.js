@@ -9,6 +9,10 @@ import {
     getArticleDate, 
     cleanURL 
 } from "./utils.js";
+import db from "./db/db.js";
+
+// Environment variables are defined in .env files and imported
+// using the dotenv package in the db/db.js file
 
 // Set the log level to DEBUG to see all the logs
 log.setLevel(process.env.LOG_LEVEL);
@@ -24,6 +28,7 @@ const defaultURLS = [
     "http://www.bemparana.com.br/",
     "http://www.bandab.com.br/",
     "http://bandnewsfmcuritiba.com/",
+    "https://www.brasildefatopr.com.br/2024/08/06/familias-do-assentamento-eli-vive-protestam-para-que-prefeitura-conclua-obras-em-estradas-rurais-em-londrina"
 ];
 
 async function runCrawler() {
@@ -35,7 +40,7 @@ async function runCrawler() {
         await requestQueue.addRequest({ url: URL });
     }
 
-    let run_additions = 0;
+    const preRunCount = await db.withSchema('crawling').table('crawling_news').count('url');
     const crawler = new CheerioCrawler({
         requestQueue,
         maxRequestRetries: 3,
@@ -80,13 +85,14 @@ async function runCrawler() {
 
                 // Creating an object with the data scraped from the current page
                 const data = {
-                    url     : cleanURL(request.loadedUrl),
-                    // cidades : [{}],
-                    titulo  : removeAccents(title),
-                    termos  : [],
-                    content : extractText(body),  // Make content last to improve readability
-                    data    : '',
-                    tipo    : 'f',
+                    url          : cleanURL(request.loadedUrl),
+                    // cidades      : [{}],
+                    titulo       : removeAccents(title),
+                    data_insercao: new Date(),
+                    termos       : [],
+                    content      : extractText(body),  // Make content last to improve readability
+                    data         : '',
+                    tipo         : 'f',
                 };
                 
                 // Saving the data scraped from the current page to
@@ -98,7 +104,7 @@ async function runCrawler() {
                     data.termos = termos;
                     // await Dataset.pushData(data);
                     if (data.tipo === 't') {
-                        run_additions += await saveToDB(data);
+                        await saveToDB(data);
                     }
                     log.debug(`URL: ${data.url} - Protesto: ${data.protesto} - Title: ${title} - Title 2: ${title2}`);
                 }
@@ -118,6 +124,8 @@ async function runCrawler() {
 
     // Run the crawler with the default URLs
     await crawler.run();
+    const postRunCount = await db.withSchema('crawling').table('crawling_news').count('url');
+    const run_additions = postRunCount[0]['count'] - preRunCount[0]['count'];
     console.log(`Tried adding: ${run_additions} new entries`);
     console.debug('Status: ', saveRunStatus({additions: run_additions}));
 }

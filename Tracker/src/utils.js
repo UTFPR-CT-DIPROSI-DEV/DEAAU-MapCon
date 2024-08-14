@@ -25,19 +25,12 @@ export function removeAccents(str) {
 // Function to extract all possible text elements from an HTML body
 // while filtering out unwanted elements (gtag, script, style, etc.)
 export function extractText(html) {
-    // Define the blacklist of tags to remove
-    const blacklist = ['script', 'style', 'gtag'];
-
     // Load the HTML into cheerio
     const $ = cheerio.load(html);
 
-    // Iterate over the blacklist, removing the tags
-    blacklist.forEach(tag => {
-        $(tag).remove();
-    });
+    let text = $('article').text();
 
-    let text = $('body').text();
-
+    // /\\n\\s*\\n/g is used to match and replace multiple consecutive empty lines
     text = text.replace(/\n\s*\n/g, '\n');
 
     // Extract and return the text from the modified HTML
