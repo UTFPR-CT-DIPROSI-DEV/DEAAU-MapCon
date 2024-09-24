@@ -110,3 +110,35 @@ a{
   top: 53%;
   transform: translate(0, -50%);
 }
+
+/* Users/Equipe carousel styling */
+.p-carousel {
+  width: 100%;
+}
+
+.p-carousel-content {
+  padding: 0 2rem;
+  text-align: center;
+}
+
+.p-carousel-indicators {
+  margin-top: 1rem;
+}
+
+.border {
+  border: 1px solid #dee2e6;
+}
+
+.border-round {
+  border-radius: 0.5rem;
+}
+
+.user-template-nome {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.user-template-funcao {
+  font-size: 0.65rem;
+}
+

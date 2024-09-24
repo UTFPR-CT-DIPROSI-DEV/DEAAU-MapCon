@@ -48,6 +48,9 @@ async function runCrawler() {
         failedRequestHandler: async ({ request }) => {
             log.error(`Request ${request.url} failed too many times.`);
         },
+        errorHandler: async ({ request, error }) => {
+            log.error(`Request ${request.url} failed with error: ${error}`);
+        },
         preNavigationHooks: [
             async ({request}) => {
                 const blockedExtensions = ['xml', 'png', 'jpg', 'jpeg', 'webp', 'pdf', 'zip'];
@@ -140,5 +143,14 @@ async function runCrawler() {
 //     console.debug('Status: ', saveRunStatus());
 // });
 
-await runCrawler();
+const crawl = async() => {
+    await runCrawler();
+};
 
+crawl().then(() => {
+    console.log('Crawler finished, exiting...');
+    process.exit(0);
+}).catch((error) => {
+    console.error('Crawler failed: ', error);
+    process.exit(1);
+});

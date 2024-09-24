@@ -27,7 +27,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const command = `node screenshot.js ${req.body.url} ${img_name}`;
       exec(command, (error, stdout, stderr) => {
         if (error) {
-          console.error(`Erro ao tirar screenshot: ${error}`);
+          console.error(`Erro ao tirar screenshot: ${error.toString()}`);
           console.log(`stdout: ${stdout}`);
           console.error(`stderr: ${stderr}`);
           add_screenshot = false;

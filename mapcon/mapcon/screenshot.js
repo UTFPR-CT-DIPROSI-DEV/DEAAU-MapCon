@@ -1,3 +1,7 @@
+//
+// Este arquivo é usado para realizar capturas de tela de uma página da web.
+// Ele é chamado pelo(s) arquivo(s): "pages/api/mapcon/migra.ts"
+//
 const puppeteer = require("puppeteer");
 
 async function takeScreenshot(url, img_name) {

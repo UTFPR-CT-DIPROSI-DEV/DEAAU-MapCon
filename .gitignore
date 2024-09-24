@@ -11,6 +11,8 @@ tmp.py
 
 # Directories
 BASH/
+Docs/
+.vscode/
 
 # *.sql
 python_crawlers/

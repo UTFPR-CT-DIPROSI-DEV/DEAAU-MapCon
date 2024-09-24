@@ -15,8 +15,8 @@ export default function ToolbarSite() {
       command:()=>{router.push("/")}
     },
     {
-      label: 'Quem Somos?',
-      command:()=>{router.push("/quemsomos")}
+      label: 'Sobre Nós',
+      command:()=>{router.push("/sobrenos")}
     },
     {
       label: 'Equipe',

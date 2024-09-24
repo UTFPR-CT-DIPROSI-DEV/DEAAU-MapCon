@@ -9,8 +9,6 @@ import styles from '../styles/index.module.css'
 
 
 function Index() {
-
-
   const card_infantil_header = (
     <Image layout={'responsive'} height={200} width={400} alt="Card" src='/images/imagem1.jpeg' />
   );
