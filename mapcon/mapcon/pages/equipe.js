@@ -1,7 +1,6 @@
 import 'primeflex/primeflex.css';
 import React, { useEffect } from 'react';
 import { Carousel } from 'primereact/carousel';
-import { Tag } from 'primereact/tag';
 import ToolbarSite from '../components/toolbar_site';
 import styles from '../styles/index.module.css'
 import db from '../lib/back/db.js';
@@ -12,10 +11,16 @@ function Index(props) {
 
   const userTemplate = (user) => {
     return (
-      <div className="border border-round p-m-2 p-py-5 p-px-3">
-        <i className="pi pi-user p-mb-3" style={{ fontSize: '2.5rem' }}/>
-        <div className="user-template-nome">{user.nome}</div>
-        <div className="user-template-funcao">{user.funcao}</div>
+      <div className="user-card border border-round p-m-2 p-py-6 p-px-3" style={{ backgroundImage: `url(${user.perfil})`}}>
+        {user.perfil != null && user.perfil != '' ? 
+          <i className="nullicon pi pi-user p-mb-5" style={{ fontSize: '4rem', visibility: 'hidden' }}/>
+        :
+          <i className="pi pi-user p-mb-5" style={{ fontSize: '4rem' }}/>
+        }
+        <div className="user-card-info">
+          <div className="user-nome">{user.nome}</div>
+          <div className="user-funcao">{user.funcao}</div>
+        </div>
       </div>
     );
   };
@@ -38,9 +43,11 @@ function Index(props) {
     <div>
       <ToolbarSite></ToolbarSite>
       <div className="p-grid p-formgrid p-m-lg-6 p-m-2">
-        <div className={styles.titulo}>A Equipe</div>
-        {CarouselEl()}
+        <div className="p-col-12 p-mb-2 p-lg-8 p-mb-lg-0">
+          <div className={styles.titulo}>A Equipe</div>
         </div>
+      </div>
+      {CarouselEl()}
     </div>
 
   );

@@ -98,13 +98,6 @@ a{
   }
 }
 
-
-/* Personalizando barra lateral */
-.pro-sidebar > .pro-sidebar-inner {
-  background: #972333 !important;
-  color: white;
-}
-
 .p-dropdown-clear-icon {
   position: absolute;
   top: 53%;
@@ -113,7 +106,8 @@ a{
 
 /* Users/Equipe carousel styling */
 .p-carousel {
-  width: 100%;
+  width: 100vw;
+  margin-top: 10vh;
 }
 
 .p-carousel-content {
@@ -121,24 +115,52 @@ a{
   text-align: center;
 }
 
-.p-carousel-indicators {
-  margin-top: 1rem;
+.p-carousel-items-content {
+  padding: 1rem;
+}
+
+.user-card {
+  width: 180px;
+  height: 200px;
+  box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.2);
+  background-size: auto 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  transition: all 0.15s ease-in-out;
+}
+
+.user-card:hover {
+  /* transform: scale(1.04); */
+  box-shadow: 3px 4px 5px rgba(0, 0, 0, 0.35);
+}
+
+.user-card:not(.user-card:hover) {
+  filter: grayscale(50%) blur(0.5px);
+  transition: all 0.15s;
 }
 
 .border {
-  border: 1px solid #dee2e6;
+  border: 1px hidden #dee2e6;
 }
 
 .border-round {
   border-radius: 0.5rem;
 }
 
-.user-template-nome {
-  font-size: 1rem;
-  font-weight: bold;
-}
+.user-card-info {
+  background-color: white;
+  position: absolute;
+  width: calc(180px - 2rem);
+  border-radius: inherit;
 
-.user-template-funcao {
-  font-size: 0.65rem;
+  .user-nome {
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  .user-funcao {
+    font-size: 0.7rem;
+  }
 }
 
