@@ -13,7 +13,5 @@ tmp.py
 BASH/
 Docs/
 .vscode/
-
-# *.sql
 python_crawlers/
 Schemas/
