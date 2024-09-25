@@ -1,8 +1,8 @@
 # Conflict Mapping System (MapCon)
 
 ![lang](https://img.shields.io/badge/Language:-blue)
-[![pt-br](https://img.shields.io/badge/Português-green)](README.pt-br.md)
-[![fr](https://img.shields.io/badge/Français-darkred)](README.fr.md)
+[![pt-br](https://img.shields.io/badge/Português_BR-green)<img src="https://raw.githubusercontent.com/stevenrskelton/flag-icon/master/png/75/country-4x3/br.png" alt="Brazil Flag" height="20"/>](README.pt-br.md)
+[![fr](https://img.shields.io/badge/Français-darkred)<img src="https://raw.githubusercontent.com/stevenrskelton/flag-icon/master/png/75/country-4x3/us.png" alt="France Flag" height="20"/>](README.fr.md)
 
 ---
 
