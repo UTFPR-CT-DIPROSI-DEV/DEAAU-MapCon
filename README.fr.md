@@ -1,4 +1,4 @@
-# Système de Cartographie de Conflits (MapCon)
+# Système de Cartographie de Conflits (MapCon) <img src="https://raw.githubusercontent.com/stevenrskelton/flag-icon/master/png/75/country-4x3/fr.png" alt="US Flag" height="30"/>
 
 ![lang](https://img.shields.io/badge/Langue:-blue)
 [![pt-br](https://img.shields.io/badge/English-darkblue)<img src="https://raw.githubusercontent.com/stevenrskelton/flag-icon/master/png/75/country-4x3/us.png" alt="US Flag" height="20"/>](README.md)
