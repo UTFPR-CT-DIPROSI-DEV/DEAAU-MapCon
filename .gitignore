@@ -1,21 +1,6 @@
-# Files / REGEX
-Tracker/src/test.js
-*.pem
-*.jpeg
-backup*
-notes2self.md
-*.tar.gz
-local.csv
-tmp.py
-**/*/.env*
-
 # Directories
-BASH/
-Docs/
 .vscode/
-python_crawlers/
-Schemas/
-Logo_mapcon_v1_ChatGPT.webp
+mapcon/public/*
 
 # dependencies
 node_modules/
@@ -34,6 +19,7 @@ build/
 # misc
 .DS_Store
 *.pem
+**/*/.env*
 
 # debug
 npm-debug.log*
