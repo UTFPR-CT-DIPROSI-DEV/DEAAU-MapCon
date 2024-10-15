@@ -29,7 +29,6 @@ const defaultURLS = [
     "http://www.bemparana.com.br/",
     "http://www.bandab.com.br/",
     "http://bandnewsfmcuritiba.com/",
-    "https://www.brasildefatopr.com.br/2024/08/06/familias-do-assentamento-eli-vive-protestam-para-que-prefeitura-conclua-obras-em-estradas-rurais-em-londrina"
 ];
 
 async function runCrawler() {
