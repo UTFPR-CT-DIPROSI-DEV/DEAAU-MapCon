@@ -1,6 +1,6 @@
 # Directories
 .vscode/
-mapcon/public/*
+mapcon/public/images/news/
 
 # dependencies
 node_modules/
