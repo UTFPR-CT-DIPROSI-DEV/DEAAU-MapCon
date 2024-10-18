@@ -8,7 +8,7 @@ import {
     saveToDB, 
     readRunStatus, 
     getArticleDate, 
-    cleanURL 
+    cleanURL
 } from "./utils.js";
 import db from "./db/db.js";
 

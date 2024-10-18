@@ -12,7 +12,6 @@ function Index(props) {
       <MainMap conflitos={props.conflitos}/>
     </div>
   );
-  
 }
 
 export async function getServerSideProps(context) {
