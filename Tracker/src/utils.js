@@ -22,16 +22,35 @@ export function removeAccents(str) {
     return cleanStr.normalize('NFC'); // Normalize back to NFC form (optional)
 }
 
-// Function to extract all possible text elements from an HTML body
-// while filtering out unwanted elements (gtag, script, style, etc.)
-export function extractText(html) {
-    // Load the HTML into cheerio
+// Function to extract only the relevant text from the HTML body
+export function extractText(URL, html) {
+    // Load the HTML into cheeri
     const $ = cheerio.load(html);
+    let text = '';
+    if (URL.includes("www.tribunapr.com.br/")) {
+        text = $('section.texto-materia p').not(':has(a)').text();
+    } else if (URL.includes("www.brasildefatopr.com.br/")) {
+        text = $('div.text-content p').not(':has(a)').not(':has(img)').text();
+    } else if (URL.includes("www.bemparana.com.br/")) {
+        text = $('div.post-content p').not(':has(a)').not(':has(img)').text();
+    } else if (URL.includes("bandnewsfmcuritiba.com/")) {
+        text = $('article.post-content p').not(':has(img)').not('.img-caption-text').text();
+    } else if (URL.includes("www.bandab.com.br/")) {
+        text = $('div.post-content p').not(':has(img)').text();
+    }
 
-    let text = $('article').text();
+    // Remove any urls from the text
+    text = text.replace(/(https?:\/\/[^\s]+)/g, '');
 
-    // /\\n\\s*\\n/g is used to match and replace multiple consecutive empty lines
-    text = text.replace(/\n\s*\n/g, '\n');
+    // Replace any characters that can be misinterpreted by the tokenizer
+    text = text.replace(/[\t\n]/g, ' ');
+
+    // Remove dangerous characters from the text (e.g., quotes, backticks, empty characters, single and double quotation marks and U+00a0 non-breaking space)
+    text = text.replace(/["'`‘’“”]/g, '');
+    text = text.replace(/\u00a0/g, ' ');
+
+    // Replace U+2013 (en dash) and U+2014 (em dash) characters by the common dash
+    text = text.replace(/[\u2013\u2014]/g, '-');
 
     // Extract and return the text from the modified HTML
     return text;

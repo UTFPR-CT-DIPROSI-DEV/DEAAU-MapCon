@@ -1,5 +1,5 @@
 // Determines whether or not a given article's subject
-// is related to "Urban conflicts" and "Curitiba".
+// is related to "Urban conflicts"
 function classifier(body) {
     // Number defines the amount of matching words needed to classify
     // the article as a protest.

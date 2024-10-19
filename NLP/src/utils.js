@@ -17,8 +17,7 @@ export function removeAccents(str) {
     return cleanStr.normalize('NFC'); // Normalize back to NFC form (optional)
 }
 
-// Function to extract all possible text elements from an HTML body
-// while filtering out unwanted elements (gtag, script, style, etc.)
+// Function to extract only the relevant text from the HTML body
 export function extractText(URL, html) {
     // Load the HTML into cheeri
     const $ = cheerio.load(html);
