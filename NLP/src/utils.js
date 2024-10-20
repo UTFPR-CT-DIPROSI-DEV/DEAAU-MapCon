@@ -1,6 +1,10 @@
 import * as cheerio from 'cheerio';
 import { log } from 'crawlee';
 import fs from 'fs';
+import path from 'path';
+import readline from 'readline';
+import axios from 'axios';
+import { fileURLToPath } from "url";
 
 // Function to remove accented characters
 export function removeAccents(str) {
@@ -71,21 +75,105 @@ export function extractTitle(html) {
     return title;
 }
 
-// Function to save the content of a page to a text file
-export async function saveContentToFile(content) {
+// Function to check if a directory is empty
+async function hasAnyFile(directory) {
+    try {
+        const dir = await fs.promises.opendir(directory);
+        for await (const _entry of dir) {
+            return true;
+        }
+        return false; // No entries found
+    } catch (err) {
+        console.error('Error:', err);
+        return false;
+    }
+}
+
+// Function to get user input from the console
+export async function getUserInput(question, answerOptions, errorMessage) {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    const message = question + (answerOptions ? ` (${answerOptions.join('/')}) ` : '');
+
+    return new Promise((resolve) => {
+        rl.question(message, (answer) => {
+            if (answerOptions && !answerOptions.includes(answer)) {
+                console.error(errorMessage);
+                rl.close();
+                resolve(getUserInput(question, answerOptions, errorMessage)); // Recursively call the function if invalid input
+            } else {
+                rl.close();
+                resolve(answer);
+            }
+        });
+    });
+}
+
+// Function to initialize the data directory
+export async function initDirectory(directory) {
     // Initialize a global counter
     if (typeof global.fileCounter === 'undefined') {
-        global.fileCounter = 1;
+        if (await hasAnyFile(directory) === false) 
+            global.fileCounter = 1;
+        else {
+            const userChoice = await getUserInput(
+                `\x1b[93m Shall I add to the data at ${directory}/ or erase the existing data?\x1b[0m`, 
+                ['add', 'erase'], 
+                'Please enter either "add" to append the data or "erase" to delete all files in it before continuing.'
+            );
+            if (userChoice === 'add') {
+                global.fileCounter = fs.readdirSync(directory).length / 2 + 1;
+            } else if (userChoice === 'erase') {
+                // Confirm deletion with the user again
+                const confirmErase = await getUserInput(
+                    `\x1b[91m This will erase all files in ${directory}. Are you sure?\x1b[0m`, 
+                    ['yes', 'no'],
+                    'Please enter "yes" to confirm or "no" to cancel.'
+                );
+                if (confirmErase === 'yes') {
+                    // Delete only files that match the relevant pattern (e.g., .yourFileExtension)
+                    await fs.readdir(directory, (err, files) => {
+                        files.forEach(file => {
+                            if (file.match(/^(data|label)_\d{4}\.txt$/)) {
+                                fs.unlinkSync(path.join(directory, file));
+                            }
+                        });
+                    });
+                    
+                    global.fileCounter = 1;
+                } else {
+                    console.log('Operation cancelled.');
+                    process.exit(0); // Exit the process if the user cancels the operation
+                }
+            } else {
+                console.error('Invalid input. Exiting.');
+                process.exit(1); // Exit the process if the user enters an invalid choice
+            }
+        }
     }
 
+}
+
+// Function to save the content of a page to a text file
+export async function saveContentToFile(directory, content, label) {
     // Format the counter to be a 4-digit number
     const formattedCounter = String(global.fileCounter).padStart(4, '0');
 
     // Construct the filename
-    const filename = `data_${formattedCounter}.txt`;
+    const data_filename = `data_${formattedCounter}.txt`;
+    const label_filename = `label_${formattedCounter}.txt`;
 
-    // Save the content to the file
-    fs.writeFileSync(filename, content);
+    // Ensure the directory exists
+    if (!fs.existsSync(directory)) {
+        fs.mkdirSync(directory, { recursive: true });
+    }
+    
+    // Save the content to the files
+    fs.writeFileSync(path.join(directory, data_filename), content);
+    fs.writeFileSync(path.join(directory, label_filename), label);
 
     // Increment the counter for the next file
     global.fileCounter++;
@@ -166,4 +254,18 @@ export function cleanURL(url) {
       log.error('Invalid URL:', error);
       return null;
     }
+}
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+    // Test the function with a URL
+    const url = "https://www.bandab.com.br/curitiba/setores-economicos-reagem-a-bandeira-vermelha-e-pedem-paralisacao-dos-onibus-em-curitiba/";
+    (async () => {
+        try {
+            const { data: html } = await axios.get(url);
+            const text = extractText(url, html);
+            console.log(text);
+        } catch (error) {
+            console.error('Error fetching the URL:', error);
+        }
+    })();
 }

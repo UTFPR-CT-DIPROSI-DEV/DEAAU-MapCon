@@ -3,7 +3,7 @@
 mapcon/public/images/news/
 NLP/notebooks/results/
 NLP/notebooks/trained_model
-NLP/notebooks/training_data/
+NLP/data/
 
 # dependencies
 node_modules/
