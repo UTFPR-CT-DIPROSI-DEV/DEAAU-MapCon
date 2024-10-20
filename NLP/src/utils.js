@@ -113,17 +113,26 @@ export async function getUserInput(question, answerOptions, errorMessage) {
 }
 
 // Function to initialize the data directory
-export async function initDirectory(directory) {
+export async function initDirectory(directory, action = 'undefined') {
+    let userChoice;
+    if (action === 'undefined') {
+        userChoice = await getUserInput(
+            `\x1b[93m Shall I add to the data at ${directory}/ or erase the existing data?\x1b[0m`, 
+            ['add', 'erase'], 
+            'Please enter either "add" to append the data or "erase" to delete all files in it before continuing.'
+        );
+    } else if (action === 'add')
+        userChoice = 'add';
+    else if (action === 'erase')
+        userChoice = 'erase';
+    else
+        throw new Error('Invalid action. Exiting.');
     // Initialize a global counter
     if (typeof global.fileCounter === 'undefined') {
-        if (await hasAnyFile(directory) === false) 
+        // If the directory is empty, reset the counter
+        if (await hasAnyFile(directory) === false)
             global.fileCounter = 1;
         else {
-            const userChoice = await getUserInput(
-                `\x1b[93m Shall I add to the data at ${directory}/ or erase the existing data?\x1b[0m`, 
-                ['add', 'erase'], 
-                'Please enter either "add" to append the data or "erase" to delete all files in it before continuing.'
-            );
             if (userChoice === 'add') {
                 global.fileCounter = fs.readdirSync(directory).length / 2 + 1;
             } else if (userChoice === 'erase') {

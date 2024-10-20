@@ -8,7 +8,7 @@ import {
 import db from "./db/db.js";
 
 // Directory to save the files
-const directory = "data";
+const directory = process.env.DATA_DIR;
 await initDirectory(directory);
 
 async function runCrawler(URLs, label) {

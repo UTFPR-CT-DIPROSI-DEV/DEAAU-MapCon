@@ -1,27 +1,11 @@
 import db from "./db/db.js";
 import readline from 'readline';
-
-async function getNumberURLs() {
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout
-    });
-
-    return new Promise((resolve) => {
-        rl.question('\x1b[93mHow many URLs are to be added?\x1b[0m ', (answer) => {
-            const numberOfUrls = parseInt(answer, 10);
-            if (isNaN(numberOfUrls)) {
-                console.error('Please enter a valid number.');
-                rl.close();
-                resolve(getNumberURLs()); // Recursively call the function if invalid input
-            } else {
-                console.log(`You have chosen to add ${numberOfUrls} URLs.`);
-                rl.close();
-                resolve(numberOfUrls); // Resolve the promise with the valid number
-            }
-        });
-    });
-}
+import { 
+    saveContentToFile,
+    extractText,
+    initDirectory,
+} from "./utils.js";
+import axios from 'axios';
 
 async function getTargetTable() {
     const rl = readline.createInterface({
@@ -30,16 +14,23 @@ async function getTargetTable() {
     });
 
     return new Promise((resolve) => {
-        rl.question('\x1b[93mAre you adding protests?\x1b[0m (Y/N) ', (answer) => {
+        rl.question('\x1b[93mAre you adding a protest?\x1b[0m (Y/N) ', (answer) => {
             const choice = answer.toUpperCase();
-            if (choice !== 'Y' && choice !== 'N') {
+            if (choice !== 'Y' && choice !== 'N' && choice !== 'EXIT') {
                 console.error('Please enter Y for "yes" and N for "no".');
                 rl.close();
                 resolve(getTargetTable()); // Recursively call the function if invalid input
             } else {
-                console.log(choice === 'Y' ? `Adding to protesturls table.` : `Adding to nonprotesturls table.`);
+                let output = 'exit';
+                if (choice === 'Y') {
+                    output = 'protesturls';
+                    console.log(`\tAdding to \x1b[94mprotesturls\x1b[0m table.`);
+                } else if (choice === 'N') {
+                    output = 'nonprotesturls';
+                    console.log(`\tAdding to \x1b[94mnonprotesturls\x1b[0m table.`);
+                }
                 rl.close();
-                resolve(choice === 'Y' ? 'protesturls' : 'nonprotesturls');
+                resolve(output); // Resolve the promise with the valid table name
             }
         });
     });
@@ -60,7 +51,7 @@ async function getURL() {
                 '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
                 '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
 
-            if (!urlPattern.test(answer)) {
+            if (!urlPattern.test(answer) && answer.toLowerCase() !== 'exit') {
                 console.error('Please enter a valid URL.');
                 rl.close();
                 resolve(getURL()); // Recursively call the function if invalid input
@@ -72,14 +63,32 @@ async function getURL() {
     });
 }
 
-const table = await getTargetTable();
-// const numURLs = await getNumberURLs();
+console.log('\x1b[94mType "exit" to quit the program.\x1b[0m');
 
-while (true) {
-    const URL = await getURL();
+let table = await getTargetTable();
+if (table === 'exit') {
+    process.exit(0);
+}
+let URL = await getURL();
+const directory = process.env.DATA_DIR;
+await initDirectory(directory, 'add');
+while (URL !== 'exit' && table !== 'exit') {
     try {
+        // Fetch the HTML content of the page
+        const { data } = await axios.get(URL);
+        
+        // Extract the content of the page
+        const content = await extractText(URL, data);
+
+        // Defining the label
+        const label = table === 'protesturls' ? 'protesto' : 'nao-protesto';
+        
+        // Insert the URL into the database
         await db.insert({ url: URL }).into(table);
         console.log('\x1b[92mURL added.\x1b[0m');
+
+        // Save the content of the page to a text file
+        await saveContentToFile(directory, content, label);
     } catch (error) {
         if (error.code === '23505') {
             console.error('URL already exists in the database.');
@@ -87,4 +96,11 @@ while (true) {
             console.error('ERROR: ', error);
         }
     }
+    table = await getTargetTable();
+    if (table === 'exit') {
+        process.exit(0);
+    }
+    URL = await getURL();
 }
+
+process.exit(0);
