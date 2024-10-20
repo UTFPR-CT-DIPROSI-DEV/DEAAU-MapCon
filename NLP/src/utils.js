@@ -115,6 +115,12 @@ export async function getUserInput(question, answerOptions, errorMessage) {
 // Function to initialize the data directory
 export async function initDirectory(directory, action = 'undefined') {
     let userChoice;
+    // If the directory is empty, reset the counter
+    if (await hasAnyFile(directory) === false) {
+        global.fileCounter = 1;
+        return;
+    }
+
     if (action === 'undefined') {
         userChoice = await getUserInput(
             `\x1b[93m Shall I add to the data at ${directory}/ or erase the existing data?\x1b[0m`, 
@@ -127,43 +133,35 @@ export async function initDirectory(directory, action = 'undefined') {
         userChoice = 'erase';
     else
         throw new Error('Invalid action. Exiting.');
-    // Initialize a global counter
-    if (typeof global.fileCounter === 'undefined') {
-        // If the directory is empty, reset the counter
-        if (await hasAnyFile(directory) === false)
+    
+    if (userChoice === 'add') {
+        global.fileCounter = fs.readdirSync(directory).length / 2 + 1;
+    } else if (userChoice === 'erase') {
+        // Confirm deletion with the user again
+        const confirmErase = await getUserInput(
+            `\x1b[91m This will erase all files in ${directory}. Are you sure?\x1b[0m`, 
+            ['yes', 'no'],
+            'Please enter "yes" to confirm or "no" to cancel.'
+        );
+        if (confirmErase === 'yes') {
+            // Delete only files that match the relevant pattern (e.g., .yourFileExtension)
+            await fs.readdir(directory, (err, files) => {
+                files.forEach(file => {
+                    if (file.match(/^(data|label)_\d{4}\.txt$/)) {
+                        fs.unlinkSync(path.join(directory, file));
+                    }
+                });
+            });
+            
             global.fileCounter = 1;
-        else {
-            if (userChoice === 'add') {
-                global.fileCounter = fs.readdirSync(directory).length / 2 + 1;
-            } else if (userChoice === 'erase') {
-                // Confirm deletion with the user again
-                const confirmErase = await getUserInput(
-                    `\x1b[91m This will erase all files in ${directory}. Are you sure?\x1b[0m`, 
-                    ['yes', 'no'],
-                    'Please enter "yes" to confirm or "no" to cancel.'
-                );
-                if (confirmErase === 'yes') {
-                    // Delete only files that match the relevant pattern (e.g., .yourFileExtension)
-                    await fs.readdir(directory, (err, files) => {
-                        files.forEach(file => {
-                            if (file.match(/^(data|label)_\d{4}\.txt$/)) {
-                                fs.unlinkSync(path.join(directory, file));
-                            }
-                        });
-                    });
-                    
-                    global.fileCounter = 1;
-                } else {
-                    console.log('Operation cancelled.');
-                    process.exit(0); // Exit the process if the user cancels the operation
-                }
-            } else {
-                console.error('Invalid input. Exiting.');
-                process.exit(1); // Exit the process if the user enters an invalid choice
-            }
+        } else {
+            console.log('Operation cancelled.');
+            process.exit(0); // Exit the process if the user cancels the operation
         }
+    } else {
+        console.error('Invalid input. Exiting.');
+        process.exit(1); // Exit the process if the user enters an invalid choice
     }
-
 }
 
 // Function to save the content of a page to a text file

@@ -6,15 +6,20 @@ import {
     getUserInput,
 } from "./utils.js";
 import db from "./db/db.js";
+import path from 'path';
 
 // Directory to save the files
 const directory = process.env.DATA_DIR;
-await initDirectory(directory);
 
 async function runCrawler(URLs, label) {
     // Initialize a request queue
     const requestQueue = await RequestQueue.open();
 
+    // Change the destination directory based on the label
+    const labelDirectory = path.join(directory, label);
+    await initDirectory(labelDirectory);
+
+    // Add starting URLs to the request queue
     for(const URL of URLs) {
         await requestQueue.addRequest(URL);
     }
@@ -35,7 +40,7 @@ async function runCrawler(URLs, label) {
                 console.log(`Count: ${i++}`);
 
                 // Save the content of the page to a text file
-                await saveContentToFile(directory, content, label);
+                await saveContentToFile(labelDirectory, content, label);
             } catch (error) {
                 console.error('ERROR: ', error);
             }
@@ -49,15 +54,12 @@ async function runCrawler(URLs, label) {
 
 const userChoice = await getUserInput('Process protests or non-protests?', ['P', 'N'], 'Please enter P for "protests" and N for "non-protests".');
 
-const crawl = async() => {
-    // Add starting URLs to the request queue
-    if (userChoice === 'P') { 
-        const protestURLs = await db.select('*').from('protesturls');
-        await runCrawler(protestURLs, 'protesto');
-    } else {
-        const nonprotestURLs = await db.select('*').from('nonprotesturls');
-        await runCrawler(nonprotestURLs, 'nao-protesto');
-    }
-};
+if (userChoice === 'P') { 
+    const protestURLs = await db.select('*').from('protesturls');
+    await runCrawler(protestURLs, 'protesto');
+} else {
+    const nonprotestURLs = await db.select('*').from('nonprotesturls');
+    await runCrawler(nonprotestURLs, 'nao-protesto');
+}
 
-crawl();
+process.exit(0);
