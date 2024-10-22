@@ -9,11 +9,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getServerSession(req, res, { /* options */ });
   if (session) {
     LogRequest(__filename, req, req.body);
-    if (!req.body.is_protesto) {
-      await db("crawling.crawling_news")
-        .where({ url: req.body.url })
-        .delete();
-    } else {
+    if (req.body.is_protesto) {
       // Marca como protesto
       await db("crawling.crawling_news")
         .where({ url: req.body.url })
@@ -76,10 +72,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           .where({ url: req.body.url })
           .delete();
       }
+      res.status(200).json({ ok: "Notícia migrada para protestos." });
     }
-    
-    res.status(200).json({ ok: "Migrou" });
+    res.status(200).json({ ok: "Alterações descartadas." });
   } else {
-    res.status(401).json({ error: "Não autorizado" });
+    res.status(401).json({ error: "Não autorizado." });
   }
 };
