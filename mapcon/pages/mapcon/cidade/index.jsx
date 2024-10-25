@@ -38,14 +38,32 @@ export default function CidadePage(props) {
 
 
     async function addButtonClicked(e) {
-        const r2 = await axios.get('/api/mapcon/cidade?limit=-1')
+        const session = await getSession();
+        const r = await axios.get('/api/mapcon/cidade?limit=-1', { params: {
+            user: {
+                id: session.user.id,
+                perfil: session.user.perfil
+            }
+        }})
 
-        setshowForm({ visible: true, cidades: r2.data['data'] })
+        setshowForm({ visible: true, cidades: r.data['data'] })
     }
 
     async function editButtonClicked(row) {
-        const r = await axios.get('/api/mapcon/cidade', { params: { id: row[0].num_seq_cidade } })
-        const r2 = await axios.get('/api/mapcon/cidade?limit=-1')
+        const session = await getSession();
+        const r = await axios.get('/api/mapcon/cidade', { params: { 
+            id: row[0].num_seq_cidade,
+            user: {
+                id: session.user.id,
+                perfil: session.user.perfil
+            }
+        } })
+        const r2 = await axios.get('/api/mapcon/cidade?limit=-1', { params: {
+            user: {
+                id: session.user.id,
+                perfil: session.user.perfil
+            }
+        } })
 
         setshowForm({
             visible: true,
@@ -67,9 +85,16 @@ export default function CidadePage(props) {
         });
     }
 
-    async function removeRows(e){
+    async function removeRows(e) {
+        const session = await getSession();
         for (const item of e) {
-            await axios.delete('/api/mapcon/cidade', { data: { num_seq_cidade: item.num_seq_cidade } })
+            await axios.delete('/api/mapcon/cidade', { 
+                data: { num_seq_cidade: item.num_seq_cidade },
+                user: {
+                    id: session.user.id,
+                    perfil: session.user.perfil
+                }
+            })
         }
 
         childRef.current.updateDatatable()
@@ -128,10 +153,24 @@ function CidadeForm(props) {
     const { control, handleSubmit, formState: { errors } } = useForm({ defaultValues: props.showForm.data });
 
     const onSubmit = async data => {
+        const session = await getSession();
         if (props.showForm.data) { // Editar
-            const r = await axios.put('/api/mapcon/cidade',{num_seq_cidade: props.showForm.data.num_seq_cidade,...data})
+            await axios.put('/api/mapcon/cidade',{
+                num_seq_cidade: props.showForm.data.num_seq_cidade,
+                ...data,
+                user: {
+                    id: session.user.id,
+                    perfil: session.user.perfil
+                }
+            })
         } else {
-            const r = await axios.post('/api/mapcon/cidade',data)
+            await axios.post('/api/mapcon/cidade',{
+                ...data,
+                user: {
+                    id: session.user.id,
+                    perfil: session.user.perfil
+                }
+            })
         }
 
         props.closeForm(true)

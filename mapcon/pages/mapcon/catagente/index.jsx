@@ -42,7 +42,14 @@ export default function CatAgentePage(props) {
     }
 
     async function editButtonClicked(row) {
-        const r = await axios.get('/api/mapcon/catagente', { params: { id: row[0].num_seq_categoria_agente } })
+        const session = await getSession();
+        const r = await axios.get('/api/mapcon/catagente', { params: { 
+            id: row[0].num_seq_categoria_agente,
+            user: {
+                id: session.user.id,
+                perfil: session.user.perfil
+            }
+        } })
         
         setshowForm({
             visible: true,
@@ -63,9 +70,16 @@ export default function CatAgentePage(props) {
         });
     }
 
-    async function removeRows(e){
+    async function removeRows(e) {
+        const session = await getSession();
         for (const item of e) {
-            await axios.delete('/api/mapcon/catagente', { data: { num_seq_categoria_agente: item.num_seq_categoria_agente } })
+            await axios.delete('/api/mapcon/catagente', {
+                data: { num_seq_categoria_agente: item.num_seq_categoria_agente },
+                user: {
+                    id: session.user.id,
+                    perfil: session.user.perfil
+                }
+            })
         }
 
         childRef.current.updateDatatable()
@@ -124,10 +138,24 @@ function CategoriaObjetoForm(props) {
     const { control, handleSubmit, formState: { errors } } = useForm({ defaultValues: props.showForm.data });
 
     const onSubmit = async data => {
+        const session = await getSession();
         if (props.showForm.data) { // Editar
-            const r = await axios.put('/api/mapcon/catagente',{num_seq_categoria_agente: props.showForm.data.num_seq_categoria_agente,...data})
+            await axios.put('/api/mapcon/catagente',{
+                num_seq_categoria_agente: props.showForm.data.num_seq_categoria_agente,
+                ...data,
+                user: {
+                    id: session.user.id,
+                    perfil: session.user.perfil
+                }
+            })
         } else {
-            const r = await axios.post('/api/mapcon/catagente',data)
+            await axios.post('/api/mapcon/catagente', {
+                ...data,
+                user: {
+                    id: session.user.id,
+                    perfil: session.user.perfil
+                }
+            })
         }
 
         props.closeForm(true)

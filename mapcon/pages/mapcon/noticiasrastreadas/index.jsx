@@ -1,22 +1,22 @@
-import React, { useEffect, useRef, useState } from "react";
-import TableCrud from "../../../lib/front/cruddatatable/datatable";
-import { Column } from "primereact/column";
-import { useRouter } from "next/router";
-import axios from "axios";
-import ToolbarMapCon from "../../../components/toolbar_mapcon";
-import Loading from "../../../components/loading/loading";
-import { getSession } from "next-auth/react";
-import { Dialog } from "primereact/dialog";
-import { RadioButton } from "primereact/radiobutton";
-import { useForm, Controller } from "react-hook-form";
-import { Button } from "primereact/button";
-import { InputText } from "primereact/inputtext";
-import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
-import { InputSwitch } from "primereact/inputswitch";
-import { Tag } from "primereact/tag";
-import { Calendar } from "primereact/calendar";
-import { Tooltip } from "primereact/tooltip";
-import moment from "moment";
+import React, { useEffect, useRef, useState } from 'react';
+import TableCrud from '../../../lib/front/cruddatatable/datatable';
+import { Column } from 'primereact/column';
+import { useRouter } from 'next/router';
+import axios from 'axios';
+import ToolbarMapCon from '../../../components/toolbar_mapcon';
+import Loading from '../../../components/loading/loading';
+import { getSession } from 'next-auth/react';
+import { Dialog } from 'primereact/dialog';
+import { RadioButton } from 'primereact/radiobutton';
+import { useForm, Controller } from 'react-hook-form';
+import { Button } from 'primereact/button';
+import { InputText } from 'primereact/inputtext';
+import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog';
+import { InputSwitch } from 'primereact/inputswitch';
+import { Tag } from 'primereact/tag';
+import { Calendar } from 'primereact/calendar';
+import { Tooltip } from 'primereact/tooltip';
+import moment from 'moment';
 
 export default function NoticiasRastreadasPage(props) {
   const router = useRouter();
@@ -54,9 +54,14 @@ export default function NoticiasRastreadasPage(props) {
   }
 
   async function removeRows(e) {
+    const session = await getSession();
     for (const item of e) {
       await axios.delete("/api/mapcon/crawling_news", {
         data: { url: item.url },
+        user: {
+          id: session.user.id,
+          perfil: session.user.perfil
+        }
       });
     }
 
@@ -72,11 +77,14 @@ export default function NoticiasRastreadasPage(props) {
 
   async function processNews(data) {
     const formated_date = moment(data.data).format("YYYY-MM-DD");
-
+    const session = await getSession();
     const close_protests = await (
-      await axios.get(
-        `/api/mapcon/get_protestos_proximos?data=${formated_date}`
-      )
+      await axios.get(`/api/mapcon/get_protestos_proximos?data=${formated_date}`, { params: {
+            user: {
+                id: session.user.id,
+                perfil: session.user.perfil
+            }
+      }})
     ).data;
 
     setshowForm({
@@ -246,8 +254,13 @@ function MigraNoticiaForm({ showForm, closeForm }) {
   };
 
   async function removeEl(url) {
+    const session = await getSession();
     await axios.delete("/api/mapcon/crawling_news", {
       data: { url: url },
+      user: {
+          id: session.user.id,
+          perfil: session.user.perfil
+      }
     });
 
     closeForm(true);

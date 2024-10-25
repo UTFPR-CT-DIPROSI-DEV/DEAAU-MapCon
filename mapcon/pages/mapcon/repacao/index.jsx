@@ -42,7 +42,14 @@ export default function RepertorioAcaoPage(props) {
     }
 
     async function editButtonClicked(row) {
-        const r = await axios.get('/api/mapcon/repacao', { params: { id: row[0].num_seq_repertorio_acao } })
+        const session = await getSession();
+        const r = await axios.get('/api/mapcon/repacao', { 
+            params: { id: row[0].num_seq_repertorio_acao },
+            user: {
+                id: session.user.id,
+                perfil: session.user.perfil
+            }
+        })
         
         setshowForm({
             visible: true,
@@ -65,9 +72,16 @@ export default function RepertorioAcaoPage(props) {
         
     }
 
-    async function removeRows(e){
+    async function removeRows(e) {
+        const session = await getSession();
         for (const item of e) {
-            await axios.delete('/api/mapcon/repacao', { data: { num_seq_repertorio_acao: item.num_seq_repertorio_acao } })
+            await axios.delete('/api/mapcon/repacao', { 
+                data: { num_seq_repertorio_acao: item.num_seq_repertorio_acao },
+                user: {
+                    id: session.user.id,
+                    perfil: session.user.perfil
+                }
+            })
         }
 
         childRef.current.updateDatatable()
@@ -130,16 +144,27 @@ function CategoriaObjetoForm(props) {
     const { control, handleSubmit, formState: { errors } } = useForm({ defaultValues: props.showForm.data });
 
     const onSubmit = async data => {
-
-        if(props.showForm.data){ // Editar
-            const r = await axios.put('/api/mapcon/repacao',{num_seq_repertorio_acao: props.showForm.data.num_seq_repertorio_acao,...data})
-        }else{
-            const r = await axios.post('/api/mapcon/repacao',data)
+        const session = await getSession();
+        if(props.showForm.data) { // Editar
+            await axios.put('/api/mapcon/repacao',{
+                num_seq_repertorio_acao: props.showForm.data.num_seq_repertorio_acao,
+                ...data,
+                user: {
+                    id: session.user.id,
+                    perfil: session.user.perfil
+                }
+            })
+        } else {
+            await axios.post('/api/mapcon/repacao',{
+                ...data,
+                user: {
+                    id: session.user.id,
+                    perfil: session.user.perfil
+                }
+            })
         }
         
-
         props.closeForm(true)
-
     }
 
 

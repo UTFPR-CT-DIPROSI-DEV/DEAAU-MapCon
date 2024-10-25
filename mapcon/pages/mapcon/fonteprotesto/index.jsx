@@ -42,7 +42,14 @@ export default function FontesProtestoPage(props) {
     }
 
     async function editButtonClicked(row) {
-        const r = await axios.get('/api/mapcon/fonteprotesto', { params: { id: row[0].num_seq_fonte_protesto } })
+        const session = await getSession();
+        const r = await axios.get('/api/mapcon/fonteprotesto', { params: { 
+            id: row[0].num_seq_fonte_protesto,
+            user: {
+                id: session.user.id,
+                perfil: session.user.perfil
+            }
+        } })
         
         setshowForm({
             visible: true,
@@ -63,9 +70,16 @@ export default function FontesProtestoPage(props) {
     });        
     }
 
-    async function removeRows(e){
+    async function removeRows(e) {
+        const session = await getSession();
         for (const item of e) {
-            await axios.delete('/api/mapcon/fonteprotesto', { data: { num_seq_fonte_protesto: item.num_seq_fonte_protesto } })
+            await axios.delete('/api/mapcon/fonteprotesto', { 
+                data: { num_seq_fonte_protesto: item.num_seq_fonte_protesto },
+                user: {
+                    id: session.user.id,
+                    perfil: session.user.perfil
+                }
+            })
         }
 
         childRef.current.updateDatatable()
@@ -123,10 +137,24 @@ function CategoriaObjetoForm(props) {
     const { control, handleSubmit, formState: { errors } } = useForm({ defaultValues: props.showForm.data });
 
     const onSubmit = async data => {
-        if(props.showForm.data){ // Editar
-            const r = await axios.put('/api/mapcon/fonteprotesto',{num_seq_fonte_protesto: props.showForm.data.num_seq_fonte_protesto,...data})
-        }else{
-            const r = await axios.post('/api/mapcon/fonteprotesto',data)
+        const session = await getSession();
+        if(props.showForm.data) { // Editar
+            await axios.put('/api/mapcon/fonteprotesto',{
+                num_seq_fonte_protesto: props.showForm.data.num_seq_fonte_protesto,
+                ...data,
+                user: {
+                    id: session.user.id,
+                    perfil: session.user.perfil
+                }
+            })
+        } else {
+            await axios.post('/api/mapcon/fonteprotesto', {
+                ...data,
+                user: {
+                    id: session.user.id,
+                    perfil: session.user.perfil
+                }
+            })
         }        
 
         props.closeForm(true)
