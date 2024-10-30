@@ -15,14 +15,7 @@ export function LocalTab({ protestId, options, selected }, props) {
     const [loading, setloading] = useState(false)
     const [bairros, setbairros] = useState(null)
 
-    const { control, watch, handleSubmit, errors, reset } = useForm({
-        defaultValues: {
-            cidade_num_seq_cidade: null,
-            endereco: '',
-            origem_manifestacao: '',
-            bairro_num_seq_bairro: null,
-        }
-    });
+    const { control, watch, handleSubmit, formState: { errors }, reset } = useForm();
 
     const watchCidade = watch('cidade_num_seq_cidade')
 
@@ -54,7 +47,6 @@ export function LocalTab({ protestId, options, selected }, props) {
     ]
 
     async function onSubmit(e) {
-        console.log(e)
         e['protesto_num_seq_protesto'] = protestId 
 
         const nameCidade = options.filter(option => option.id == e.cidade_num_seq_cidade)[0].name;
@@ -68,9 +60,11 @@ export function LocalTab({ protestId, options, selected }, props) {
                 perfil: session.user.perfil
             }
         });
-        reset();
-        selectedValue.push({ 'id': ret.data[0].num_seq_local, 'name': e.endereco, 'cidade': nameCidade, 'bairro': nameBairro  })
-        setselectedValue(selectedValue)
+        if (ret.status === 200) {
+            reset();
+            selectedValue.push({ 'id': ret.data[0].num_seq_local, 'name': e.endereco, 'cidade': nameCidade, 'bairro': nameBairro  });
+            setselectedValue(selectedValue);
+        }
     }
 
     async function removeValue(e) {
@@ -82,13 +76,13 @@ export function LocalTab({ protestId, options, selected }, props) {
             rejectLabel: 'Não',
             accept: async () => {
                 const session = await getSession();
-                await axios.delete('/api/mapcon/local', { 
-                    data: { 'num_seq_local': e.id },
+                await axios.delete('/api/mapcon/local', {data: { 
+                    'num_seq_local': e.id,
                     user: {
                         id: session.user.id,
                         perfil: session.user.perfil
                     }
-                })
+                }})
                 const newSelectedValues = selectedValue.filter(v => v.id != e.id)
                 setselectedValue(newSelectedValues)
             },
@@ -109,25 +103,25 @@ export function LocalTab({ protestId, options, selected }, props) {
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="endereco">Referência*</label>
                         <Controller name="endereco" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
-                            <InputTextarea disabled={props.view} rows={5} className={props.endereco ? "p-invalid" : ""} value={value} onChange={onChange}></InputTextarea>
+                            <InputTextarea disabled={props.view} rows={5} className={errors.endereco ? "p-invalid" : ""} value={value} onChange={onChange}></InputTextarea>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="cidade_num_seq_cidade">Cidade*</label>
                         <Controller name="cidade_num_seq_cidade" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
-                            <Dropdown className={props.cidade_num_seq_cidade && 'p-invalid'} value={value} options={options} onChange={e => onChange(e.value)} optionLabel="name" optionValue="id" filter filterBy="name" showClear placeholder="Selecione uma cidade" />
+                            <Dropdown className={errors.cidade_num_seq_cidade && 'p-invalid'} value={value} options={options} onChange={e => onChange(e.value)} optionLabel="name" optionValue="id" filter filterBy="name" showClear placeholder="Selecione uma cidade" />
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="bairro_num_seq_bairro">Bairro*</label>
                         <Controller name="bairro_num_seq_bairro" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
-                            <Dropdown className={props.bairro_num_seq_bairro && 'p-invalid'} value={value} options={bairros} onChange={e => onChange(e.value)} optionLabel="bairro" optionValue="num_seq_bairro" filter filterBy="bairro" showClear placeholder="Selecione um bairro" />
+                            <Dropdown className={errors.bairro_num_seq_bairro && 'p-invalid'} value={value} options={bairros} onChange={e => onChange(e.value)} optionLabel="bairro" optionValue="num_seq_bairro" filter filterBy="bairro" showClear placeholder="Selecione um bairro" />
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="origem_manifestacao">Origem e/ou Manifestação</label>
                         <Controller name="origem_manifestacao" control={control} render={({field: { onChange, value = '' }}) =>
-                            <Dropdown className={props.origem_manifestacao && 'p-invalid'} value={value} options={origens} onChange={e => onChange(e.value)} optionLabel="name" optionValue="id" filter filterBy="name" showClear placeholder="Selecione uma opção" />
+                            <Dropdown className={errors.origem_manifestacao && 'p-invalid'} value={value} options={origens} onChange={e => onChange(e.value)} optionLabel="name" optionValue="id" filter filterBy="name" showClear placeholder="Selecione uma opção" />
                         } />
                     </div>
 

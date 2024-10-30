@@ -15,13 +15,7 @@ export function DesdobramentoTab({ protestId, selected }, props) {
     const [selectedValue, setselectedValue] = useState(selected)
     const [loading, setloading] = useState(false)
 
-    const { control, watch, handleSubmit, errors, reset } = useForm({
-        defaultValues: {
-            objeto_protesto: '',
-            categoria_objeto_num_seq_categoria_objeto: null,
-            descritor_objeto_protesto: ''
-        }
-    });
+    const { control, watch, handleSubmit, formState: { errors }, reset } = useForm();
 
     async function onSubmit(e) {
         e['protesto_num_seq_protesto'] = protestId
@@ -34,9 +28,11 @@ export function DesdobramentoTab({ protestId, selected }, props) {
                 perfil: session.user.perfil
             }
         })
-        reset();
-        selectedValue.push({ 'id': ret.data[0].num_seq_desdobramento, 'name': ret.data[0].desdobramento})
-        setselectedValue(selectedValue)
+        if (ret.status === 200) {
+            reset();
+            selectedValue.push({ 'id': ret.data[0].num_seq_desdobramento, 'name': ret.data[0].desdobramento});
+            setselectedValue(selectedValue);
+        }
 
     }
 
@@ -50,13 +46,13 @@ export function DesdobramentoTab({ protestId, selected }, props) {
             rejectLabel: 'Não',
             accept: async () => {
                 const session = await getSession();
-                await axios.delete('/api/mapcon/desdobramento', { 
-                    data: { 'num_seq_desdobramento': e.id },
+                await axios.delete('/api/mapcon/desdobramento', {data: { 
+                    'num_seq_desdobramento': e.id,
                     user: {
                         id: session.user.id,
                         perfil: session.user.perfil
                     }
-                })
+                }})
                 const newSelectedValues = selectedValue.filter(v => v.id != e.id)
                 setselectedValue(newSelectedValues)
             },
@@ -77,19 +73,19 @@ export function DesdobramentoTab({ protestId, selected }, props) {
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="desdobramento">Desdobramento*</label>
                         <Controller name="desdobramento" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
-                            <InputText disabled={props.view} className={props.desdobramento ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
+                            <InputText disabled={props.view} className={errors.desdobramento ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="fonte_desdobramento">Fonte*</label>
                         <Controller name="fonte_desdobramento" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
-                            <InputText disabled={props.view} className={props.fonte_desdobramento ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
+                            <InputText disabled={props.view} className={errors.fonte_desdobramento ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="descritor_desdobramento">Descritor</label>
                         <Controller name="descritor_desdobramento" control={control} render={({field: { onChange, value = '' }}) =>
-                            <InputTextarea disabled={props.view} rows={5} className={props.descritor_desdobramento ? "p-invalid" : ""} value={value} onChange={onChange}></InputTextarea>
+                            <InputTextarea disabled={props.view} rows={5} className={errors.descritor_desdobramento ? "p-invalid" : ""} value={value} onChange={onChange}></InputTextarea>
                         } />
                     </div>
 

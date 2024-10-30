@@ -31,7 +31,6 @@ import { ScreenshotTab } from '../../../components/mapcon/protesto/screenshot_ta
 export default function ProtestoForm(props) {
 
     // const hist = props.hist?.map(h => ({ status: h['quem'] + ' - ' + h['acao'], date: h['quando'] }))
-    console.log('PROPS: ', props);
     const GeolocalizacaoTab = dynamic(() => import("../../../components/mapcon/protesto/geolocalizacao_tab"), { ssr: false });
 
     const router = useRouter();
