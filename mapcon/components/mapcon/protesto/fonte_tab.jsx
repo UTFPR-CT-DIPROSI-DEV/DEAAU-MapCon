@@ -14,12 +14,7 @@ export function FonteTab({ protestId, options, selected }, props) {
     const [selectedValue, setselectedValue] = useState(selected)
     const [loading, setloading] = useState(false)
 
-    const { control, watch, handleSubmit, errors, reset } = useForm({
-        defaultValues: {
-            fonte_protesto_num_seq_fonte_protesto: null,
-            referencia: ''
-        }
-    });
+    const { control, watch, handleSubmit, formState: { errors }, reset } = useForm();
 
     async function onSubmit(e) {
 
@@ -35,9 +30,11 @@ export function FonteTab({ protestId, options, selected }, props) {
                 perfil: session.user.perfil
             }
         })
-        reset();
-        selectedValue.push({ 'id': ret.data[0].num_seq_fonte, 'name': nameCategory, 'referencia': ret.data[0].referencia })
-        setselectedValue(selectedValue)
+        if (ret.status === 200) {
+            reset();
+            selectedValue.push({ 'id': ret.data[0].num_seq_fonte, 'name': nameCategory, 'referencia': ret.data[0].referencia });
+            setselectedValue(selectedValue);
+        }
 
     }
 
@@ -50,13 +47,13 @@ export function FonteTab({ protestId, options, selected }, props) {
             rejectLabel: 'Não',
             accept: async () => {
                 const session = await getSession();
-                await axios.delete('/api/mapcon/fonte', { 
-                    data: { 'num_seq_fonte': e.id },
+                await axios.delete('/api/mapcon/fonte', {data: { 
+                    'num_seq_fonte': e.id,
                     user: {
                         id: session.user.id,
                         perfil: session.user.perfil
                     }
-                })
+                }})
                 const newSelectedValues = selectedValue.filter(v => v.id != e.id)
                 setselectedValue(newSelectedValues)
             },
@@ -77,14 +74,14 @@ export function FonteTab({ protestId, options, selected }, props) {
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="fonte_protesto_num_seq_fonte_protesto">Fonte*</label>
                         <Controller name="fonte_protesto_num_seq_fonte_protesto" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
-                            <Dropdown className={props.fonte_protesto_num_seq_fonte_protesto && 'p-invalid'} value={value} options={options} onChange={e => onChange(e.value)} optionLabel="name" optionValue="id" filter filterBy="name" showClear placeholder="Selecione uma fonte" />
+                            <Dropdown className={errors.fonte_protesto_num_seq_fonte_protesto && 'p-invalid'} value={value} options={options} onChange={e => onChange(e.value)} optionLabel="name" optionValue="id" filter filterBy="name" showClear placeholder="Selecione uma fonte" />
                         } />
                     </div>
 
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="referencia">Referência</label>
                         <Controller name="referencia" control={control} render={({field: { onChange, value = '' }}) =>
-                            <InputTextarea disabled={props.view} rows={5} className={props.referencia ? "p-invalid" : ""} value={value} onChange={onChange}></InputTextarea>
+                            <InputTextarea disabled={props.view} rows={5} className={errors.referencia ? "p-invalid" : ""} value={value} onChange={onChange}></InputTextarea>
                         } />
                     </div>
 

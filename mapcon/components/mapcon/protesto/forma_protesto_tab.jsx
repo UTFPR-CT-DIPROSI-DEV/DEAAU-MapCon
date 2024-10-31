@@ -15,13 +15,7 @@ export function FormaProtestoTab({ protestId, options, selected }, props) {
     const [selectedValue, setselectedValue] = useState(selected)
     const [loading, setloading] = useState(false)
 
-    const { control, watch, handleSubmit, errors, reset } = useForm({
-        defaultValues: {
-            objeto_protesto: '',
-            categoria_objeto_num_seq_categoria_objeto: null,
-            descritor_objeto_protesto: ''
-        }
-    });
+    const { control, watch, handleSubmit, formState: { errors }, reset } = useForm();
 
     async function onSubmit(e) {
 
@@ -36,9 +30,11 @@ export function FormaProtestoTab({ protestId, options, selected }, props) {
                 perfil: session.user.perfil
             }
         })
-        reset();
-        selectedValue.push({ 'id': ret.data[0].num_seq_forma_protesto, 'name': ret.data[0].forma_protesto, 'repertorio': nameCategory })
-        setselectedValue(selectedValue)
+        if (ret.status === 200) {
+            reset();
+            selectedValue.push({ 'id': ret.data[0].num_seq_forma_protesto, 'name': ret.data[0].forma_protesto, 'repertorio': nameCategory });
+            setselectedValue(selectedValue);
+        }
 
     }
 
@@ -51,13 +47,13 @@ export function FormaProtestoTab({ protestId, options, selected }, props) {
             rejectLabel: 'Não',
             accept: async () => {
                 const session = await getSession();                
-                await axios.delete('/api/mapcon/forma_protesto', { 
-                    data: { 'num_seq_forma_protesto': e.id },
+                await axios.delete('/api/mapcon/forma_protesto', {data: { 
+                    'num_seq_forma_protesto': e.id,
                     user: {
                         id: session.user.id,
                         perfil: session.user.perfil
                     }
-                })
+                }})
                 const newSelectedValues = selectedValue.filter(v => v.id != e.id)
                 setselectedValue(newSelectedValues)
             },

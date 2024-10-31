@@ -15,13 +15,7 @@ export function ObjetoProtestoTab({ protestId, options, selected }, props) {
     const [selectedValue, setselectedValue] = useState(selected)
     const [loading, setloading] = useState(false)
 
-    const { control, watch, handleSubmit, errors, reset } = useForm({
-        defaultValues: {
-            objeto_protesto: '',
-            categoria_objeto_num_seq_categoria_objeto: null,
-            descritor_objeto_protesto: ''
-        }
-    });
+    const { control, watch, handleSubmit, formState: { errors }, reset } = useForm();
 
     async function onSubmit(e) {
 
@@ -36,9 +30,11 @@ export function ObjetoProtestoTab({ protestId, options, selected }, props) {
                 perfil: session.user.perfil
             }
         })
-        reset();
-        selectedValue.push({ 'id': ret.data[0].num_seq_objeto_protesto, 'name': ret.data[0].objeto_protesto, 'categoria': nameCategory })
-        setselectedValue(selectedValue)
+        if (ret.status === 200) {
+            reset();
+            selectedValue.push({ 'id': ret.data[0].num_seq_objeto_protesto, 'name': ret.data[0].objeto_protesto, 'categoria': nameCategory });
+            setselectedValue(selectedValue);
+        }
 
     }
 
@@ -51,13 +47,13 @@ export function ObjetoProtestoTab({ protestId, options, selected }, props) {
             rejectLabel: 'Não',
             accept: async () => {
                 const session = await getSession();
-                await axios.delete('/api/mapcon/objeto_protesto', { 
-                    data: { 'num_seq_objeto_protesto': e.id },
+                await axios.delete('/api/mapcon/objeto_protesto', {data: { 
+                    'num_seq_objeto_protesto': e.id,
                     user: {
                         id: session.user.id,
                         perfil: session.user.perfil
                     }
-                })
+                }})
                 const newSelectedValues = selectedValue.filter(v => v.id != e.id)
                 setselectedValue(newSelectedValues)
             },
@@ -77,20 +73,20 @@ export function ObjetoProtestoTab({ protestId, options, selected }, props) {
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="objeto_protesto">Objeto do Protesto*</label>
                         <Controller name="objeto_protesto" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
-                            <InputText disabled={props.view} className={props.objeto_protesto ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
+                            <InputText disabled={props.view} className={errors.objeto_protesto ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="categoria_objeto_num_seq_categoria_objeto">Categoria do Objeto*</label>
                         <Controller name="categoria_objeto_num_seq_categoria_objeto" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
-                            <Dropdown className={props.categoria_objeto_num_seq_categoria_objeto && 'p-invalid'} value={value} options={options} onChange={e => onChange(e.value)} optionLabel="name" optionValue="id" filter filterBy="name" showClear placeholder="Selecione uma categoria" />
+                            <Dropdown className={errors.categoria_objeto_num_seq_categoria_objeto && 'p-invalid'} value={value} options={options} onChange={e => onChange(e.value)} optionLabel="name" optionValue="id" filter filterBy="name" showClear placeholder="Selecione uma categoria" />
                         } />
                     </div>
 
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="descritor_objeto_protesto">Descritor</label>
                         <Controller name="descritor_objeto_protesto" control={control} render={({field: { onChange, value = '' }}) =>
-                            <InputTextarea disabled={props.view} rows={5} className={props.descritor_objeto_protesto ? "p-invalid" : ""} value={value} onChange={onChange}></InputTextarea>
+                            <InputTextarea disabled={props.view} rows={5} className={errors.descritor_objeto_protesto ? "p-invalid" : ""} value={value} onChange={onChange}></InputTextarea>
                         } />
                     </div>
 

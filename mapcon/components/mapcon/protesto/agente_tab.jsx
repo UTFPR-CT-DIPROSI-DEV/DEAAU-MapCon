@@ -13,39 +13,28 @@ export function AgenteTab({ protestId, opt_col,opt_forma, selected }, props) {
     const [selectedValue, setselectedValue] = useState(selected)
     const [loading, setloading] = useState(false)
 
-    const { control, watch, handleSubmit, errors, reset } = useForm({
-        defaultValues: {
-            cidade_num_seq_cidade: null,
-            endereco: '',
-            origem_manifestacao: '',
-            bairro_num_seq_bairro: null,
-        }
-    });
-
+    const { control, watch, handleSubmit, formState: { errors } , reset } = useForm();
 
     async function onSubmit(e) {
-
-
-       
-        e['protesto_num_seq_protesto'] = protestId
-
-        
+        e['protesto_num_seq_protesto'] = protestId     
 
         const nameColetivo = opt_col.filter(option => option.id == e.agente_protesto_num_seq_agente_protesto)[0].name;
         const nameForma = opt_forma.filter(option => option.id == e.forma_participacao_num_seq_forma_participacao)[0].name;
 
-     
         const session = await getSession();
         const ret = await axios.post(`/api/mapcon/participacao_agente`, {
-            e,
+            ...e,
             user: {
                 id: session.user.id,
                 perfil: session.user.perfil
             }
         })
-        reset();
-        selectedValue.push({ 'id': ret.data[0].num_seq_participacao_agente, 'name': nameColetivo, 'forma': nameForma  })
-        // setselectedValue(selectedValue)
+    
+        if (ret.status === 200) {
+            reset();
+            selectedValue.push({ 'id': ret.data[0].num_seq_participacao_agente, 'name': nameColetivo, 'forma': nameForma  })
+            // setselectedValue(selectedValue)
+        }
 
     }
 
@@ -58,13 +47,13 @@ export function AgenteTab({ protestId, opt_col,opt_forma, selected }, props) {
             rejectLabel: 'Não',
             accept: async () => {
                 const session = await getSession();
-                await axios.delete('/api/mapcon/participacao_agente', { 
-                    data: { 'num_seq_participacao_agente': e.id },
+                await axios.delete('/api/mapcon/participacao_agente', { data: {            
+                    'num_seq_participacao_agente': e.id, 
                     user: {
                         id: session.user.id,
                         perfil: session.user.perfil
                     }
-                })
+                }})
                 const newSelectedValues = selectedValue.filter(v => v.id != e.id)
                 setselectedValue(newSelectedValues)
             },
@@ -86,13 +75,13 @@ export function AgenteTab({ protestId, opt_col,opt_forma, selected }, props) {
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="agente_protesto_num_seq_agente_protesto">Nome do Coletivo*</label>
                         <Controller name="agente_protesto_num_seq_agente_protesto" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
-                            <Dropdown className={props.agente_protesto_num_seq_agente_protesto && 'p-invalid'} value={value} options={opt_col} onChange={e => onChange(e.value)} optionLabel="name" optionValue="id" filter filterBy="name" showClear placeholder="Selecione um coletivo" />
+                            <Dropdown className={errors.agente_protesto_num_seq_agente_protesto && 'p-invalid'} value={value} options={opt_col} onChange={e => onChange(e.value)} optionLabel="name" optionValue="id" filter filterBy="name" showClear placeholder="Selecione um coletivo" />
                         } />
                     </div>
                     <div className="p-field p-col-12 p-md-12">
                         <label htmlFor="forma_participacao_num_seq_forma_participacao">Forma de Participação*</label>
                         <Controller name="forma_participacao_num_seq_forma_participacao" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
-                            <Dropdown className={props.forma_participacao_num_seq_forma_participacao && 'p-invalid'} value={value} options={opt_forma} onChange={e => onChange(e.value)} optionLabel="name" optionValue="id" filter filterBy="name" showClear placeholder="Selecione uma forma" />
+                            <Dropdown className={errors.forma_participacao_num_seq_forma_participacao && 'p-invalid'} value={value} options={opt_forma} onChange={e => onChange(e.value)} optionLabel="name" optionValue="id" filter filterBy="name" showClear placeholder="Selecione uma forma" />
                         } />
                     </div>
 
