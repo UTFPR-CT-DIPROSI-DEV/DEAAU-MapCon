@@ -1,10 +1,11 @@
 import { Column } from "primereact/column";
 import { Button } from "primereact/button"
+import { Toast } from 'primereact/toast'
 import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog';
 import { DataTable } from "primereact/datatable";
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Dropdown } from "primereact/dropdown";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
 import { getSession } from 'next-auth/react'
@@ -13,13 +14,12 @@ export function FonteTab({ protestId, options, selected }, props) {
 
     const [selectedValue, setselectedValue] = useState(selected)
     const [loading, setloading] = useState(false)
-
     const { control, watch, handleSubmit, formState: { errors }, reset } = useForm();
+    const toast = useRef(null);
 
     async function onSubmit(e) {
 
         e['protesto_num_seq_protesto'] = protestId
-
         const nameCategory = options.filter(option => option.id == e.fonte_protesto_num_seq_fonte_protesto)[0].name;
 
         const session = await getSession();
@@ -59,7 +59,13 @@ export function FonteTab({ protestId, options, selected }, props) {
             },
             reject: () => null
         });
+    }
 
+    // Função implementada para copiar o valor da célula selecionada pois a Datatable 
+    // do Primereact não deixa copiar o conteúdo das células.
+    const onValueSelected = (e) => {
+        toast.current.show({ severity: 'info', summary: 'Valor copiado', detail: `Valor ${String(e.value).slice(8,25).concat(String(e.value).length > 17 ? '...':'')} copiado` });
+        navigator.clipboard.writeText(e.value)
     }
 
     function acoesTemplate(rowData) {
@@ -92,7 +98,8 @@ export function FonteTab({ protestId, options, selected }, props) {
                 </div>
             </form>
             {/* <Dropdown value={selectedValue} panelStyle={{ width: '100%' }} style={{ marginBottom: '10px' }} options={comboOptions} onChange={onValueSelected} optionLabel="name" filter filterBy="name" placeholder="Selecione um valor" /> */}
-            <DataTable loading={loading} value={selectedValue}>
+            <Toast ref={toast}/>
+            <DataTable loading={loading} value={selectedValue} cellSelection onCellSelect={onValueSelected}>
                 <Column field="id" header="Id"></Column>
                 <Column field="name" header="Fonte"></Column>
                 <Column field="referencia" header="Referência"></Column>
