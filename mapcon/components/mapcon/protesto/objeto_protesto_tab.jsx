@@ -9,6 +9,7 @@ import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
 import { getSession } from 'next-auth/react'
+import SubForm from './SubForm';
 
 export function ObjetoProtestoTab({ protestId, options, selected }, props) {
 
@@ -18,10 +19,9 @@ export function ObjetoProtestoTab({ protestId, options, selected }, props) {
     const { control, watch, handleSubmit, formState: { errors }, reset } = useForm();
 
     async function onSubmit(e) {
-
         e['protesto_num_seq_protesto'] = protestId
 
-        const nameCategory = options.filter(option => option.id == e.categoria_objeto_num_seq_categoria_objeto)[0].name;
+        const nameCategory = options.filter(option => option.id === e.categoria_objeto_num_seq_categoria_objeto)[0].name;
         const session = await getSession();
         const ret = await axios.post(`/api/mapcon/objeto_protesto`, {
             ...e,
@@ -34,8 +34,7 @@ export function ObjetoProtestoTab({ protestId, options, selected }, props) {
             reset();
             selectedValue.push({ 'id': ret.data[0].num_seq_objeto_protesto, 'name': ret.data[0].objeto_protesto, 'categoria': nameCategory });
             setselectedValue(selectedValue);
-        }
-
+        }    
     }
 
     async function removeValue(e) {
@@ -66,9 +65,9 @@ export function ObjetoProtestoTab({ protestId, options, selected }, props) {
     }
 
     return (
-        <React.Fragment>
+        <>
             <ConfirmDialog/>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <SubForm onSubmit={handleSubmit(onSubmit)}>
                 <div className="p-fluid p-formgrid p-grid p-mt-lg-2 p-mt-2">
                     <div className="p-field p-col-12 p-md-6">
                         <label htmlFor="objeto_protesto">Objeto do Protesto*</label>
@@ -89,13 +88,8 @@ export function ObjetoProtestoTab({ protestId, options, selected }, props) {
                             <InputTextarea disabled={props.view} rows={5} className={errors.descritor_objeto_protesto ? "p-invalid" : ""} value={value} onChange={onChange}></InputTextarea>
                         } />
                     </div>
-
-
-                    <div className="p-field p-col-12 p-md-offset-9 p-md-3">
-                        {!props.view ? <Button label="Adicionar" icon="pi pi-plus" /> : null}
-                    </div>
                 </div>
-            </form>
+            </SubForm>
             {/* <Dropdown value={selectedValue} panelStyle={{ width: '100%' }} style={{ marginBottom: '10px' }} options={comboOptions} onChange={onValueSelected} optionLabel="name" filter filterBy="name" placeholder="Selecione um valor" /> */}
             <DataTable loading={loading} value={selectedValue}>
                 <Column field="id" header="Id"></Column>
@@ -103,7 +97,7 @@ export function ObjetoProtestoTab({ protestId, options, selected }, props) {
                 <Column field="categoria" header="Categoria do Objeto"></Column>
                 <Column fheader="Ação" body={acoesTemplate}></Column>
             </DataTable>
-        </React.Fragment>
+        </>
     )
 
 }
