@@ -46,7 +46,7 @@ export default function MainMap({ conflitos }) {
 
     return (
         <>
-            <MapContainer zoomControl={true} style={{ height: "calc(100vh - 43px - 1.125rem)", width: "100vw" }} center={latLng(position)} zoom={10} scrollWheelZoom={true}>
+            <MapContainer zoomControl={true} style={{ height: "calc(100vh - 43px - 1.125rem)", width: "100vw" }} center={latLng(position)} zoom={10} scrollWheelZoom={true} minZoom={5} maxZoom={18} maxBounds={[[90, 180], [-90, -180]]} maxBoundsViscosity={1.0}>
                 <TileLayer
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png" />
