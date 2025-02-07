@@ -26,23 +26,19 @@ import dynamic from 'next/dynamic'
 import { LocalTab } from '../../../components/mapcon/protesto/local_tab';
 import { AgenteTab } from '../../../components/mapcon/protesto/agente_tab';
 import { ScreenshotTab } from '../../../components/mapcon/protesto/screenshot_tab';
+import { FormProvider, useFormContext } from '../../../components/mapcon/protesto/FormProvider';
+import FormGeral from '../../../components/mapcon/protesto/FormGeral';
 
-
-export default function ProtestoForm(props) {
+function ProtestoForm(props) {
 
     // const hist = props.hist?.map(h => ({ status: h['quem'] + ' - ' + h['acao'], date: h['quando'] }))
     const GeolocalizacaoTab = dynamic(() => import("../../../components/mapcon/protesto/geolocalizacao_tab"), { ssr: false });
-
-    const router = useRouter();
 
     const toast = useRef(null);
 
     const { control, watch, handleSubmit, formState: { errors } } = useForm({
         defaultValues: props.form
     });
-
-    const conflitos_all = props.conflitos_all;
-
 
     const status_options = [
         {
@@ -57,134 +53,24 @@ export default function ProtestoForm(props) {
             id: 2,
             label: 'Finalizado (Não Publicado)'
         },
-
-
-
     ]
-
-    const onSubmit = async data => {
-        data['data_protesto'] = moment(data['data_protesto'], 'DD/MM/YYYY').format('YYYY-MM-DD')
-
-        if (props.id) {
-            data['num_seq_protesto'] = props.id
-            const session = await getSession();
-            axios.put('/api/mapcon/protesto', {
-                ...data,
-                user: {
-                    id: session.user.id,
-                    perfil: session.user.perfil
-                }
-            }).then(r => {
-                toast.current.show({ severity: 'success', summary: 'Dados Atualizados', detail: 'Os dados foram atualizados com sucesso.', life: 3000 });
-            })
-        }
-
-    }
-
-    const form_geral = (<form onSubmit={handleSubmit(onSubmit)}>
-        <div className="p-fluid p-formgrid p-grid p-mt-lg-2 p-mt-2">
-            <div className="p-field p-col-12 p-md-9">
-                <label htmlFor="tema_protesto">Tema*</label>
-                <Controller name="tema_protesto" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
-                    <InputText disabled={props.view} className={errors.tema_protesto ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
-                } />
-            </div>
-            <div className="p-field p-col-12 p-md-3">
-                <label htmlFor="data_protesto">Data*</label>
-                <Controller name="data_protesto" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
-                    <InputMask disabled={props.view} className={errors.data_protesto ? "p-invalid" : ""} unmask={false} mask="99/99/9999" value={value} onChange={e => onChange(e.value)}></InputMask>
-                } />
-            </div>
-            <div className="p-field p-col-12 p-md-9">
-                <label htmlFor="desc_protesto">Descrição Sumária</label>
-                <Controller name="desc_protesto" control={control} render={({field: { onChange, value = '' }}) =>
-                    <InputText disabled={props.view} className={errors.desc_protesto ? "p-invalid" : ""} value={value} onChange={onChange}></InputText>
-                } />
-            </div>
-            <div className="p-field p-col-12 p-md-3">
-                <label htmlFor="qtde_envolvidos_protesto">Quantidade de Envolvidos</label>
-                <Controller name="qtde_envolvidos_protesto" control={control} render={({field: { onChange, value = '' }}) =>
-                    <InputNumber disabled={props.view} className={errors.qtde_envolvidos_protesto ? "p-invalid" : ""} value={value} onChange={e => onChange(e.value)}></InputNumber>
-                } />
-            </div>
-            <div className="p-field p-col-12 p-md-12">
-                <label htmlFor="desc_detal_protesto">Descrição</label>
-                <Controller name="desc_detal_protesto" control={control} render={({field: { onChange, value = '' }}) =>
-                    <InputTextarea disabled={props.view} rows={5} className={errors.desc_detal_protesto ? "p-invalid" : ""} value={value} onChange={onChange}></InputTextarea>
-                } />
-            </div>
-            {/* <div className="p-field p-col-12 p-md-6">
-            <label htmlFor="cidade_num_seq_cidade">Conflito</label>
-            <Controller name="cidade_num_seq_cidade" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
-                <Dropdown className={props.cidade_num_seq_cidade && 'p-invalid'} value={value} options={cidades} onChange={e => onChange(e.value)} optionLabel="cidade" optionValue="num_seq_cidade" showClear placeholder="Selecione uma Cidade" />
-            } />
-        </div> */}
-            <div className="p-field p-col-12 p-md-6">
-                <label htmlFor="status">Status*</label>
-                <Controller name="status" rules={{ required: true }} control={control} render={({field: { onChange, value = '' }}) =>
-                    <Dropdown className={errors.status && 'p-invalid'} value={value} options={status_options} onChange={(e) => onChange(e.value)} optionLabel="label" optionValue="id" showClear placeholder="Selecione um status" />
-                }/>
-            </div>
-
-            <div className="p-field p-col-12 p-md-6">
-                <label htmlFor="conflito_num_seq_conflito">Conflito</label>
-                <Controller name="conflito_num_seq_conflito" control={control} render={({field: { onChange, value = '' }}) =>
-                    <Dropdown className={errors.conflito_num_seq_conflito && 'p-invalid'} value={value} options={props.conflitos_all} onChange={e => onChange(e.value)} optionLabel="name" optionValue="id" filter filterBy="name"  showClear placeholder="Selecione um conflito" />
-                }/>
-            </div>
-            <div className="p-field p-col-12 p-md-offset-9 p-md-3">
-                {!props.view ? <Button label="Gravar" icon="pi pi-save" /> : null}
-            </div>
-        </div>
-    </form>)
 
     return (
         <div>
             <Toast ref={toast} />
             <ToolbarMapCon></ToolbarMapCon>
             <div className="p-grid p-formgrid p-fluid p-m-lg-1 p-m-1">
-                <div className="p-col-12 p-mb-2 p-lg-2 p-mb-lg-0">
-
-                </div>
                 <div className="p-col-12 p-mb-8 p-lg-8 p-mb-lg-0">
-
+                    {/* Pra que serve a linha abaixo? */}
                     {props.hist ? <Panel header="Histórico" id="historico" toggleable collapsed={true}>
                         <Timeline value={hist} opposite={(item) => item.status} content={(item) => <small className="p-text-secondary">{item.date}</small>} />
-                    </Panel> : null}
+                    </Panel> : null}  
 
                     <div className="p-field p-col-12"><h2>Protesto</h2></div>
 
-                    <Accordion className="accordion-custom">
-                        <AccordionTab header={<React.Fragment><span>Geral</span></React.Fragment>}>
-                            {form_geral}
-                        </AccordionTab>
-                        <AccordionTab header={<React.Fragment><span>Objeto do Protesto</span></React.Fragment>}>
-                            <ObjetoProtestoTab protestId={props.id} selected={props.objetos_protesto} options={props.objetos_protesto_all} ></ObjetoProtestoTab>
-                        </AccordionTab>
-                        <AccordionTab header={<React.Fragment><span>Forma de Protesto</span></React.Fragment>}>
-                            <FormaProtestoTab protestId={props.id} selected={props.forma_protesto} options={props.repertorio_acao_all} ></FormaProtestoTab>
-                        </AccordionTab>
-                        <AccordionTab header={<React.Fragment><span>Desdobramento</span></React.Fragment>}>
-                            <DesdobramentoTab protestId={props.id} selected={props.desdobramento}></DesdobramentoTab>
-                        </AccordionTab>
-                        <AccordionTab header={<React.Fragment><span>Fonte</span></React.Fragment>}>
-                            <FonteTab protestId={props.id} selected={props.fonte} options={props.fonte_all} ></FonteTab>
-                        </AccordionTab>
-                        <AccordionTab header={<React.Fragment><span>Geolocalização</span></React.Fragment>}>
-                            <GeolocalizacaoTab protestId={props.id} coordenadas={props.geolocalizacao}></GeolocalizacaoTab>
-                        </AccordionTab>
-                        <AccordionTab header={<React.Fragment><span>Local</span></React.Fragment>}>
-                            <LocalTab protestId={props.id} selected={props.local} options={props.local_all}  ></LocalTab>
-                        </AccordionTab>
-                        <AccordionTab header={<React.Fragment><span>Agente do Protesto</span></React.Fragment>}>
-                            <AgenteTab protestId={props.id} selected={props.agente} opt_col={props.agente_coletivos} opt_forma={props.agente_forma}   ></AgenteTab>
-                        </AccordionTab>
-                        <AccordionTab header={<React.Fragment><span>Screenshots</span></React.Fragment>}>
-                            <ScreenshotTab screenshots={props.screenshots}></ScreenshotTab>
-                        </AccordionTab>
-                       
-                    </Accordion>
-
+                    <FormProvider>
+                        <FormGeral {...props}/>
+                    </FormProvider>
                 </div>
             </div>
         </div>
@@ -268,3 +154,5 @@ export async function getServerSideProps(context) {
     }
 
 }
+
+export default ProtestoForm;
