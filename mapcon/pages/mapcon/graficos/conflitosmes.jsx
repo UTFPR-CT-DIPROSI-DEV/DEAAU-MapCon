@@ -1,4 +1,3 @@
-import axios from 'axios';
 import db from '../../../lib/back/db'
 import React from 'react'
 import { Chart } from 'primereact/chart';

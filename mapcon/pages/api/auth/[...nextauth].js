@@ -7,7 +7,6 @@ export default NextAuth({
     // Configure one or more authentication providers
     session: {
         strategy: 'jwt',
-        jwt: true,
         maxAge: 3600, // 1 hour
     },
     secret: process.env.NEXTAUTH_SECRET,
@@ -19,10 +18,11 @@ export default NextAuth({
             // You can specify whatever fields you are expecting to be submitted.
             // e.g. domain, username, password, 2FA token, etc.
             credentials: {
+                csrfToken: { label: "CSRF Token", type: "hidden" },
                 username: { label: "Usuário", type: "text" },
                 password: { label: "Senha",   type: "password" }
             },
-            async authorize(credentials, req) {
+            async authorize(credentials) {
                 const usr = await db('usuario')
                     .select('usu_login', 'usu_senha', 'perfil_usuario_num_seq_perfil_usuario')
                     .where({ usu_login: credentials.username })
@@ -44,7 +44,7 @@ export default NextAuth({
         })
     ],
     callbacks: {
-        jwt: async ({token, user, account, profile}) => {
+        jwt: async ({token, user}) => {
             //  "user" parameter is the object received from "authorize"
             //  "token" is being send below to "session" callback...
             //  ...so we set "user" param of "token" to object from "authorize"...
@@ -54,15 +54,9 @@ export default NextAuth({
             }
             return token;
         },
-        session: async (session) => {
-            if (session) {
-                session.user = session.token.user;
-                return session;
-            } else {
-                // Handle the case where session or user is undefined
-                console.error('Session or user is undefined', { session });
-                return session;
-            }
+        session: async ({session, token}) => {
+            session.user = token.user;
+            return session;
         }
     },
     pages: {

@@ -20,7 +20,6 @@
     "not op_mini all"
   ],
   "dependencies": {
-    "@prisma/client": "^5.22.0",
     "axios": "^1.6.2",
     "bcryptjs": "^2.4.3",
     "chart.js": "^3.5.0",
